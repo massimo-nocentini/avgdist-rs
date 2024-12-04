@@ -1,0 +1,9 @@
+[package]
+name = "avgdist-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lender = "0.2.9"
+rand = "0.8.5"
+webgraph = "0.1.4"
