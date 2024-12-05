@@ -7,8 +7,7 @@ fn bfs<F: RandomAccessDecoderFactory>(
     start: usize,
     graph: &BvGraph<F>,
 ) -> (Vec<usize>, Vec<usize>) {
-    let num_nodes = graph.num_nodes();
-    let mut seen = vec![0usize; num_nodes];
+    let mut distances = vec![0usize; graph.num_nodes()];
     let mut queue = VecDeque::new();
     let mut good = Vec::new();
 
@@ -17,18 +16,18 @@ fn bfs<F: RandomAccessDecoderFactory>(
     while !queue.is_empty() {
         let current_node = queue.pop_front().unwrap();
 
-        let d = seen[current_node];
+        let d = distances[current_node];
 
         for succ in graph.successors(current_node) {
-            if succ != start && seen[succ] == 0 {
-                seen[succ] = d + 1;
+            if succ != start && distances[succ] == 0 {
+                distances[succ] = d + 1;
                 good.push(succ);
                 queue.push_back(succ);
             }
         }
     }
 
-    (seen, good)
+    (distances, good)
 }
 
 fn sample<F: RandomAccessDecoderFactory>(epsilon: f64, graph: &BvGraph<F>) -> Vec<usize> {
@@ -37,10 +36,8 @@ fn sample<F: RandomAccessDecoderFactory>(epsilon: f64, graph: &BvGraph<F>) -> Ve
     let mut r = rand::thread_rng();
     let mut pool = vec![0usize; num_nodes];
     let mut sampled = vec![0usize; k];
-    let mut cross = vec![0usize; num_nodes];
+    // let mut cross = vec![0usize; num_nodes];
     let mut good = Vec::new();
-
-    println!("Sample size {}", k);
 
     for node in 0..num_nodes {
         pool[node] = node; // the identity permutation.
@@ -53,15 +50,17 @@ fn sample<F: RandomAccessDecoderFactory>(epsilon: f64, graph: &BvGraph<F>) -> Ve
 
         let (distances, dgood) = bfs(start, graph);
 
-        print!(".");
+        print!(",");
         io::stdout().flush().expect("Unable to flush stdout");
 
-        for i in dgood {
-            //if distances[i] > 0 {
-            //cross[i] += 1;
-            good.push(i);
-            //}
-        }
+        good.extend(dgood);
+
+        // for i in dgood {
+        //if distances[i] > 0 {
+        //cross[i] += 1;
+        // good.push(i);
+        //}
+        // }
     }
 
     for i in 0..k {
@@ -119,7 +118,7 @@ fn main() {
     let mut sum = 0usize;
     let mut count = 0usize;
 
-    for s in sampled {
+    for &s in sampled.iter() {
         let (distances, good) = bfs(s, &graph);
         print!(".");
         io::stdout().flush().expect("Unable to flush stdout");
@@ -130,7 +129,10 @@ fn main() {
     }
 
     println!(
-        "\nReachable pairs {}, average distance {}.",
+        "\n|V| = {}, |E| = {}, |S| = {}, reachable pairs {}, average distance {}.",
+        graph.num_nodes(),
+        graph.num_arcs(),
+        sampled.len(),
         count,
         (sum as f64).div(count as f64)
     );
