@@ -123,7 +123,7 @@ fn main() {
         k
     );
 
-    for j in 0..k {
+    for j in 1..k + 1 {
         println!("*** |s| = {}", j);
 
         let sampled = sample(j, &graph_t);
