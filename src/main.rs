@@ -1,14 +1,16 @@
-
-use std::io::{self, Write};
 use rand::Rng;
+use std::io::{self, Write};
 use std::{collections::VecDeque, ops::Div};
 use webgraph::prelude::*;
 
-fn bfs<F: RandomAccessDecoderFactory>(start: usize, graph: &BvGraph<F>) -> (Vec<usize>, Vec<usize>) {
+fn bfs<F: RandomAccessDecoderFactory>(
+    start: usize,
+    graph: &BvGraph<F>,
+) -> (Vec<usize>, Vec<usize>) {
     let num_nodes = graph.num_nodes();
     let mut seen = vec![0usize; num_nodes];
     let mut queue = VecDeque::new();
-    let mut good = Vec::new ();
+    let mut good = Vec::new();
 
     queue.push_back(start);
 
@@ -20,7 +22,7 @@ fn bfs<F: RandomAccessDecoderFactory>(start: usize, graph: &BvGraph<F>) -> (Vec<
         for succ in graph.successors(current_node) {
             if succ != start && seen[succ] == 0 {
                 seen[succ] = d + 1;
-                good.push (succ);
+                good.push(succ);
                 queue.push_back(succ);
             }
         }
@@ -36,10 +38,10 @@ fn sample<F: RandomAccessDecoderFactory>(epsilon: f64, graph: &BvGraph<F>) -> Ve
     let mut pool = vec![0usize; num_nodes];
     let mut sampled = vec![0usize; k];
     let mut cross = vec![0usize; num_nodes];
-    let mut good = Vec::new ();
+    let mut good = Vec::new();
 
-    println! ("Sample size {}", k);
-    
+    println!("Sample size {}", k);
+
     for node in 0..num_nodes {
         pool[node] = node; // the identity permutation.
     }
@@ -51,20 +53,20 @@ fn sample<F: RandomAccessDecoderFactory>(epsilon: f64, graph: &BvGraph<F>) -> Ve
 
         let (distances, dgood) = bfs(start, graph);
 
-        print! (".");
+        print!(".");
         io::stdout().flush().expect("Unable to flush stdout");
 
         for i in dgood {
             //if distances[i] > 0 {
-                //cross[i] += 1;
-                good.push (i);
+            //cross[i] += 1;
+            good.push(i);
             //}
         }
     }
 
     for i in 0..k {
-        let c = r.gen_range(0..good.len ());
-        sampled[i] = good.remove (c);
+        let c = r.gen_range(0..good.len());
+        sampled[i] = good.remove(c);
     }
 
     /*
@@ -119,7 +121,7 @@ fn main() {
 
     for s in sampled {
         let (distances, good) = bfs(s, &graph);
-        print! (".");
+        print!(".");
         io::stdout().flush().expect("Unable to flush stdout");
         for d in good {
             sum = sum + distances[d];
@@ -127,5 +129,9 @@ fn main() {
         }
     }
 
-    println!("\nReachable pairs {}, average distance {}.", count, (sum as f64).div(count as f64));
+    println!(
+        "\nReachable pairs {}, average distance {}.",
+        count,
+        (sum as f64).div(count as f64)
+    );
 }
