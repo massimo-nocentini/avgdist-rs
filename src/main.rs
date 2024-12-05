@@ -127,5 +127,5 @@ fn main() {
         }
     }
 
-    println!("\n{}", (sum as f64).div(count as f64));
+    println!("\nReachable pairs {}, average distance {}.", count, (sum as f64).div(count as f64));
 }
