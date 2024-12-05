@@ -30,9 +30,8 @@ fn bfs<F: RandomAccessDecoderFactory>(
     (distances, good)
 }
 
-fn sample<F: RandomAccessDecoderFactory>(epsilon: f64, graph: &BvGraph<F>) -> Vec<usize> {
+fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<usize> {
     let num_nodes = graph.num_nodes();
-    let k = 1usize; //(num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
     let mut r = rand::thread_rng();
     let mut pool = vec![0usize; num_nodes];
     let mut sampled = vec![0usize; k];
@@ -113,27 +112,37 @@ fn main() {
         .load()
         .unwrap();
 
-    let sampled = sample(0.1, &graph_t);
+    let num_nodes = graph.num_nodes();
+    let epsilon = 0.1f64;
+    let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
+
+    println!(
+        "|V| = {}, |E| = {}, |S| = {}.",
+        num_nodes,
+        graph.num_arcs(),
+        k
+    );
+
+    let sampled = sample(k, &graph_t);
 
     let mut sum = 0usize;
     let mut count = 0usize;
 
-    for &s in sampled.iter() {
+    for (i, &s) in sampled.iter().enumerate() {
         let (distances, good) = bfs(s, &graph);
-        print!(".");
-        io::stdout().flush().expect("Unable to flush stdout");
+
         for d in good {
             sum = sum + distances[d];
             count = count + 1;
         }
-    }
 
-    println!(
-        "\n|V| = {}, |E| = {}, |S| = {}, reachable pairs {}, average distance {}.",
-        graph.num_nodes(),
-        graph.num_arcs(),
-        sampled.len(),
-        count,
-        (sum as f64).div(count as f64)
-    );
+        if i % 5 == 0 {
+            println!(
+                "after {}, reachable pairs {},average distance {}.",
+                i,
+                count,
+                (sum as f64).div(count as f64)
+            );
+        }
+    }
 }
