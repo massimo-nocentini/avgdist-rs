@@ -136,13 +136,11 @@ fn main() {
             count = count + 1;
         }
 
-        if i % 5 == 0 {
-            println!(
-                "after {}, reachable pairs {},average distance {}.",
-                i,
-                count,
-                (sum as f64).div(count as f64)
-            );
-        }
+        println!(
+            "after {}, reachable pairs {},average distance {}.",
+            i + 1,
+            count,
+            (sum as f64).div(count as f64)
+        );
     }
 }
