@@ -1,6 +1,5 @@
 use rand::Rng;
 use std::{
-    collections::VecDeque,
     io::{self, Write},
     ops::Div,
 };
@@ -11,21 +10,21 @@ fn bfs<F: RandomAccessDecoderFactory>(
     graph: &BvGraph<F>,
 ) -> (Vec<usize>, Vec<usize>, usize) {
     let mut distances = vec![0usize; graph.num_nodes()];
-    let mut frontier = VecDeque::new();
+    let mut frontier = Vec::new();
     let mut good = Vec::new();
     let mut diameter = 1usize;
 
-    frontier.push_back(start);
+    frontier.push(start);
 
     while !frontier.is_empty() {
-        let mut frontier_next = VecDeque::new();
+        let mut frontier_next = Vec::new();
 
         for current_node in frontier {
             for succ in graph.successors(current_node) {
                 if succ != start && distances[succ] == 0 {
                     distances[succ] = diameter;
                     good.push(succ);
-                    frontier_next.push_back(succ);
+                    frontier_next.push(succ);
                 }
             }
         }
