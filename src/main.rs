@@ -1,6 +1,9 @@
 use rand::Rng;
-use std::io::{self, Write};
-use std::{collections::VecDeque, ops::Div};
+use std::{
+    collections::VecDeque,
+    io::{self, Write},
+    ops::Div,
+};
 use webgraph::prelude::*;
 
 fn bfs<F: RandomAccessDecoderFactory>(
@@ -33,72 +36,43 @@ fn bfs<F: RandomAccessDecoderFactory>(
 fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<usize> {
     let num_nodes = graph.num_nodes();
     let mut r = rand::thread_rng();
-    let mut pool = vec![0usize; num_nodes];
     let mut sampled = vec![0usize; k];
-    // let mut cross = vec![0usize; num_nodes];
-    let mut good = Vec::new();
-
-    for node in 0..num_nodes {
-        pool[node] = node; // the identity permutation.
-    }
+    let mut cross = vec![0usize; num_nodes];
 
     for _ in 0..k {
-        let mut start: usize = r.gen_range(0..pool.len());
+        let (_, dgood) = bfs(r.gen_range(0..num_nodes), graph);
 
-        start = pool.remove(start);
+        print!(",");
+        io::stdout().flush().expect("Unable to flush stdout");
 
-        let (distances, dgood) = bfs(start, graph);
-
-        // print!(",");
-        // io::stdout().flush().expect("Unable to flush stdout");
-
-        good.extend(dgood);
-
-        // for i in dgood {
-        //if distances[i] > 0 {
-        //cross[i] += 1;
-        // good.push(i);
-        //}
-        // }
+        for i in dgood {
+            cross[i] += 1;
+        }
     }
 
-    for i in 0..k {
-        let c = r.gen_range(0..good.len());
-        sampled[i] = good.remove(c);
-    }
-
-    /*
     for i in 1..num_nodes {
         cross[i] += cross[i - 1];
     }
 
-    println! ("\nCumulated");
-
+    let (minc, maxc) = (cross[0], cross[num_nodes - 1]);
+    
     for i in 0..k {
-        let c = r.gen_range(cross[0]..cross[num_nodes - 1]);
+        let c = r.gen_range(minc..maxc);
 
         let mut l = 0usize;
         let mut h = num_nodes - 1;
 
-        loop {
-            if l >= h {
-                break;
-            }
-
-            let m = l + ((h - l) >> 1);
-            if cross[m] == c {
-                l = m;
-                h = m;
-            } else if cross[m] > c {
-                h = m - 1;
-            } else {
+        while l < h {
+            let m = (h + l) >> 1;
+            if cross[m] < c {
                 l = m + 1;
+            } else {
+                h = m;
             }
         }
-
+        assert!(l == h);
         sampled[i] = h;
     }
-    */
 
     sampled
 }
