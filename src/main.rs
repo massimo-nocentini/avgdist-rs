@@ -9,28 +9,32 @@ use webgraph::prelude::*;
 fn bfs<F: RandomAccessDecoderFactory>(
     start: usize,
     graph: &BvGraph<F>,
-) -> (Vec<usize>, Vec<usize>) {
+) -> (Vec<usize>, Vec<usize>, usize) {
     let mut distances = vec![0usize; graph.num_nodes()];
-    let mut queue = VecDeque::new();
+    let mut frontier = VecDeque::new();
     let mut good = Vec::new();
+    let mut diameter = 1usize;
 
-    queue.push_back(start);
+    frontier.push_back(start);
 
-    while !queue.is_empty() {
-        let current_node = queue.pop_front().unwrap();
+    while !frontier.is_empty() {
+        let mut frontier_next = VecDeque::new();
 
-        let d = distances[current_node];
-
-        for succ in graph.successors(current_node) {
-            if succ != start && distances[succ] == 0 {
-                distances[succ] = d + 1;
-                good.push(succ);
-                queue.push_back(succ);
+        for current_node in frontier {
+            for succ in graph.successors(current_node) {
+                if succ != start && distances[succ] == 0 {
+                    distances[succ] = diameter;
+                    good.push(succ);
+                    frontier_next.push_back(succ);
+                }
             }
         }
+
+        frontier = frontier_next;
+        diameter = diameter + 1;
     }
 
-    (distances, good)
+    (distances, good, diameter)
 }
 
 fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<usize> {
@@ -40,7 +44,7 @@ fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<us
     let mut cross = vec![0usize; num_nodes];
 
     for _ in 0..k {
-        let (_, dgood) = bfs(r.gen_range(0..num_nodes), graph);
+        let (_, dgood, _) = bfs(r.gen_range(0..num_nodes), graph);
 
         print!(",");
         io::stdout().flush().expect("Unable to flush stdout");
@@ -55,7 +59,7 @@ fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<us
     }
 
     let (minc, maxc) = (cross[0], cross[num_nodes - 1]);
-    
+
     for i in 0..k {
         let c = r.gen_range(minc..maxc);
 
@@ -70,8 +74,8 @@ fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<us
                 h = m;
             }
         }
-        assert!(l == h);
-        sampled[i] = h;
+
+        sampled[i] = l;
     }
 
     sampled
@@ -106,7 +110,7 @@ fn main() {
         let mut count = 0usize;
 
         for (i, &s) in sampled.iter().enumerate() {
-            let (distances, good) = bfs(s, &graph);
+            let (distances, good, _) = bfs(s, &graph);
 
             for d in good {
                 sum = sum + distances[d];
