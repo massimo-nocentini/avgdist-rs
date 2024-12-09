@@ -98,7 +98,7 @@ fn bfs<F: RandomAccessDecoderFactory>(
     while !frontier.is_empty() {
         frontier_next.clear();
 
-        for current_node in frontier.iter() {
+        for current_node in &frontier {
             for succ in graph.successors(*current_node) {
                 if succ != start && distances[succ] == 0 {
                     distances[succ] = diameter;
@@ -108,7 +108,8 @@ fn bfs<F: RandomAccessDecoderFactory>(
             }
         }
 
-        frontier.extend(frontier_next.iter());
+        frontier.clear();
+        frontier.extend(&frontier_next);
         diameter = diameter + 1;
     }
 
