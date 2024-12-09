@@ -5,6 +5,84 @@ use std::{
 };
 use webgraph::prelude::*;
 
+struct Pennant<'a, T> {
+    value: &'a T,
+    left: Option<&'a Pennant<'a, T>>,
+    right: Option<&'a Pennant<'a, T>>,
+}
+
+impl<'a, T> Pennant<'a, T> {
+    fn new(value: &'a T) -> Pennant<'a, T> {
+        Pennant {
+            value,
+            left: None,
+            right: None,
+        }
+    }
+
+    fn union(&'a self, y: &'a mut Pennant<'a, T>) -> Pennant<'a, T> {
+        y.right = self.left;
+        // self.left = Some(y);
+        Pennant {
+            value: self.value,
+            left: Some(y),
+            right: self.right,
+        }
+    }
+
+    fn len(&self) -> usize {
+        let l = match self.left {
+            None => 0,
+            Some(p) => p.len(),
+        };
+        let r = match self.right {
+            None => 0,
+            Some(p) => p.len(),
+        };
+        1 + l + r
+    }
+}
+
+struct Bag<'a, T> {
+    spine: Vec<Option<&'a Pennant<'a, T>>>,
+}
+
+impl<'a, T> Bag<'a, T> {
+    fn new() -> Bag<'a, T> {
+        Bag { spine: Vec::new() }
+    }
+
+    fn len(&self) -> usize {
+        let mut l = 0;
+
+        for p in self.spine.iter() {
+            l += match *p {
+                None => 0,
+                Some(pp) => pp.len(),
+            };
+        }
+
+        l
+    }
+
+    fn push(&mut self, value: &T) {
+        let mut v = Pennant::new(value);
+        let mut k = 0usize;
+
+        while k < self.len() {
+            let each = self.spine[k];
+
+            let pp = match each {
+                None => break,
+                Some(p) => break, // p.union(&mut v),
+            };
+
+            self.spine[k] = None;
+            k += 1;
+        }
+    }
+}
+
 fn bfs<F: RandomAccessDecoderFactory>(
     start: usize,
     graph: &BvGraph<F>,
@@ -13,14 +91,15 @@ fn bfs<F: RandomAccessDecoderFactory>(
     let mut frontier = Vec::new();
     let mut good = Vec::new();
     let mut diameter = 1usize;
+    let mut frontier_next = Vec::new();
 
     frontier.push(start);
 
     while !frontier.is_empty() {
-        let mut frontier_next = Vec::new();
+        frontier_next.clear();
 
-        for current_node in frontier {
-            for succ in graph.successors(current_node) {
+        for current_node in frontier.iter() {
+            for succ in graph.successors(*current_node) {
                 if succ != start && distances[succ] == 0 {
                     distances[succ] = diameter;
                     good.push(succ);
@@ -29,7 +108,7 @@ fn bfs<F: RandomAccessDecoderFactory>(
             }
         }
 
-        frontier = frontier_next;
+        frontier.extend(frontier_next.iter());
         diameter = diameter + 1;
     }
 
