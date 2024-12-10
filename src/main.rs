@@ -1,4 +1,7 @@
+use lender::for_;
 use rand::Rng;
+use std::fs::File;
+use std::io::prelude::*;
 use std::{
     io::{self, Write},
     ops::Div,
@@ -160,6 +163,29 @@ fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<us
     sampled
 }
 
+fn as_bytes(v: &[usize]) -> &[u8] {
+    unsafe {
+        std::slice::from_raw_parts(
+            v.as_ptr() as *const u8,
+            v.len() * std::mem::size_of::<usize>(),
+        )
+    }
+}
+
+fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut Vec<usize>) {
+    buffer.push(graph.num_nodes());
+
+    for_!((src, succ) in graph {
+
+        buffer.push(src);
+        buffer.push(succ.len());
+
+        for dst in succ {
+            buffer.push(dst);
+        }
+    });
+}
+
 fn main() {
     let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
         .load()
@@ -168,6 +194,20 @@ fn main() {
     let graph_t = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg-t")
         .load()
         .unwrap();
+
+    {
+        let mut file = File::create("/data/bitcoin/bitcoin-webgraph/pg.data").unwrap();
+        let mut buffer = Vec::new();
+        append_to_vec(&graph, &mut buffer);
+        file.write_all(as_bytes(&buffer)).unwrap();
+    }
+
+    {
+        let mut file = File::create("/data/bitcoin/bitcoin-webgraph/pg-t.data").unwrap();
+        let mut buffer = Vec::new();
+        append_to_vec(&graph_t, &mut buffer);
+        file.write_all(as_bytes(&buffer)).unwrap();
+    }
 
     let num_nodes = graph.num_nodes();
     let epsilon = 0.1f64;
