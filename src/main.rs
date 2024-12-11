@@ -195,19 +195,19 @@ fn main() {
         .load()
         .unwrap();
 
-    {
-        let mut file = File::create("/data/bitcoin/bitcoin-webgraph/pg.data").unwrap();
-        let mut buffer = Vec::new();
-        append_to_vec(&graph, &mut buffer);
-        file.write_all(as_bytes(&buffer)).unwrap();
-    }
+    // {
+    //     let mut file = File::create("/data/bitcoin/bitcoin-webgraph/pg.data").unwrap();
+    //     let mut buffer = Vec::new();
+    //     append_to_vec(&graph, &mut buffer);
+    //     file.write_all(as_bytes(&buffer)).unwrap();
+    // }
 
-    {
-        let mut file = File::create("/data/bitcoin/bitcoin-webgraph/pg-t.data").unwrap();
-        let mut buffer = Vec::new();
-        append_to_vec(&graph_t, &mut buffer);
-        file.write_all(as_bytes(&buffer)).unwrap();
-    }
+    // {
+    //     let mut file = File::create("/data/bitcoin/bitcoin-webgraph/pg-t.data").unwrap();
+    //     let mut buffer = Vec::new();
+    //     append_to_vec(&graph_t, &mut buffer);
+    //     file.write_all(as_bytes(&buffer)).unwrap();
+    // }
 
     let num_nodes = graph.num_nodes();
     let epsilon = 0.1f64;
