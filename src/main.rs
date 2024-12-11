@@ -96,7 +96,7 @@ fn bfs_layered<F: RandomAccessDecoderFactory>(
     let mut good = Vec::new();
     let mut diameter = 0usize;
 
-    distances[start] = Some(0usize);
+    distances[start] = Some(diameter);
 
     frontier.push(start);
 
@@ -124,7 +124,7 @@ fn bfs_layered<F: RandomAccessDecoderFactory>(
     (distances, good, diameter)
 }
 
-fn bfs<F: RandomAccessDecoderFactory>(
+fn bfs_queued<F: RandomAccessDecoderFactory>(
     start: usize,
     graph: &BvGraph<F>,
 ) -> (Vec<Option<usize>>, Vec<usize>, usize) {
@@ -133,7 +133,7 @@ fn bfs<F: RandomAccessDecoderFactory>(
     let mut good = Vec::new();
     let mut diameter = 0usize;
 
-    distances[start] = Some(0usize);
+    distances[start] = Some(diameter);
 
     queue.push_back(start);
 
@@ -156,6 +156,13 @@ fn bfs<F: RandomAccessDecoderFactory>(
     }
 
     (distances, good, diameter)
+}
+
+fn bfs<F: RandomAccessDecoderFactory>(
+    start: usize,
+    graph: &BvGraph<F>,
+) -> (Vec<Option<usize>>, Vec<usize>, usize) {
+    bfs_layered(start, graph)
 }
 
 fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> (Vec<usize>, f64) {
