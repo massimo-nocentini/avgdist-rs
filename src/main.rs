@@ -1,5 +1,6 @@
 use lender::for_;
 use rand::Rng;
+use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
 use std::{
@@ -86,7 +87,7 @@ impl<'a, T> Bag<'a, T> {
     }
 }
 
-fn bfs<F: RandomAccessDecoderFactory>(
+fn bfs_layered<F: RandomAccessDecoderFactory>(
     start: usize,
     graph: &BvGraph<F>,
 ) -> (Vec<Option<usize>>, Vec<usize>, usize) {
@@ -123,6 +124,40 @@ fn bfs<F: RandomAccessDecoderFactory>(
     (distances, good, diameter)
 }
 
+fn bfs<F: RandomAccessDecoderFactory>(
+    start: usize,
+    graph: &BvGraph<F>,
+) -> (Vec<Option<usize>>, Vec<usize>, usize) {
+    let mut distances = vec![None; graph.num_nodes()];
+    let mut queue = VecDeque::new();
+    let mut good = Vec::new();
+    let mut diameter = 0usize;
+
+    distances[start] = Some(0usize);
+
+    queue.push_back(start);
+
+    while !queue.is_empty() {
+        let current_node = queue.pop_front().unwrap();
+
+        let d = distances[current_node].unwrap();
+        diameter = diameter.max(d);
+
+        for succ in graph.successors(current_node) {
+            match distances[succ] {
+                None => {
+                    distances[succ] = Some(d + 1);
+                    good.push(succ);
+                    queue.push_back(succ);
+                }
+                _ => {}
+            }
+        }
+    }
+
+    (distances, good, diameter)
+}
+
 fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> (Vec<usize>, f64) {
     let num_nodes = graph.num_nodes();
     let mut r = rand::thread_rng();
@@ -139,7 +174,7 @@ fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> (Vec<u
         io::stdout().flush().expect("Unable to flush stdout");
 
         for i in dgood {
-            cross[i] += distances[i].unwrap();
+            cross[i] += 1; //distances[i].unwrap();
         }
     }
 
@@ -234,12 +269,12 @@ fn main() {
 
         let mut sum = 0usize;
         let mut count = 0usize;
-        let mut dia = 0.0;
+        let mut dia = 0;
 
         for (i, &s) in sampled.iter().enumerate() {
             let (distances, good, d) = bfs(s, &graph);
 
-            dia += d as f64;
+            dia += d;
 
             for d in good {
                 sum = sum + distances[d].unwrap();
@@ -251,8 +286,10 @@ fn main() {
                 i + 1,
                 count,
                 (sum as f64) / (count as f64),
-                (diameter + (dia / ((i + 1) as f64))) / 2.0
+                (diameter + ((dia as f64) / ((i + 1) as f64))) / 2.0
             );
         }
+
+        break;
     }
 }
