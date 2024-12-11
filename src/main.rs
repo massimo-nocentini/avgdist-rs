@@ -94,7 +94,6 @@ fn bfs<F: RandomAccessDecoderFactory>(
     let mut frontier = Vec::new();
     let mut good = Vec::new();
     let mut diameter = 0usize;
-    
 
     distances[start] = Some(0usize);
 
@@ -124,14 +123,17 @@ fn bfs<F: RandomAccessDecoderFactory>(
     (distances, good, diameter)
 }
 
-fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<usize> {
+fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> (Vec<usize>, f64) {
     let num_nodes = graph.num_nodes();
     let mut r = rand::thread_rng();
     let mut sampled = vec![0usize; k];
     let mut cross = vec![0usize; num_nodes];
+    let mut diameter = 0usize;
 
     for _ in 0..k {
-        let (distances, dgood, _) = bfs(r.gen_range(0..num_nodes), graph);
+        let (distances, dgood, d) = bfs(r.gen_range(0..num_nodes), graph);
+
+        diameter += d;
 
         print!(",");
         io::stdout().flush().expect("Unable to flush stdout");
@@ -145,7 +147,7 @@ fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<us
         cross[i] += cross[i - 1];
     }
 
-    let (minc, maxc) = (cross[0], cross[num_nodes - 1]);
+    let (minc, maxc) = (0, cross[num_nodes - 1]);
 
     for i in 0..k {
         let c = r.gen_range(minc..maxc);
@@ -165,7 +167,7 @@ fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<us
         sampled[i] = l;
     }
 
-    sampled
+    (sampled, (diameter as f64) / (k as f64))
 }
 
 fn as_bytes(v: &[usize]) -> &[u8] {
@@ -228,13 +230,13 @@ fn main() {
     for j in 1..k + 1 {
         println!("*** |s| = {}", j);
 
-        let sampled = sample(j, &graph_t);
+        let (sampled, diameter) = sample(j, &graph_t);
 
         let mut sum = 0usize;
         let mut count = 0usize;
 
         for (i, &s) in sampled.iter().enumerate() {
-            let (distances, good, _) = bfs(s, &graph);
+            let (distances, good, d) = bfs(s, &graph);
 
             for d in good {
                 sum = sum + distances[d].unwrap();
@@ -242,10 +244,11 @@ fn main() {
             }
 
             println!(
-                "after {}, reachable pairs {},average distance {}.",
+                "after {}, reachable pairs {},average distance {}, average diameter {}.",
                 i + 1,
                 count,
-                (sum as f64).div(count as f64)
+                (sum as f64) / (count as f64),
+                (diameter + (d as f64)) / 2.0
             );
         }
     }
