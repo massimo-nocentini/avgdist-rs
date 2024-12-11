@@ -126,13 +126,13 @@ fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<us
     let mut cross = vec![0usize; num_nodes];
 
     for _ in 0..k {
-        let (_, dgood, _) = bfs(r.gen_range(0..num_nodes), graph);
+        let (distances, dgood, _) = bfs(r.gen_range(0..num_nodes), graph);
 
         print!(",");
         io::stdout().flush().expect("Unable to flush stdout");
 
         for i in dgood {
-            cross[i] += 1;
+            cross[i] += distances[i];
         }
     }
 
