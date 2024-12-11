@@ -281,8 +281,8 @@ fn main() {
                 count = count + 1;
             }
 
-            println!(
-                "after {}, reachable pairs {},average distance {}, average diameter {}.",
+            print!(
+                "\nafter {}, reachable pairs {}, average distance {}, average diameter {}.",
                 i + 1,
                 count,
                 (sum as f64) / (count as f64),
