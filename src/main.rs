@@ -234,9 +234,12 @@ fn main() {
 
         let mut sum = 0usize;
         let mut count = 0usize;
+        let mut dia = 0.0;
 
         for (i, &s) in sampled.iter().enumerate() {
             let (distances, good, d) = bfs(s, &graph);
+
+            dia += d as f64;
 
             for d in good {
                 sum = sum + distances[d].unwrap();
@@ -248,7 +251,7 @@ fn main() {
                 i + 1,
                 count,
                 (sum as f64) / (count as f64),
-                (diameter + (d as f64)) / 2.0
+                (diameter + (dia / ((i + 1) as f64))) / 2.0
             );
         }
     }
