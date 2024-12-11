@@ -89,31 +89,36 @@ impl<'a, T> Bag<'a, T> {
 fn bfs<F: RandomAccessDecoderFactory>(
     start: usize,
     graph: &BvGraph<F>,
-) -> (Vec<usize>, Vec<usize>, usize) {
-    let mut distances = vec![0usize; graph.num_nodes()];
+) -> (Vec<Option<usize>>, Vec<usize>, usize) {
+    let mut distances = vec![None; graph.num_nodes()];
     let mut frontier = Vec::new();
     let mut good = Vec::new();
-    let mut diameter = 1usize;
-    let mut frontier_next = Vec::new();
+    let mut diameter = 0usize;
+    
+
+    distances[start] = Some(0usize);
 
     frontier.push(start);
 
     while !frontier.is_empty() {
-        frontier_next.clear();
+        diameter = diameter + 1;
 
-        for current_node in &frontier {
+        let mut frontier_next = Vec::new();
+
+        for current_node in frontier.iter() {
             for succ in graph.successors(*current_node) {
-                if succ != start && distances[succ] == 0 {
-                    distances[succ] = diameter;
-                    good.push(succ);
-                    frontier_next.push(succ);
+                match distances[succ] {
+                    None => {
+                        distances[succ] = Some(diameter);
+                        good.push(succ);
+                        frontier_next.push(succ);
+                    }
+                    _ => {}
                 }
             }
         }
 
-        frontier.clear();
-        frontier.extend(&frontier_next);
-        diameter = diameter + 1;
+        frontier = frontier_next;
     }
 
     (distances, good, diameter)
@@ -132,7 +137,7 @@ fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> Vec<us
         io::stdout().flush().expect("Unable to flush stdout");
 
         for i in dgood {
-            cross[i] += distances[i];
+            cross[i] += distances[i].unwrap();
         }
     }
 
@@ -232,7 +237,7 @@ fn main() {
             let (distances, good, _) = bfs(s, &graph);
 
             for d in good {
-                sum = sum + distances[d];
+                sum = sum + distances[d].unwrap();
                 count = count + 1;
             }
 
