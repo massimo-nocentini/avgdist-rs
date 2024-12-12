@@ -310,8 +310,6 @@ fn main() {
     while remaining > 0 {
         slot = slot.min(remaining);
 
-        let mut time = SystemTime::now();
-
         println!(
             "\n*** iteration {}, batch size {}, remaining {}.",
             iteration,
@@ -320,9 +318,6 @@ fn main() {
         );
 
         let (sampled, diameter) = sample(slot, ag_t.clone(), &mut r);
-        print!("\nelapsed time ");
-        dbg!(&time.elapsed().unwrap());
-        println!(".");
 
         let mut sum = 0usize;
         let mut count = 0usize;
@@ -356,9 +351,6 @@ fn main() {
         let adist = (sum as f64) / (count as f64);
         let adia = (diameter + ((dia as f64) / (slot as f64))) / 2.0;
 
-        print!("\nelapsed time ");
-        dbg!(&time.elapsed().unwrap());
-        println!(".");
         println!("\naverages: distance {}, diameter {}.", adist, adia);
 
         averages_dist.push(adist);
