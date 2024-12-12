@@ -296,19 +296,20 @@ fn main() {
         k
     );
 
+    let ag = Arc::new(g);
+    let ag_t = Arc::new(g_t);
+    
     for j in 50..51 {
         println!("*** |s| = {}", j);
-
-        let ag_t = Arc::new(g_t);
+    
         let (sampled, diameter) = sample(j, ag_t, &mut r);
+        println!("\nSampling completed.");
 
         let mut sum = 0usize;
         let mut count = 0usize;
         let mut dia = 0;
 
         let (tx, rx) = mpsc::channel();
-
-        let ag = Arc::new(g);
 
         for v in sampled {
             let tx1 = tx.clone();
@@ -330,6 +331,7 @@ fn main() {
             }
 
             print!("<");
+            io::stdout().flush().expect("Unable to flush stdout");
         }
 
         print!(
