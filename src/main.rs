@@ -253,7 +253,7 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
 
 fn main() {
     let mut r = rand::thread_rng();
-    let mut slot = 50;
+    let mut slot = 10;
     let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
         .load()
         .unwrap();
@@ -318,6 +318,8 @@ fn main() {
         );
 
         let (sampled, diameter) = sample(slot, ag_t.clone(), &mut r);
+
+        println!("");
 
         let mut sum = 0usize;
         let mut count = 0usize;
