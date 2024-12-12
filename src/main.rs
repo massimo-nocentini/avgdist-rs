@@ -169,15 +169,13 @@ fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<Option<usize>>, Vec<us
     bfs_layered(start, graph)
 }
 
-fn sample(k: usize, graph: Vec<Vec<usize>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
-    let num_nodes = graph.len();
+fn sample(k: usize, agraph: Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
+    let num_nodes = agraph.len();
     let mut sampled = vec![0usize; k];
     let mut cross = vec![0usize; num_nodes];
     let mut diameter = 0usize;
 
     let (tx, rx) = mpsc::channel();
-
-    let agraph = Arc::new(graph);
 
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
@@ -192,7 +190,7 @@ fn sample(k: usize, graph: Vec<Vec<usize>>, r: &mut ThreadRng) -> (Vec<usize>, f
     for (_distances, dgood, d) in rx {
         diameter += d;
 
-        print!(",");
+        print!(">");
         io::stdout().flush().expect("Unable to flush stdout");
 
         for i in dgood {
@@ -299,7 +297,8 @@ fn main() {
     for j in 1..k + 1 {
         println!("*** |s| = {}", j);
 
-        let (sampled, diameter) = sample(j, g_t.clone(), &mut r);
+        let ag_t = Arc::new(g_t);
+        let (sampled, diameter) = sample(j, ag_t, &mut r);
 
         let mut sum = 0usize;
         let mut count = 0usize;
@@ -325,6 +324,8 @@ fn main() {
                 sum = sum + distances[d].unwrap();
                 count = count + 1;
             }
+
+            print!("<");
         }
 
         print!(
