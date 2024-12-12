@@ -1,8 +1,14 @@
+use core::num;
 use lender::for_;
+use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
+use std::ops::Deref;
+use std::rc::Rc;
+use std::sync::{mpsc, Arc};
+use std::thread;
 use std::{
     io::{self, Write},
     ops::Div,
@@ -87,11 +93,11 @@ impl<'a, T> Bag<'a, T> {
     }
 }
 
-fn bfs_layered<F: RandomAccessDecoderFactory>(
+fn bfs_layered(
     start: usize,
-    graph: &BvGraph<F>,
+    graph: Arc<Vec<Vec<usize>>>,
 ) -> (Vec<Option<usize>>, Vec<usize>, usize) {
-    let mut distances = vec![None; graph.num_nodes()];
+    let mut distances = vec![None; graph.len()];
     let mut frontier = Vec::new();
     let mut good = Vec::new();
     let mut diameter = 0usize;
@@ -106,7 +112,8 @@ fn bfs_layered<F: RandomAccessDecoderFactory>(
         let mut frontier_next = Vec::new();
 
         for current_node in frontier.iter() {
-            for succ in graph.successors(*current_node) {
+            for each in graph[*current_node].iter() {
+                let succ = *each;
                 match distances[succ] {
                     None => {
                         distances[succ] = Some(diameter);
@@ -158,23 +165,31 @@ fn bfs_queued<F: RandomAccessDecoderFactory>(
     (distances, good, diameter)
 }
 
-fn bfs<F: RandomAccessDecoderFactory>(
-    start: usize,
-    graph: &BvGraph<F>,
-) -> (Vec<Option<usize>>, Vec<usize>, usize) {
+fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<Option<usize>>, Vec<usize>, usize) {
     bfs_layered(start, graph)
 }
 
-fn sample<F: RandomAccessDecoderFactory>(k: usize, graph: &BvGraph<F>) -> (Vec<usize>, f64) {
-    let num_nodes = graph.num_nodes();
-    let mut r = rand::thread_rng();
+fn sample(k: usize, graph: Vec<Vec<usize>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
+    let num_nodes = graph.len();
     let mut sampled = vec![0usize; k];
     let mut cross = vec![0usize; num_nodes];
     let mut diameter = 0usize;
 
-    for _ in 0..k {
-        let (distances, dgood, d) = bfs(r.gen_range(0..num_nodes), graph);
+    let (tx, rx) = mpsc::channel();
 
+    let agraph = Arc::new(graph);
+
+    for _ in 0..k {
+        let v = r.gen_range(0..num_nodes);
+        let tx1 = tx.clone();
+        let agraph = Arc::clone(&agraph);
+        thread::spawn(move || {
+            let tup = bfs(v, agraph);
+            tx1.send(tup).unwrap()
+        });
+    }
+
+    for (_distances, dgood, d) in rx {
         diameter += d;
 
         print!(",");
@@ -236,6 +251,8 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
 }
 
 fn main() {
+    let mut r = rand::thread_rng();
+
     let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
         .load()
         .unwrap();
@@ -262,6 +279,16 @@ fn main() {
     let epsilon = 0.1f64;
     let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
 
+    let mut g = vec![Vec::new(); num_nodes];
+    for_!((src, succ) in graph {
+        g[src].extend(succ);
+    });
+
+    let mut g_t = vec![Vec::new(); num_nodes];
+    for_!((src, succ) in graph_t {
+        g_t[src].extend(succ);
+    });
+
     println!(
         "|V| = {}, |E| = {}, |S| = {}.",
         num_nodes,
@@ -272,30 +299,41 @@ fn main() {
     for j in 1..k + 1 {
         println!("*** |s| = {}", j);
 
-        let (sampled, diameter) = sample(j, &graph_t);
+        let (sampled, diameter) = sample(j, g_t.clone(), &mut r);
 
         let mut sum = 0usize;
         let mut count = 0usize;
         let mut dia = 0;
 
-        for (i, &s) in sampled.iter().enumerate() {
-            let (distances, good, d) = bfs(s, &graph);
+        let (tx, rx) = mpsc::channel();
 
+        let ag = Arc::new(g);
+
+        for v in sampled {
+            let tx1 = tx.clone();
+            let ag = Arc::clone(&ag);
+            thread::spawn(move || {
+                let tup = bfs(v, ag);
+                tx1.send(tup).unwrap()
+            });
+        }
+
+        for (distances, good, d) in rx {
             dia += d;
 
             for d in good {
                 sum = sum + distances[d].unwrap();
                 count = count + 1;
             }
-
-            print!(
-                "\nafter {}, reachable pairs {}, average distance {}, average diameter {}.",
-                i + 1,
-                count,
-                (sum as f64) / (count as f64),
-                (diameter + ((dia as f64) / ((i + 1) as f64))) / 2.0
-            );
         }
+
+        print!(
+            "\nafter {}, reachable pairs {}, average distance {}, average diameter {}.",
+            j,
+            count,
+            (sum as f64) / (count as f64),
+            (diameter + ((dia as f64) / (j as f64))) / 2.0
+        );
 
         break;
     }
