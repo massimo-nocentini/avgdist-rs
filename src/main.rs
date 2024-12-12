@@ -187,6 +187,8 @@ fn sample(k: usize, agraph: Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usi
         });
     }
 
+    drop(tx);
+
     for (_distances, dgood, d) in rx {
         diameter += d;
 
@@ -294,7 +296,7 @@ fn main() {
         k
     );
 
-    for j in 1..k + 1 {
+    for j in 50..51 {
         println!("*** |s| = {}", j);
 
         let ag_t = Arc::new(g_t);
@@ -316,6 +318,8 @@ fn main() {
                 tx1.send(tup).unwrap()
             });
         }
+
+        drop(tx);
 
         for (distances, good, d) in rx {
             dia += d;
