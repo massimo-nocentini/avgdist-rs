@@ -9,6 +9,7 @@ use std::ops::Deref;
 use std::rc::Rc;
 use std::sync::{mpsc, Arc};
 use std::thread;
+use std::time::SystemTime;
 use std::{
     io::{self, Write},
     ops::Div,
@@ -309,10 +310,19 @@ fn main() {
     while remaining > 0 {
         slot = slot.min(remaining);
 
-        println!("\n*** iteration {}, batch size {}.", iteration, slot);
+        let mut time = SystemTime::now();
+
+        println!(
+            "\n*** iteration {}, batch size {}, remaining {}.",
+            iteration,
+            slot,
+            remaining - slot
+        );
 
         let (sampled, diameter) = sample(slot, ag_t.clone(), &mut r);
-        println!("");
+        print!("\nelapsed time ");
+        dbg!(&time.elapsed().unwrap());
+        println!(".");
 
         let mut sum = 0usize;
         let mut count = 0usize;
@@ -346,6 +356,9 @@ fn main() {
         let adist = (sum as f64) / (count as f64);
         let adia = (diameter + ((dia as f64) / (slot as f64))) / 2.0;
 
+        print!("\nelapsed time ");
+        dbg!(&time.elapsed().unwrap());
+        println!(".");
         println!("\naverages: distance {}, diameter {}.", adist, adia);
 
         averages_dist.push(adist);
@@ -356,7 +369,7 @@ fn main() {
         let n = averages_dist.len() as f64;
 
         println!(
-            "\naverage of averages: distance {}, diameter {}.",
+            "average of averages: distance {}, diameter {}.",
             avgdist / n,
             avgdia / n
         );
