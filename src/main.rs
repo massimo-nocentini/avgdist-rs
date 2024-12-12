@@ -252,7 +252,7 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
 
 fn main() {
     let mut r = rand::thread_rng();
-
+    let mut slot = 50;
     let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
         .load()
         .unwrap();
@@ -290,20 +290,29 @@ fn main() {
     });
 
     println!(
-        "|V| = {}, |E| = {}, |S| = {}.",
+        "|V| = {}, |E| = {}, |S| = {}, s = {}.",
         num_nodes,
         graph.num_arcs(),
-        k
+        k,
+        slot
     );
 
     let ag = Arc::new(g);
     let ag_t = Arc::new(g_t);
-    
-    for j in 50..51 {
-        println!("*** |s| = {}", j);
-    
-        let (sampled, diameter) = sample(j, ag_t, &mut r);
-        println!("\nSampling completed.");
+
+    let mut averages_dist = Vec::new();
+    let mut averages_diameter = Vec::new();
+
+    let mut remaining = k;
+    let mut iteration = 1usize;
+
+    while remaining > 0 {
+        slot = slot.min(remaining);
+
+        println!("\n*** iteration {}, batch size {}.", iteration, slot);
+
+        let (sampled, diameter) = sample(slot, ag_t.clone(), &mut r);
+        println!("");
 
         let mut sum = 0usize;
         let mut count = 0usize;
@@ -334,14 +343,25 @@ fn main() {
             io::stdout().flush().expect("Unable to flush stdout");
         }
 
-        print!(
-            "\nafter {}, reachable pairs {}, average distance {}, average diameter {}.",
-            j,
-            count,
-            (sum as f64) / (count as f64),
-            (diameter + ((dia as f64) / (j as f64))) / 2.0
+        let adist = (sum as f64) / (count as f64);
+        let adia = (diameter + ((dia as f64) / (slot as f64))) / 2.0;
+
+        println!("\naverages: distance {}, diameter {}.", adist, adia);
+
+        averages_dist.push(adist);
+        averages_diameter.push(adia);
+
+        let avgdist: f64 = averages_dist.iter().sum();
+        let avgdia: f64 = averages_diameter.iter().sum();
+        let n = averages_dist.len() as f64;
+
+        println!(
+            "\naverage of averages: distance {}, diameter {}.",
+            avgdist / n,
+            avgdia / n
         );
 
-        break;
+        remaining -= slot;
+        iteration += 1;
     }
 }
