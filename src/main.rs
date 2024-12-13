@@ -183,7 +183,9 @@ fn sample(k: usize, agraph: Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usi
         let agraph = Arc::clone(&agraph);
         thread::spawn(move || {
             let tup = bfs(v, agraph);
-            tx1.send(tup).unwrap()
+            tx1.send(tup).unwrap();
+            print!(">");
+            io::stdout().flush().expect("Unable to flush stdout");
         });
     }
 
@@ -191,9 +193,6 @@ fn sample(k: usize, agraph: Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usi
 
     for (distances, d) in rx {
         diameter += d;
-
-        print!(">");
-        io::stdout().flush().expect("Unable to flush stdout");
 
         for (v, _d) in distances {
             cross[v] += 1;
@@ -252,7 +251,7 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
 
 fn main() {
     let mut r = rand::thread_rng();
-    let mut slot = 31;
+    let mut slot = 50;
     let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
         .load()
         .unwrap();
@@ -331,7 +330,9 @@ fn main() {
             let ag = Arc::clone(&ag);
             thread::spawn(move || {
                 let tup = bfs(v, ag);
-                tx1.send(tup).unwrap()
+                tx1.send(tup).unwrap();
+                print!("<");
+                io::stdout().flush().expect("Unable to flush stdout");
             });
         }
 
@@ -344,9 +345,6 @@ fn main() {
                 sum = sum + d;
                 count = count + 1;
             }
-
-            print!("<");
-            io::stdout().flush().expect("Unable to flush stdout");
         }
 
         let adist = (sum as f64) / (count as f64);
