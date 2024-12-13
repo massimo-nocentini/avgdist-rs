@@ -1,7 +1,7 @@
+use bitvec::{bitarr, bits, bitvec, BitArr};
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
-use sdsl::bit_vectors::BitVector;
 use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
@@ -96,9 +96,10 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
     let mut frontier = Vec::new();
     let mut diameter = 0usize;
 
-    let mut seen = BitVector::new(graph.len(), 0).unwrap();
+    let n = graph.len();
+    let mut seen = bitvec![1; n];
 
-    seen.set(start, 1);
+    seen.set(start, true);
 
     frontier.push(start);
 
@@ -111,11 +112,13 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
             for each in graph[*current_node].iter() {
                 let succ = *each;
 
-                match seen.get(succ) {
-                    0 => {
-                        seen.set(succ, 1);
-                        distances.push((succ, diameter));
-                        frontier_next.push(succ);
+                match seen.get_mut(succ) {
+                    Some(mut b) => {
+                        if *b == false {
+                            *b = true;
+                            distances.push((succ, diameter));
+                            frontier_next.push(succ);
+                        }
                     }
                     _ => {}
                 }
