@@ -252,7 +252,7 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
 
 fn main() {
     let mut r = rand::thread_rng();
-    let mut slot = 50;
+    let mut slot = 31;
     let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
         .load()
         .unwrap();
@@ -316,7 +316,7 @@ fn main() {
             remaining - slot
         );
 
-        let (sampled, diameter) = sample(slot, ag_t.clone(), &mut r);
+        let (sampled, _) = sample(slot, ag_t.clone(), &mut r);
 
         println!("");
 
@@ -350,7 +350,7 @@ fn main() {
         }
 
         let adist = (sum as f64) / (count as f64);
-        let adia = (diameter + ((dia as f64) / (slot as f64))) / 2.0;
+        let adia = (dia as f64) / (slot as f64);
 
         println!("\naverages: distance {}, diameter {}.", adist, adia);
 
