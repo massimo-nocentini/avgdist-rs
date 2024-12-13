@@ -147,7 +147,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
                 }
             }
 
-            tx1.send(across[l]).unwrap();
+            tx1.send(l).unwrap();
         });
     }
 
