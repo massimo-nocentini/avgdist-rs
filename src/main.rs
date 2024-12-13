@@ -169,7 +169,7 @@ fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize
     bfs_layered(start, graph)
 }
 
-fn sample(k: usize, agraph: Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
+fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
     let num_nodes = agraph.len();
     let mut sampled = vec![0usize; k];
     let mut cross = vec![0usize; num_nodes];
@@ -188,6 +188,8 @@ fn sample(k: usize, agraph: Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usi
             io::stdout().flush().expect("Unable to flush stdout");
         });
     }
+
+    println!("|");
 
     drop(tx);
 
@@ -251,7 +253,7 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
 
 fn main() {
     let mut r = rand::thread_rng();
-    let mut slot = 50;
+    let mut slot = 75;
     let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
         .load()
         .unwrap();
@@ -315,7 +317,7 @@ fn main() {
             remaining - slot
         );
 
-        let (sampled, _) = sample(slot, ag_t.clone(), &mut r);
+        let (sampled, _) = sample(slot, &ag_t, &mut r);
 
         println!("");
 
@@ -335,6 +337,8 @@ fn main() {
                 io::stdout().flush().expect("Unable to flush stdout");
             });
         }
+
+        println!("|");
 
         drop(tx);
 
