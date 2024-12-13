@@ -13,84 +13,6 @@ use std::{
 };
 use webgraph::prelude::*;
 
-struct Pennant<'a, T> {
-    value: &'a T,
-    left: Option<&'a Pennant<'a, T>>,
-    right: Option<&'a Pennant<'a, T>>,
-}
-
-impl<'a, T> Pennant<'a, T> {
-    fn new(value: &'a T) -> Pennant<'a, T> {
-        Pennant {
-            value,
-            left: None,
-            right: None,
-        }
-    }
-
-    fn union(&'a self, y: &'a mut Pennant<'a, T>) -> Pennant<'a, T> {
-        y.right = self.left;
-        // self.left = Some(y);
-        Pennant {
-            value: self.value,
-            left: Some(y),
-            right: self.right,
-        }
-    }
-
-    fn len(&self) -> usize {
-        let l = match self.left {
-            None => 0,
-            Some(p) => p.len(),
-        };
-        let r = match self.right {
-            None => 0,
-            Some(p) => p.len(),
-        };
-        1 + l + r
-    }
-}
-
-struct Bag<'a, T> {
-    spine: Vec<Option<&'a Pennant<'a, T>>>,
-}
-
-impl<'a, T> Bag<'a, T> {
-    fn new() -> Bag<'a, T> {
-        Bag { spine: Vec::new() }
-    }
-
-    fn len(&self) -> usize {
-        let mut l = 0;
-
-        for p in self.spine.iter() {
-            l += match *p {
-                None => 0,
-                Some(pp) => pp.len(),
-            };
-        }
-
-        l
-    }
-
-    fn push(&mut self, value: &T) {
-        let mut v = Pennant::new(value);
-        let mut k = 0usize;
-
-        while k < self.len() {
-            let each = self.spine[k];
-
-            let pp = match each {
-                None => break,
-                Some(p) => break, // p.union(&mut v),
-            };
-
-            self.spine[k] = None;
-            k += 1;
-        }
-    }
-}
-
 fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
     let mut distances = Vec::new();
     let mut frontier = Vec::new();
@@ -171,7 +93,6 @@ fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize
 
 fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
     let num_nodes = agraph.len();
-    let mut sampled = vec![0usize; k];
     let mut cross = vec![0usize; num_nodes];
     let mut diameter = 0usize;
 
@@ -189,7 +110,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
         });
     }
 
-    println!("|");
+    print!("|");
 
     drop(tx);
 
@@ -205,27 +126,36 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
         cross[i] += cross[i - 1];
     }
 
-    let (minc, maxc) = (0, cross[num_nodes - 1]);
+    let maxc = *cross.last().unwrap();
+    let (tx, rx) = mpsc::channel();
+    let across = Arc::new(cross);
 
-    for i in 0..k {
-        let c = r.gen_range(minc..maxc);
+    for _ in 0..k {
+        let tx1 = tx.clone();
+        let across = Arc::clone(&across);
+        let c = r.gen_range(0..maxc);
+        thread::spawn(move || {
+            let mut l = 0usize;
+            let mut h = num_nodes - 1;
 
-        let mut l = 0usize;
-        let mut h = num_nodes - 1;
-
-        while l < h {
-            let m = (h + l) >> 1;
-            if cross[m] < c {
-                l = m + 1;
-            } else {
-                h = m;
+            while l < h {
+                let m = (h + l) >> 1;
+                if across[m] < c {
+                    l = m + 1;
+                } else {
+                    h = m;
+                }
             }
-        }
 
-        sampled[i] = l;
+            tx1.send(across[l]).unwrap();
+        });
     }
 
-    (sampled, (diameter as f64) / (k as f64))
+    println!("s");
+
+    drop(tx);
+
+    (rx.iter().collect(), (diameter as f64) / (k as f64))
 }
 
 fn as_bytes(v: &[usize]) -> &[u8] {
