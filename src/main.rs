@@ -1,4 +1,4 @@
-use bitvec::{bitarr, bits, bitvec, BitArr};
+use bitvec::bitvec;
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
@@ -18,8 +18,7 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
     let mut frontier = Vec::new();
     let mut diameter = 0usize;
 
-    let n = graph.len();
-    let mut seen = bitvec![0; n];
+    let mut seen = bitvec![0; graph.len()];
 
     seen.set(start, true);
 
@@ -110,17 +109,17 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
         });
     }
 
-    print!("|");
-
     drop(tx);
 
-    for (distances, d) in rx {
-        diameter += d;
+    for (distances, dia) in rx {
+        diameter += dia;
 
-        for (v, _d) in distances {
-            cross[v] += 1;
+        for (v, d) in distances {
+            cross[v] += d;
         }
     }
+
+    print!("|");
 
     for i in 1..num_nodes {
         cross[i] += cross[i - 1];
@@ -171,7 +170,7 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
     buffer.push(graph.num_nodes());
 
     for_!((src, succ) in graph {
-
+        let graph = BvGraphSeq::with_basename("hello").load().unwrap();
         buffer.push(src);
         buffer.push(succ.len());
 
@@ -249,8 +248,6 @@ fn main() {
 
         let (sampled, _) = sample(slot, &ag_t, &mut r);
 
-        println!("");
-
         let mut sum = 0usize;
         let mut count = 0usize;
         let mut dia = 0;
@@ -268,8 +265,6 @@ fn main() {
             });
         }
 
-        println!("|");
-
         drop(tx);
 
         for (distances, d) in rx {
@@ -280,6 +275,8 @@ fn main() {
                 count = count + 1;
             }
         }
+
+        println!("|");
 
         let adist = (sum as f64) / (count as f64);
         let adia = (dia as f64) / (slot as f64);
