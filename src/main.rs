@@ -5,7 +5,7 @@ use rand::Rng;
 use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
-use std::sync::{mpsc, Arc};
+use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 use std::{
     io::{self, Write},
@@ -169,36 +169,36 @@ fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize
     bfs_layered(start, graph)
 }
 
-fn sample(k: usize, agraph: Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
+fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
     let num_nodes = agraph.len();
     let mut sampled = vec![0usize; k];
-    let mut cross = vec![0usize; num_nodes];
-    let mut diameter = 0usize;
 
-    let (tx, rx) = mpsc::channel();
+    let diameter_mutex = Arc::new(Mutex::new(0usize));
+    let cross_mutex = Arc::new(Mutex::new(vec![0usize; num_nodes]));
 
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
-        let tx1 = tx.clone();
         let agraph = Arc::clone(&agraph);
+        let diameter_mutex = Arc::clone(&diameter_mutex);
+        let cross_mutex = Arc::clone(&cross_mutex);
         thread::spawn(move || {
-            let tup = bfs(v, agraph);
-            tx1.send(tup).unwrap()
+            let (distances, d) = bfs(v, agraph);
+            {
+                let mut diameter = diameter_mutex.lock().unwrap();
+                *diameter += d;
+            }
+            {
+                let mut cross = cross_mutex.lock().unwrap();
+                for (v, _d) in distances {
+                    cross[v] += 1;
+                }
+            }
+            print!(">");
+            io::stdout().flush().expect("Unable to flush stdout");
         });
     }
 
-    drop(tx);
-
-    for (distances, d) in rx {
-        diameter += d;
-
-        print!(">");
-        io::stdout().flush().expect("Unable to flush stdout");
-
-        for (v, _d) in distances {
-            cross[v] += 1;
-        }
-    }
+    let mut cross = cross_mutex.lock().unwrap();
 
     for i in 1..num_nodes {
         cross[i] += cross[i - 1];
@@ -223,6 +223,8 @@ fn sample(k: usize, agraph: Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usi
 
         sampled[i] = l;
     }
+
+    let diameter = *diameter_mutex.lock().unwrap();
 
     (sampled, (diameter as f64) / (k as f64))
 }
@@ -316,41 +318,47 @@ fn main() {
             remaining - slot
         );
 
-        let (sampled, diameter) = sample(slot, ag_t.clone(), &mut r);
+        let (sampled, _) = sample(slot, &ag_t, &mut r);
 
         println!("");
 
-        let mut sum = 0usize;
-        let mut count = 0usize;
-        let mut dia = 0;
-
-        let (tx, rx) = mpsc::channel();
+        let diameter_mutex = Arc::new(Mutex::new(0usize));
+        let sum_mutex = Arc::new(Mutex::new(0usize));
+        let count_mutex = Arc::new(Mutex::new(0usize));
 
         for v in sampled {
-            let tx1 = tx.clone();
             let ag = Arc::clone(&ag);
+            let diameter_mutex = Arc::clone(&diameter_mutex);
+            let sum_mutex = Arc::clone(&sum_mutex);
+            let count_mutex = Arc::clone(&count_mutex);
             thread::spawn(move || {
-                let tup = bfs(v, ag);
-                tx1.send(tup).unwrap()
+                let (distances, dia) = bfs(v, ag);
+                {
+                    let mut diameter = diameter_mutex.lock().unwrap();
+                    *diameter += dia;
+                }
+                {
+                    let mut count = count_mutex.lock().unwrap();
+                    *count += distances.len();
+                }
+                {
+                    let mut sum = sum_mutex.lock().unwrap();
+                    for (_v, d) in distances {
+                        *sum += d;
+                    }
+                }
+
+                print!("<");
+                io::stdout().flush().expect("Unable to flush stdout");
             });
         }
 
-        drop(tx);
-
-        for (distances, d) in rx {
-            dia += d;
-
-            for (_v, d) in distances {
-                sum = sum + d;
-                count = count + 1;
-            }
-
-            print!("<");
-            io::stdout().flush().expect("Unable to flush stdout");
-        }
+        let sum = *sum_mutex.lock().unwrap();
+        let count = *count_mutex.lock().unwrap();
+        let dia = *diameter_mutex.lock().unwrap();
 
         let adist = (sum as f64) / (count as f64);
-        let adia = (diameter + ((dia as f64) / (slot as f64))) / 2.0;
+        let adia = (dia as f64) / (slot as f64);
 
         println!("\naverages: distance {}, diameter {}.", adist, adia);
 
