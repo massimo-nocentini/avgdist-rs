@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-fixedbitset = "0.5.7"
 lender = "0.2.9"
 rand = "0.8.5"
+sdsl = "0.3.1"
 webgraph = "0.1.4"

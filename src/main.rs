@@ -1,16 +1,12 @@
-use core::num;
-use fixedbitset::FixedBitSet;
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
+use sdsl::bit_vectors::BitVector;
 use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
-use std::ops::Deref;
-use std::rc::Rc;
 use std::sync::{mpsc, Arc};
 use std::thread;
-use std::time::SystemTime;
 use std::{
     io::{self, Write},
     ops::Div,
@@ -100,9 +96,9 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
     let mut frontier = Vec::new();
     let mut diameter = 0usize;
 
-    let mut seen = FixedBitSet::with_capacity(graph.len());
+    let mut seen = BitVector::new(graph.len(), 0).unwrap();
 
-    seen.insert(start);
+    seen.set(start, 1);
 
     frontier.push(start);
 
@@ -115,9 +111,9 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
             for each in graph[*current_node].iter() {
                 let succ = *each;
 
-                match seen.contains(succ) {
-                    false => {
-                        seen.insert(succ);
+                match seen.get(succ) {
+                    0 => {
+                        seen.set(succ, 1);
                         distances.push((succ, diameter));
                         frontier_next.push(succ);
                     }
