@@ -354,7 +354,7 @@ fn main() {
         let adist = (sum as f64) / (count as f64);
         let adia = (dia as f64) / (slot as f64);
 
-        println!("\naverages: distance {}, diameter {}.", adist, adia);
+        println!("averages: distance {}, diameter {}.", adist, adia);
 
         averages_dist.push(adist);
         averages_diameter.push(adia);
