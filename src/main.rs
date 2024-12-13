@@ -97,7 +97,7 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
     let mut diameter = 0usize;
 
     let n = graph.len();
-    let mut seen = bitvec![1; n];
+    let mut seen = bitvec![0; n];
 
     seen.set(start, true);
 
@@ -252,7 +252,7 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
 
 fn main() {
     let mut r = rand::thread_rng();
-    let mut slot = 10;
+    let mut slot = 50;
     let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
         .load()
         .unwrap();
