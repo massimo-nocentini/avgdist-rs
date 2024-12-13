@@ -2,6 +2,7 @@ use core::num;
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
+use sdsl::bit_vectors::BitVector;
 use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
@@ -94,16 +95,14 @@ impl<'a, T> Bag<'a, T> {
     }
 }
 
-fn bfs_layered(
-    start: usize,
-    graph: Arc<Vec<Vec<usize>>>,
-) -> (Vec<Option<usize>>, Vec<usize>, usize) {
-    let mut distances = vec![None; graph.len()];
+fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
+    let mut distances = Vec::new();
     let mut frontier = Vec::new();
-    let mut good = Vec::new();
     let mut diameter = 0usize;
 
-    distances[start] = Some(diameter);
+    let mut seen = BitVector::new(graph.len(), 0).unwrap();
+
+    seen.set(start, 1);
 
     frontier.push(start);
 
@@ -115,10 +114,11 @@ fn bfs_layered(
         for current_node in frontier.iter() {
             for each in graph[*current_node].iter() {
                 let succ = *each;
-                match distances[succ] {
-                    None => {
-                        distances[succ] = Some(diameter);
-                        good.push(succ);
+
+                match seen.get(succ) {
+                    0 => {
+                        seen.set(succ, 1);
+                        distances.push((succ, diameter));
                         frontier_next.push(succ);
                     }
                     _ => {}
@@ -129,7 +129,7 @@ fn bfs_layered(
         frontier = frontier_next;
     }
 
-    (distances, good, diameter)
+    (distances, diameter)
 }
 
 fn bfs_queued<F: RandomAccessDecoderFactory>(
@@ -166,7 +166,7 @@ fn bfs_queued<F: RandomAccessDecoderFactory>(
     (distances, good, diameter)
 }
 
-fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<Option<usize>>, Vec<usize>, usize) {
+fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
     bfs_layered(start, graph)
 }
 
@@ -190,14 +190,14 @@ fn sample(k: usize, agraph: Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usi
 
     drop(tx);
 
-    for (_distances, dgood, d) in rx {
+    for (distances, d) in rx {
         diameter += d;
 
         print!(">");
         io::stdout().flush().expect("Unable to flush stdout");
 
-        for i in dgood {
-            cross[i] += 1; //distances[i].unwrap();
+        for (v, _d) in distances {
+            cross[v] += 1;
         }
     }
 
@@ -338,11 +338,11 @@ fn main() {
 
         drop(tx);
 
-        for (distances, good, d) in rx {
+        for (distances, d) in rx {
             dia += d;
 
-            for d in good {
-                sum = sum + distances[d].unwrap();
+            for (_v, d) in distances {
+                sum = sum + d;
                 count = count + 1;
             }
 
