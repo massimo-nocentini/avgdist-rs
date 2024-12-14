@@ -115,7 +115,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
         diameter += dia;
 
         for (v, d) in distances {
-            cross[v] += d;
+            cross[v] += 1;
         }
     }
 
@@ -182,7 +182,7 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
 
 fn main() {
     let mut r = rand::thread_rng();
-    let mut slot = 75;
+    let mut slot = 61;
     let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
         .load()
         .unwrap();
