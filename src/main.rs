@@ -100,7 +100,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
         let tx1 = tx.clone();
-        let agraph = Arc::clone(&agraph);
+        let agraph = Arc::clone(agraph);
         thread::spawn(move || {
             let tup = bfs(v, agraph);
             tx1.send(tup).unwrap();
