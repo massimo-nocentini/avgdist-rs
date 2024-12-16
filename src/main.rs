@@ -6,7 +6,7 @@ use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
 use std::sync::{mpsc, Arc};
-use std::thread;
+use std::{env, thread};
 use std::{
     io::{self, Write},
     ops::Div,
@@ -115,7 +115,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
         diameter += dia;
 
         for (v, d) in distances {
-            cross[v] += 1;
+            cross[v] += d;
         }
     }
 
@@ -181,15 +181,17 @@ fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut
 }
 
 fn main() {
-    let mut r = rand::thread_rng();
-    let mut slot = 61;
-    let graph = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg")
-        .load()
-        .unwrap();
+    let args: Vec<String> = env::args().collect();
 
-    let graph_t = BvGraph::with_basename("/data/bitcoin/bitcoin-webgraph/pg-t")
-        .load()
-        .unwrap();
+    let graph_filename = &args[1];
+    let graph_filename_t = &args[2];
+    let mut slot: usize = args[3].parse().unwrap();
+    let epsilon: f64 = args[4].parse().unwrap();
+    let truth: bool = args[5].parse().unwrap();
+
+    let mut r = rand::thread_rng();
+    let graph = BvGraph::with_basename(graph_filename).load().unwrap();
+    let graph_t = BvGraph::with_basename(graph_filename_t).load().unwrap();
 
     // {
     //     let mut file = File::create("/data/bitcoin/bitcoin-webgraph/pg.data").unwrap();
@@ -206,7 +208,6 @@ fn main() {
     // }
 
     let num_nodes = graph.num_nodes();
-    let epsilon = 0.1f64;
     let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
 
     let mut g = vec![Vec::new(); num_nodes];
@@ -246,7 +247,13 @@ fn main() {
             remaining - slot
         );
 
-        let (sampled, _) = sample(slot, &ag_t, &mut r);
+        let sampled: Vec<usize> = if truth {
+            slot = k;
+            (0..num_nodes - 1).collect()
+        } else {
+            let (sampled, _) = sample(slot, &ag_t, &mut r);
+            sampled
+        };
 
         let mut sum = 0usize;
         let mut count = 0usize;
