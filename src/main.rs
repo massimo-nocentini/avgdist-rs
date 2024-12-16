@@ -275,7 +275,7 @@ fn main() {
         drop(tx);
 
         for (distances, d) in rx {
-            dia += d;
+            dia = dia.max(d);
 
             for (_v, d) in distances {
                 sum = sum + d;
@@ -286,7 +286,7 @@ fn main() {
         println!("|");
 
         let adist = (sum as f64) / (count as f64);
-        let adia = (dia as f64) / (slot as f64);
+        let adia = (dia as f64);// / (slot as f64);
 
         println!("averages: distance {}, diameter {}.", adist, adia);
 
