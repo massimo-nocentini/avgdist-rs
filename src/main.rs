@@ -5,7 +5,7 @@ use rand::Rng;
 use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
-use std::sync::{mpsc, Arc};
+use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 use std::{
     io::{self, Write},
@@ -90,71 +90,58 @@ fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize
     bfs_layered(start, graph)
 }
 
-fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
+fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> Vec<usize> {
     let num_nodes = agraph.len();
-    let mut cross = vec![0usize; num_nodes];
-    let mut diameter = 0usize;
-
-    let (tx, rx) = mpsc::channel();
+    let cross = Arc::new(Mutex::new(vec![0usize; num_nodes]));
 
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
-        let tx1 = tx.clone();
         let agraph = Arc::clone(&agraph);
+        let cross = Arc::clone(&cross);
         thread::spawn(move || {
-            let tup = bfs(v, agraph);
-            tx1.send(tup).unwrap();
+            let (distances, _) = bfs(v, agraph);
+            let mut c = cross.lock().unwrap();
+            for (v, d) in distances {
+                c[v] += 1;
+            }
             print!(">");
             io::stdout().flush().expect("Unable to flush stdout");
         });
     }
 
-    drop(tx);
-
-    for (distances, dia) in rx {
-        diameter += dia;
-
-        for (v, d) in distances {
-            cross[v] += 1;
+    print!("|");
+    {
+        let mut cross = cross.lock().unwrap();
+        for i in 1..num_nodes {
+            cross[i] += cross[i - 1];
         }
     }
 
-    print!("|");
+    let cross = cross.lock().unwrap();
+    let maxc = cross[num_nodes - 1];
 
-    for i in 1..num_nodes {
-        cross[i] += cross[i - 1];
-    }
-
-    let maxc = *cross.last().unwrap();
-    let (tx, rx) = mpsc::channel();
-    let across = Arc::new(cross);
-
-    for _ in 0..k {
-        let tx1 = tx.clone();
-        let across = Arc::clone(&across);
-        let c = r.gen_range(0..maxc);
-        thread::spawn(move || {
+    let sampled = (0..k)
+        .map(|j| {
+            let c = r.gen_range(0..maxc);
             let mut l = 0usize;
             let mut h = num_nodes - 1;
 
             while l < h {
                 let m = (h + l) >> 1;
-                if across[m] < c {
+                if cross[m] < c {
                     l = m + 1;
                 } else {
                     h = m;
                 }
             }
 
-            tx1.send(l).unwrap();
-        });
-    }
+            l
+        })
+        .collect();
 
     println!("s");
 
-    drop(tx);
-
-    (rx.iter().collect(), (diameter as f64) / (k as f64))
+    sampled
 }
 
 fn as_bytes(v: &[usize]) -> &[u8] {
@@ -246,37 +233,31 @@ fn main() {
             remaining - slot
         );
 
-        let (sampled, _) = sample(slot, &ag_t, &mut r);
+        let sampled = sample(slot, &ag_t, &mut r);
 
-        let mut sum = 0usize;
-        let mut count = 0usize;
-        let mut dia = 0;
-
-        let (tx, rx) = mpsc::channel();
+        let tup = Arc::new(Mutex::new((0usize, 0usize, 0usize)));
 
         for v in sampled {
-            let tx1 = tx.clone();
             let ag = Arc::clone(&ag);
+            let tup = Arc::clone(&tup);
             thread::spawn(move || {
-                let tup = bfs(v, ag);
-                tx1.send(tup).unwrap();
+                let (distances, dia) = bfs(v, ag);
+                let (mut s, mut c, mut d) = *tup.lock().unwrap();
+
+                d += dia;
+                for (_v, dist) in distances {
+                    s += dist;
+                    c += 1;
+                }
+
                 print!("<");
                 io::stdout().flush().expect("Unable to flush stdout");
             });
         }
 
-        drop(tx);
-
-        for (distances, d) in rx {
-            dia += d;
-
-            for (_v, d) in distances {
-                sum = sum + d;
-                count = count + 1;
-            }
-        }
-
         println!("|");
+
+        let (sum, count, dia) = *tup.lock().unwrap();
 
         let adist = (sum as f64) / (count as f64);
         let adia = (dia as f64) / (slot as f64);
