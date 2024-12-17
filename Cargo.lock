@@ -143,7 +143,7 @@ dependencies = [
  "lender",
  "rand",
  "sux",
- "webgraph 0.1.4",
+ "webgraph",
  "webgraph-algo",
 ]
 
@@ -1974,42 +1974,6 @@ dependencies = [
 
 [[package]]
 name = "webgraph"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88601c6091fde006b92bca4850d0f0003d7f40571d0f67f166bda2ec978de619"
-dependencies = [
- "anyhow",
- "bitflags 2.6.0",
- "built",
- "bytemuck",
- "clap",
- "clap_complete",
- "common_traits 0.10.2",
- "dary_heap",
- "dsi-bitstream",
- "dsi-progress-logger",
- "env_logger",
- "epserde",
- "impl-tools",
- "itertools 0.13.0",
- "java-properties",
- "lender",
- "libc",
- "log",
- "mmap-rs",
- "num_cpus",
- "predicates",
- "rand",
- "rayon",
- "rdst",
- "sealed 0.5.0",
- "sux",
- "sysinfo 0.30.13",
- "tempfile",
-]
-
-[[package]]
-name = "webgraph"
 version = "0.2.0"
 source = "git+https://github.com/vigna/webgraph-rs#839884644c63cd32fc88a3efa73c3c691f1492a5"
 dependencies = [
@@ -2069,7 +2033,7 @@ dependencies = [
  "tempfile",
  "thiserror 2.0.7",
  "unwrap-infallible",
- "webgraph 0.2.0",
+ "webgraph",
 ]
 
 [[package]]
