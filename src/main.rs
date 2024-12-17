@@ -1,4 +1,3 @@
-use bitvec::bitvec;
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
@@ -11,6 +10,7 @@ use std::{
     io::{self, Write},
     ops::Div,
 };
+use sux::bits::BitVec;
 use webgraph::prelude::*;
 
 fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
@@ -18,7 +18,7 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
     let mut frontier = Vec::new();
     let mut diameter = 0usize;
 
-    let mut seen = bitvec![0; graph.len()];
+    let mut seen = BitVec::new(graph.len());
 
     seen.set(start, true);
 
@@ -33,13 +33,11 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
             for each in graph[*current_node].iter() {
                 let succ = *each;
 
-                match seen.get_mut(succ) {
-                    Some(mut b) => {
-                        if *b == false {
-                            *b = true;
-                            distances.push((succ, diameter));
-                            frontier_next.push(succ);
-                        }
+                match seen.get(succ) {
+                    false => {
+                        seen.set(succ, true);
+                        distances.push((succ, diameter));
+                        frontier_next.push(succ);
                     }
                     _ => {}
                 }
@@ -154,7 +152,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
 
     drop(tx);
 
-    (rx.iter().collect(), (diameter as f64))// / (k as f64))
+    (rx.iter().collect(), (diameter as f64)) // / (k as f64))
 }
 
 fn as_bytes(v: &[usize]) -> &[u8] {

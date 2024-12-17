@@ -142,7 +142,9 @@ dependencies = [
  "bitvec",
  "lender",
  "rand",
- "webgraph",
+ "sux",
+ "webgraph 0.1.4",
+ "webgraph-algo",
 ]
 
 [[package]]
@@ -268,7 +270,9 @@ checksum = "7e36cc9d416881d2e24f9a963be5fb1cd90966419ac844274161d10488b3e825"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
+ "js-sys",
  "num-traits",
+ "wasm-bindgen",
  "windows-targets 0.52.6",
 ]
 
@@ -586,7 +590,7 @@ dependencies = [
  "maligned",
  "mem_dbg",
  "mmap-rs",
- "sealed",
+ "sealed 0.5.0",
  "xxhash-rust",
 ]
 
@@ -979,6 +983,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "kahan"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f21cb50baffe6384be28e8272456e23563bd9dda67abc3bcbf51075fbb7d1f79"
+dependencies = [
+ "num-traits",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1126,7 +1139,7 @@ dependencies = [
  "mach2",
  "nix",
  "sysctl",
- "thiserror",
+ "thiserror 1.0.69",
  "widestring",
  "windows 0.48.0",
 ]
@@ -1149,6 +1162,18 @@ dependencies = [
  "memoffset",
  "pin-utils",
 ]
+
+[[package]]
+name = "no-break"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8b96b58ebd7a91a0c3a761872219acc494bd6c94fd78065da61b9d4fb4e78ab"
+
+[[package]]
+name = "nonmax"
+version = "0.5.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "610a5acd306ec67f907abe5567859a3c693fb9886eb1f012ab8f2a47bef3db51"
 
 [[package]]
 name = "normalize-line-endings"
@@ -1214,6 +1239,14 @@ name = "oorandom"
 version = "11.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b410bbe7e14ab526a0e86877eb47c6996a2bd7746f027ba551028c925390e4e9"
+
+[[package]]
+name = "parallel_frontier"
+version = "0.1.0"
+source = "git+https://github.com/zommiommy/parallel_frontier#8efb04e3676cde9917f8f5c0d8b09a01ce6e2536"
+dependencies = [
+ "rayon",
+]
 
 [[package]]
 name = "partition"
@@ -1492,6 +1525,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "sealed"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "22f968c5ea23d555e670b449c1c5e7b2fc399fdaec1d304a17cd48e288abc107"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.90",
+]
+
+[[package]]
 name = "serde"
 version = "1.0.216"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1540,6 +1584,19 @@ name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
+
+[[package]]
+name = "stderrlog"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61c910772f992ab17d32d6760e167d2353f4130ed50e796752689556af07dc6b"
+dependencies = [
+ "chrono",
+ "is-terminal",
+ "log",
+ "termcolor",
+ "thread_local",
+]
 
 [[package]]
 name = "strsim"
@@ -1601,6 +1658,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "sync-cell-slice"
+version = "0.9.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "25d346b7dba9bb779958d0db4b65da932ef2ad1d26cd469c15de1e318044386b"
+
+[[package]]
 name = "synstructure"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1621,7 +1684,7 @@ dependencies = [
  "byteorder",
  "enum-as-inner",
  "libc",
- "thiserror",
+ "thiserror 1.0.69",
  "walkdir",
 ]
 
@@ -1675,12 +1738,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "termcolor"
+version = "1.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bab24d30b911b2376f3a13cc2cd443142f0c81dda04c118693e35b3835757755"
+dependencies = [
+ "winapi-util",
+]
+
+[[package]]
 name = "thiserror"
 version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52"
 dependencies = [
- "thiserror-impl",
+ "thiserror-impl 1.0.69",
+]
+
+[[package]]
+name = "thiserror"
+version = "2.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "93605438cbd668185516ab499d589afb7ee1859ea3d5fc8f6b0755e1c7443767"
+dependencies = [
+ "thiserror-impl 2.0.7",
 ]
 
 [[package]]
@@ -1692,6 +1773,27 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.90",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "2.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e1d8749b4531af2117677a5fcd12b1348a3fe2b81e36e61ffeac5c4aa3273e36"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.90",
+]
+
+[[package]]
+name = "thread_local"
+version = "1.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b9ef9bad013ada3808854ceac7b46812a6465ba368859a37e2100283d2d719c"
+dependencies = [
+ "cfg-if",
+ "once_cell",
 ]
 
 [[package]]
@@ -1739,6 +1841,12 @@ name = "unicode-ident"
 version = "1.0.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "adb9e6ca4f869e1180728b7950e35922a7fc6397f7b641499e8f3ef06e50dc83"
+
+[[package]]
+name = "unwrap-infallible"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "151ac09978d3c2862c4e39b557f4eceee2cc72150bc4cb4f16abf061b6e381fb"
 
 [[package]]
 name = "url"
@@ -1894,10 +2002,74 @@ dependencies = [
  "rand",
  "rayon",
  "rdst",
- "sealed",
+ "sealed 0.5.0",
  "sux",
  "sysinfo 0.30.13",
  "tempfile",
+]
+
+[[package]]
+name = "webgraph"
+version = "0.2.0"
+source = "git+https://github.com/vigna/webgraph-rs#839884644c63cd32fc88a3efa73c3c691f1492a5"
+dependencies = [
+ "anyhow",
+ "bitflags 2.6.0",
+ "built",
+ "bytemuck",
+ "clap",
+ "clap_complete",
+ "common_traits 0.10.2",
+ "dary_heap",
+ "dsi-bitstream",
+ "dsi-progress-logger",
+ "env_logger",
+ "epserde",
+ "impl-tools",
+ "itertools 0.13.0",
+ "java-properties",
+ "lender",
+ "libc",
+ "log",
+ "mmap-rs",
+ "num_cpus",
+ "predicates",
+ "rand",
+ "rayon",
+ "rdst",
+ "sealed 0.5.0",
+ "sux",
+ "sync-cell-slice",
+ "sysinfo 0.30.13",
+ "tempfile",
+]
+
+[[package]]
+name = "webgraph-algo"
+version = "0.1.0"
+source = "git+https://github.com/vigna/webgraph-algo-rs#7ffcf1c15292cb05e1995fb3e8d8ecea0d7a31f9"
+dependencies = [
+ "anyhow",
+ "common_traits 0.11.0",
+ "dsi-progress-logger",
+ "epserde",
+ "impl-tools",
+ "kahan",
+ "lender",
+ "mmap-rs",
+ "no-break",
+ "nonmax",
+ "parallel_frontier",
+ "rand",
+ "rayon",
+ "sealed 0.6.0",
+ "stderrlog",
+ "sux",
+ "sync-cell-slice",
+ "tempfile",
+ "thiserror 2.0.7",
+ "unwrap-infallible",
+ "webgraph 0.2.0",
 ]
 
 [[package]]

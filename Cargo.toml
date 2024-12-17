@@ -7,4 +7,6 @@ edition = "2021"
 bitvec = "1.0.1"
 lender = "0.2.9"
 rand = "0.8.5"
+sux = "0.4.6"
 webgraph = "0.1.4"
+webgraph-algo = { git = "https://github.com/vigna/webgraph-algo-rs", version = "0.1.0" }
