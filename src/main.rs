@@ -112,7 +112,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
     drop(tx);
 
     for (distances, dia) in rx {
-        diameter += dia;
+        diameter = diameter.max(dia);
 
         for (v, d) in distances {
             cross[v] += d;
@@ -154,7 +154,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
 
     drop(tx);
 
-    (rx.iter().collect(), (diameter as f64) / (k as f64))
+    (rx.iter().collect(), (diameter as f64))// / (k as f64))
 }
 
 fn as_bytes(v: &[usize]) -> &[u8] {
@@ -248,7 +248,7 @@ fn main() {
         );
 
         let sampled: Vec<usize> = if truth {
-            slot = k;
+            slot = remaining;
             (0..num_nodes - 1).collect()
         } else {
             let (sampled, _) = sample(slot, &ag_t, &mut r);
@@ -286,7 +286,7 @@ fn main() {
         println!("|");
 
         let adist = (sum as f64) / (count as f64);
-        let adia = (dia as f64);// / (slot as f64);
+        let adia = (dia as f64); // / (slot as f64);
 
         println!("averages: distance {}, diameter {}.", adist, adia);
 
