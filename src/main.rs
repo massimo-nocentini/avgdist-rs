@@ -1,10 +1,8 @@
-use core::num;
+
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
-use std::collections::VecDeque;
-use std::fs::File;
-use std::io::prelude::*;
+
 use std::sync::{mpsc, Arc};
 use std::{env, thread};
 use std::{
@@ -17,7 +15,7 @@ use webgraph::prelude::*;
 fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
     let mut distances = Vec::new();
     let mut frontier = Vec::new();
-    let mut diameter = 0usize;
+    let mut diameter = 1usize;
 
     let mut seen = BitVec::new(graph.len());
 
@@ -26,8 +24,6 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
     frontier.push(start);
 
     while !frontier.is_empty() {
-        diameter = diameter + 1;
-
         let mut frontier_next = Vec::new();
 
         for current_node in frontier.iter() {
@@ -46,50 +42,17 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
         }
 
         frontier = frontier_next;
+        diameter = diameter + 1;
     }
 
-    (distances, diameter)
-}
-
-fn bfs_queued<F: RandomAccessDecoderFactory>(
-    start: usize,
-    graph: &BvGraph<F>,
-) -> (Vec<Option<usize>>, Vec<usize>, usize) {
-    let mut distances = vec![None; graph.num_nodes()];
-    let mut queue = VecDeque::new();
-    let mut good = Vec::new();
-    let mut diameter = 0usize;
-
-    distances[start] = Some(diameter);
-
-    queue.push_back(start);
-
-    while !queue.is_empty() {
-        let current_node = queue.pop_front().unwrap();
-
-        let d = distances[current_node].unwrap();
-        diameter = diameter.max(d);
-
-        for succ in graph.successors(current_node) {
-            match distances[succ] {
-                None => {
-                    distances[succ] = Some(d + 1);
-                    good.push(succ);
-                    queue.push_back(succ);
-                }
-                _ => {}
-            }
-        }
-    }
-
-    (distances, good, diameter)
+    (distances, diameter - 1)
 }
 
 fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
     bfs_layered(start, graph)
 }
 
-fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, f64) {
+fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, usize) {
     let num_nodes = agraph.len();
     let mut cross = vec![0usize; num_nodes];
     let mut diameter = 0usize;
@@ -153,7 +116,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
 
     drop(tx);
 
-    (rx.iter().collect(), (diameter as f64)) // / (k as f64))
+    (rx.iter().collect(), diameter)
 }
 
 fn main() {
@@ -164,7 +127,7 @@ fn main() {
     let mut slot: usize = args[3].parse().unwrap();
     let epsilon: f64 = args[4].parse().unwrap();
     let truth: bool = args[5].parse().unwrap();
-    let dummy: bool = args[5].parse().unwrap();
+    let dummy: bool = args[6].parse().unwrap();
 
     let mut r = rand::thread_rng();
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
@@ -253,7 +216,7 @@ fn main() {
         println!("|");
 
         let adist = (sum as f64) / (count as f64);
-        let adia = (dia as f64); // / (slot as f64);
+        let adia = dia as f64;
 
         println!("averages: distance {}, diameter {}.", adist, adia);
 
