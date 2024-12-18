@@ -178,7 +178,7 @@ fn main() {
             (0..num_nodes).collect()
         } else {
             if dummy {
-                (0..k).map(|_j| r.gen_range(0..num_nodes)).collect()
+                (0..slot).map(|_j| r.gen_range(0..num_nodes)).collect()
             } else {
                 let (sampled, _) = sample(slot, &ag_t, &mut r);
                 sampled
