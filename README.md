@@ -42,6 +42,7 @@ where
 |# vertices|edges|$\epsilon$|dummy|link|
 |---|---|---|---|---|
 |668261953|2162523341|0.1|$\top$|[pg-d.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/pg/result/pg-d.out)|
+|668261953|2162523341|0.1|$\bot$|[pg.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/pg/result/pg.out)|
 
 ## WebGraph in Rust
 
