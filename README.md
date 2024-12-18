@@ -2,8 +2,6 @@
 
 A Rust implementation of a sampling algorithm to estimate the average distance among vertices in graph with a large diameter.
 
-
-
 Load it with:
 ```
 git clone git@github.com:massimo-nocentini/avgdist-rs.git
@@ -20,12 +18,14 @@ where
 |---|---|
 |`g` $\in \mathbb{S}$|the webgraph graph's base name|
 |`gt` $\in \mathbb{S}$|the webgraph transposed graph's base name|
-|`th` $\in \mathbb{N}$|the number of threads to use|
-|`e` $\in \mathbb{N}$|the absolute error $\epsilon$|
-|`tr` $\in \lbrace \top, \bot \rbrace$|perform exact computation|
-|`d` $\in \lbrace \top, \bot \rbrace$|dummy sampling, just choose vertices at random and do BFS from them|
+|`th` $\in \mathbb{N}$|the number of threads to use, usually $60$|
+|`e` $\in (0, 1]$|the absolute error $\epsilon$, usually $0.1$|
+|`tr` $\in \lbrace \top, \bot \rbrace$|perform exact computation, usually $\bot$|
+|`d` $\in \lbrace \top, \bot \rbrace$|dummy sampling, , usually $\bot$|
 
-## Results
+# Results
+
+## Erdos-Renyi generated graphs
 
 |# vertices|edge presence prob|$\epsilon$|dummy|link|
 |---|---|---|---|---|
@@ -36,6 +36,12 @@ where
 |5k|0.001|0.1|$\top$|[5k-0001p-01e-d.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/erdos-renyi/result/5k-0001p-01e-d.out)|
 |5k|0.001|0.1|$\bot$|[5k-0001p-01e.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/erdos-renyi/result/5k-0001p-01e.out)|
 
+
+## Payment graph
+
+|# vertices|edges|$\epsilon$|dummy|link|
+|---|---|---|---|---|
+|668261953|2162523341|0.1|$\top$|[pg-d.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/pg/result/pg-d.out)|
 
 ## WebGraph in Rust
 
