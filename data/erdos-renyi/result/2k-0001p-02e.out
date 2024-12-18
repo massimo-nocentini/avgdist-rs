@@ -3,32 +3,32 @@
 *** iteration 1, batch size 60, remaining 215.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>|s
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|
-averages: distance 10.695580443967541, diameter 25.
-average of averages: distance 10.695580443967541, diameter 25.
+averages: distance 10.306005389769327, diameter 22.
+average of averages: distance 10.306005389769327, diameter 22.
 
 *** iteration 2, batch size 60, remaining 155.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>|s
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|
-averages: distance 10.236990724660055, diameter 22.
-average of averages: distance 10.466285584313798, diameter 23.5.
+averages: distance 10.466144126991976, diameter 25.
+average of averages: distance 10.386074758380651, diameter 23.5.
 
 *** iteration 3, batch size 60, remaining 95.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>|s
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|
-averages: distance 10.718279252572135, diameter 24.
-average of averages: distance 10.550283473733243, diameter 23.666666666666668.
+averages: distance 10.818450465595818, diameter 23.
+average of averages: distance 10.53019999411904, diameter 23.333333333333332.
 
 *** iteration 4, batch size 60, remaining 35.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>|s
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|
-averages: distance 10.173790048818338, diameter 21.
-average of averages: distance 10.456160117504517, diameter 23.
+averages: distance 10.745333168500432, diameter 24.
+average of averages: distance 10.583983287714387, diameter 23.5.
 
 *** iteration 5, batch size 35, remaining 0.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>|s
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|
-averages: distance 10.263464447806355, diameter 21.
-average of averages: distance 10.417620983564884, diameter 22.6.
+averages: distance 10.47512935345015, diameter 24.
+average of averages: distance 10.56221250086154, diameter 23.6.
 |V| = 2000, |E| = 4006, |S| = 275, s = 60.
 
 *** iteration 1, batch size 60, remaining 215.

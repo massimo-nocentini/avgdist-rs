@@ -3,32 +3,32 @@
 *** iteration 1, batch size 60, remaining 190.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>|s
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|
-averages: distance 2.8620689655172415, diameter 9.
-average of averages: distance 2.8620689655172415, diameter 9.
+averages: distance 2.796747967479675, diameter 11.
+average of averages: distance 2.796747967479675, diameter 11.
 
 *** iteration 2, batch size 60, remaining 130.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>|s
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|
-averages: distance 3.1488372093023256, diameter 11.
-average of averages: distance 3.0054530874097836, diameter 10.
+averages: distance 1.989010989010989, diameter 8.
+average of averages: distance 2.392879478245332, diameter 9.5.
 
 *** iteration 3, batch size 60, remaining 70.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>|s
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|
-averages: distance 3.4979757085020244, diameter 12.
-average of averages: distance 3.169627294440531, diameter 10.666666666666666.
+averages: distance 3.287958115183246, diameter 9.
+average of averages: distance 2.691239023891303, diameter 9.333333333333334.
 
 *** iteration 4, batch size 60, remaining 10.
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>|s
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<|
-averages: distance 3.05, diameter 10.
-average of averages: distance 3.1397204708303983, diameter 10.5.
+averages: distance 2.2155172413793105, diameter 8.
+average of averages: distance 2.5723085782633053, diameter 9.
 
 *** iteration 5, batch size 10, remaining 0.
 >>>>>>>>>>|s
 <<<<<<<<<<|
-averages: distance 1, diameter 2.
-average of averages: distance 2.711776376664319, diameter 8.8.
+averages: distance 1.8666666666666667, diameter 5.
+average of averages: distance 2.431180195943978, diameter 8.2.
 |V| = 1000, |E| = 950, |S| = 250, s = 60.
 
 *** iteration 1, batch size 60, remaining 190.
