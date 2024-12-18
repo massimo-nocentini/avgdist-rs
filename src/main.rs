@@ -15,7 +15,7 @@ use webgraph::prelude::*;
 fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
     let mut distances = Vec::new();
     let mut frontier = Vec::new();
-    let mut diameter = 1usize;
+    let mut diameter = 0usize;
 
     let mut seen = BitVec::new(graph.len());
 
@@ -25,6 +25,7 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
 
     while !frontier.is_empty() {
         let mut frontier_next = Vec::new();
+        diameter = diameter + 1;
 
         for current_node in frontier.iter() {
             for each in graph[*current_node].iter() {
@@ -42,10 +43,9 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
         }
 
         frontier = frontier_next;
-        diameter = diameter + 1;
     }
 
-    (distances, diameter - 1)
+    (distances, diameter)
 }
 
 fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
@@ -77,7 +77,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
         diameter = diameter.max(dia);
 
         for (v, d) in distances {
-            cross[v] += d;
+            cross[v] += 1;
         }
     }
 
