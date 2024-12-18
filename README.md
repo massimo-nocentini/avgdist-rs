@@ -11,6 +11,31 @@ cd avgdist-rs
 cargo build --release
 ```
 
+Then run it with:
+```
+cargo run --release -- <g> <gt> <th> <e> <tr> <d>
+```
+where
+|key|meaning|
+|---|---|
+|`g` $\in \mathbb{S}$|the webgraph graph's base name|
+|`gt` $\in \mathbb{S}$|the webgraph transposed graph's base name|
+|`th` $\in \mathbb{N}$|the number of threads to use|
+|`e` $\in \mathbb{N}$|the absolute error $\epsilon$|
+|`tr` $\in \lbrace \top, \bot \rbrace$|perform exact computation|
+|`d` $\in \lbrace \top, \bot \rbrace$|dummy sampling, just choose vertices at random and do BFS from them|
+
+## Results
+
+|# vertices|edge presence prob|$\epsilon$|dummy|link|
+|---|---|---|---|---|
+|1k|0.001|0.1|$\top$|[1k-0001p-01e-d.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/erdos-renyi/result/1k-0001p-01e-d.out)|
+|1k|0.001|0.1|$\bot$|[1k-0001p-01e.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/erdos-renyi/result/1k-0001p-01e.out)|
+|2k|0.001|0.1|$\top$|[2k-0001p-01e-d.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/erdos-renyi/result/2k-0001p-01e-d.out)|
+|2k|0.001|0.1|$\bot$|[2k-0001p-01e.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/erdos-renyi/result/2k-0001p-01e.out)|
+|5k|0.001|0.1|$\top$|[5k-0001p-01e-d.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/erdos-renyi/result/5k-0001p-01e-d.out)|
+|5k|0.001|0.1|$\bot$|[5k-0001p-01e.out](https://github.com/massimo-nocentini/avgdist-rs/blob/master/data/erdos-renyi/result/5k-0001p-01e.out)|
+
 
 ## WebGraph in Rust
 
