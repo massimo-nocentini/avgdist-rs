@@ -156,29 +156,6 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
     (rx.iter().collect(), (diameter as f64)) // / (k as f64))
 }
 
-fn as_bytes(v: &[usize]) -> &[u8] {
-    unsafe {
-        std::slice::from_raw_parts(
-            v.as_ptr() as *const u8,
-            v.len() * std::mem::size_of::<usize>(),
-        )
-    }
-}
-
-fn append_to_vec<F: RandomAccessDecoderFactory>(graph: &BvGraph<F>, buffer: &mut Vec<usize>) {
-    buffer.push(graph.num_nodes());
-
-    for_!((src, succ) in graph {
-        let graph = BvGraphSeq::with_basename("hello").load().unwrap();
-        buffer.push(src);
-        buffer.push(succ.len());
-
-        for dst in succ {
-            buffer.push(dst);
-        }
-    });
-}
-
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -192,20 +169,6 @@ fn main() {
     let mut r = rand::thread_rng();
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
     let graph_t = BvGraph::with_basename(graph_filename_t).load().unwrap();
-
-    // {
-    //     let mut file = File::create("/data/bitcoin/bitcoin-webgraph/pg.data").unwrap();
-    //     let mut buffer = Vec::new();
-    //     append_to_vec(&graph, &mut buffer);
-    //     file.write_all(as_bytes(&buffer)).unwrap();
-    // }
-
-    // {
-    //     let mut file = File::create("/data/bitcoin/bitcoin-webgraph/pg-t.data").unwrap();
-    //     let mut buffer = Vec::new();
-    //     append_to_vec(&graph_t, &mut buffer);
-    //     file.write_all(as_bytes(&buffer)).unwrap();
-    // }
 
     let num_nodes = graph.num_nodes();
     let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
