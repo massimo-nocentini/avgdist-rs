@@ -1,3 +1,4 @@
+use core::num;
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
@@ -186,6 +187,7 @@ fn main() {
     let mut slot: usize = args[3].parse().unwrap();
     let epsilon: f64 = args[4].parse().unwrap();
     let truth: bool = args[5].parse().unwrap();
+    let dummy: bool = args[5].parse().unwrap();
 
     let mut r = rand::thread_rng();
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
@@ -247,10 +249,14 @@ fn main() {
 
         let sampled: Vec<usize> = if truth {
             slot = remaining;
-            (0..num_nodes - 1).collect()
+            (0..num_nodes).collect()
         } else {
-            let (sampled, _) = sample(slot, &ag_t, &mut r);
-            sampled
+            if dummy {
+                (0..k).map(|_j| r.gen_range(0..num_nodes)).collect()
+            } else {
+                let (sampled, _) = sample(slot, &ag_t, &mut r);
+                sampled
+            }
         };
 
         let mut sum = 0usize;
