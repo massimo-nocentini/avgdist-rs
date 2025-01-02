@@ -55,12 +55,14 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
     let across = Arc::new(Mutex::new(vec![0usize; num_nodes]));
     let adiameter = Arc::new(Mutex::new(0usize));
 
+    let mut handles = Vec::new();
+
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
         let agraph = Arc::clone(agraph);
         let adiameter = Arc::clone(&adiameter);
         let across = Arc::clone(&across);
-        thread::spawn(move || {
+        let handle = thread::spawn(move || {
             let tup = bfs(v, agraph);
 
             {
@@ -78,6 +80,12 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
             print!(">");
             io::stdout().flush().expect("Unable to flush stdout");
         });
+
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
     }
 
     let diameter = *adiameter.lock().unwrap();
