@@ -16,43 +16,47 @@ fn bfs(
     graph: Arc<Vec<Vec<usize>>>,
 ) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
+    let mut distance = 0usize;
     let mut diameter = 0usize;
-    let mut distances = Vec::new();
+    let mut count = 0usize;
     let mut seen = BitVec::new(graph.len());
 
     seen.set(start, true);
 
-    frontier.push(start);
+    frontier.push((start, diameter));
 
     while !frontier.is_empty() {
         let mut frontier_next = Vec::new();
-        diameter = diameter + 1;
 
-        for current_node in frontier.iter() {
+        for (current_node, l) in frontier.iter() {
+            diameter = diameter.max(*l + 1);
+
             for each in graph[*current_node].iter() {
                 let succ = *each;
 
                 if !seen.get(succ) {
                     seen.set(succ, true);
-                    distances.push((succ, diameter));
-                    frontier_next.push(succ);
+                    // distances.push((succ, diameter));
+                    count += 1;
+                    distance += diameter;
+                    frontier_next.push((succ, diameter));
                 }
+            }
+        }
+
+        if !frontier_next.is_empty() {
+            let mut cross = across.lock().unwrap();
+            for (succ, d) in frontier_next.iter() {
+                cross[*succ] += *d;
             }
         }
 
         frontier = frontier_next;
     }
 
-    let mut distance = 0usize;
-    {
-        let mut cross = across.lock().unwrap();
-        for (succ, d) in distances.iter() {
-            cross[*succ] += *d;
-            distance += *d;
-        }
-    }
+    diameter -= 1;
 
-    (diameter, distance, distances.len())
+    (diameter, distance, count)
 }
 
 fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> Vec<usize> {
