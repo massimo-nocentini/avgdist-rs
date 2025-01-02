@@ -12,7 +12,7 @@ use webgraph::prelude::*;
 
 fn bfs(
     start: usize,
-    across: Arc<Mutex<Vec<usize>>>,
+    oacross: Option<&Arc<Mutex<Vec<usize>>>>,
     graph: Arc<Vec<Vec<usize>>>,
 ) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
@@ -45,9 +45,11 @@ fn bfs(
         }
 
         if !frontier_next.is_empty() {
-            let mut cross = across.lock().unwrap();
-            for (succ, d) in frontier_next.iter() {
-                cross[*succ] += *d;
+            if let Some(across) = oacross {
+                let mut cross = across.lock().unwrap();
+                for (succ, d) in frontier_next.iter() {
+                    cross[*succ] += *d;
+                }
             }
         }
 
@@ -68,7 +70,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> Vec<usi
         let agraph = Arc::clone(agraph);
         let across = Arc::clone(&across);
         let handle = thread::spawn(move || {
-            bfs(v, across, agraph);
+            bfs(v, Some(&across), agraph);
 
             print!(">");
             io::stdout().flush().expect("Unable to flush stdout");
@@ -182,14 +184,12 @@ fn main() {
 
         let mut handles = Vec::new();
         let triple = Arc::new(Mutex::new((0usize, 0usize, 0usize)));
-        let across = Arc::new(Mutex::new(vec![0usize; num_nodes]));
 
         for v in sampled {
             let ag = Arc::clone(&ag);
             let triple = Arc::clone(&triple);
-            let across = Arc::clone(&across);
             let handle = thread::spawn(move || {
-                let (dia, sum, count) = bfs(v, across, ag);
+                let (dia, sum, count) = bfs(v, None, ag);
 
                 {
                     let mut t = triple.lock().unwrap();
