@@ -206,11 +206,13 @@ fn main() {
                     count = count + 1;
                 }
 
-                let mut t = triple.lock().unwrap();
+                {
+                    let mut t = triple.lock().unwrap();
 
-                t.0 = t.0 + sum;
-                t.1 = t.1 + count;
-                t.2 = t.2.max(tup.1);
+                    t.0 = t.0 + sum;
+                    t.1 = t.1 + count;
+                    t.2 = t.2.max(tup.1);
+                }
 
                 print!("<");
                 io::stdout().flush().expect("Unable to flush stdout");
