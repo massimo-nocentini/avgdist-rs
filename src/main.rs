@@ -1,9 +1,7 @@
-
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
-
-use std::sync::{mpsc, Arc};
+use std::sync::{mpsc, Arc, Mutex};
 use std::{env, thread};
 use std::{
     io::{self, Write},
@@ -54,69 +52,68 @@ fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize
 
 fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, usize) {
     let num_nodes = agraph.len();
-    let mut cross = vec![0usize; num_nodes];
-    let mut diameter = 0usize;
-
-    let (tx, rx) = mpsc::channel();
+    let across = Arc::new(Mutex::new(vec![0usize; num_nodes]));
+    let adiameter = Arc::new(Mutex::new(0usize));
 
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
-        let tx1 = tx.clone();
         let agraph = Arc::clone(agraph);
+        let adiameter = Arc::clone(&adiameter);
+        let across = Arc::clone(&across);
         thread::spawn(move || {
             let tup = bfs(v, agraph);
-            tx1.send(tup).unwrap();
+
+            {
+                let mut dia = adiameter.lock().unwrap();
+                *dia = dia.max(tup.1);
+            }
+
+            {
+                let mut cross = across.lock().unwrap();
+                for (v, _d) in tup.0 {
+                    cross[v] += 1;
+                }
+            }
+
             print!(">");
             io::stdout().flush().expect("Unable to flush stdout");
         });
     }
 
-    drop(tx);
-
-    for (distances, dia) in rx {
-        diameter = diameter.max(dia);
-
-        for (v, d) in distances {
-            cross[v] += 1;
-        }
-    }
+    let diameter = *adiameter.lock().unwrap();
 
     print!("|");
+
+    let mut cross = across.lock().unwrap();
 
     for i in 1..num_nodes {
         cross[i] += cross[i - 1];
     }
 
     let maxc = *cross.last().unwrap();
-    let (tx, rx) = mpsc::channel();
-    let across = Arc::new(cross);
 
-    for _ in 0..k {
-        let tx1 = tx.clone();
-        let across = Arc::clone(&across);
-        let c = r.gen_range(0..maxc);
-        thread::spawn(move || {
-            let mut l = 0usize;
-            let mut h = num_nodes - 1;
+    let mut sampled = vec![0usize; k];
 
-            while l < h {
-                let m = (h + l) >> 1;
-                if across[m] < c {
-                    l = m + 1;
-                } else {
-                    h = m;
-                }
+    for i in 0..k {
+        let c = r.gen_range(0..=maxc);
+        let mut l = 0usize;
+        let mut h = num_nodes - 1;
+
+        while l < h {
+            let m = (h + l) >> 1;
+            if cross[m] < c {
+                l = m + 1;
+            } else {
+                h = m;
             }
+        }
 
-            tx1.send(l).unwrap();
-        });
+        sampled[i] = l;
     }
 
     println!("s");
 
-    drop(tx);
-
-    (rx.iter().collect(), diameter)
+    (sampled, diameter)
 }
 
 fn main() {
