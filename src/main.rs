@@ -23,23 +23,23 @@ fn bfs(
 
     seen.set(start, true);
 
-    frontier.push((start, diameter));
+    frontier.push((start, 0));
 
     while !frontier.is_empty() {
         let mut frontier_next = Vec::new();
 
         for (current_node, l) in frontier.iter() {
-            diameter = diameter.max(*l + 1);
+            let ll = *l + 1;
 
             for each in graph[*current_node].iter() {
                 let succ = *each;
 
                 if !seen.get(succ) {
+                    diameter = diameter.max(ll);
                     seen.set(succ, true);
-                    // distances.push((succ, diameter));
                     count += 1;
-                    distance += diameter;
-                    frontier_next.push((succ, diameter));
+                    distance += ll;
+                    frontier_next.push((succ, ll));
                 }
             }
         }
@@ -53,8 +53,6 @@ fn bfs(
 
         frontier = frontier_next;
     }
-
-    diameter -= 1;
 
     (diameter, distance, count)
 }
