@@ -10,11 +10,15 @@ use std::{
 use sux::bits::BitVec;
 use webgraph::prelude::*;
 
-fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
-    let mut distances = Vec::new();
+fn bfs(
+    start: usize,
+    across: Arc<Mutex<Vec<usize>>>,
+    graph: Arc<Vec<Vec<usize>>>,
+) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
     let mut diameter = 0usize;
-
+    let mut distance = 0usize;
+    let mut count = 0usize;
     let mut seen = BitVec::new(graph.len());
 
     seen.set(start, true);
@@ -29,13 +33,13 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
             for each in graph[*current_node].iter() {
                 let succ = *each;
 
-                match seen.get(succ) {
-                    false => {
-                        seen.set(succ, true);
-                        distances.push((succ, diameter));
-                        frontier_next.push(succ);
-                    }
-                    _ => {}
+                if !seen.get(succ) {
+                    seen.set(succ, true);
+                    let mut distances = across.lock().unwrap();
+                    distances[succ] += 1;
+                    count += 1;
+                    distance += diameter;
+                    frontier_next.push(succ);
                 }
             }
         }
@@ -43,11 +47,7 @@ fn bfs_layered(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)
         frontier = frontier_next;
     }
 
-    (distances, diameter)
-}
-
-fn bfs(start: usize, graph: Arc<Vec<Vec<usize>>>) -> (Vec<(usize, usize)>, usize) {
-    bfs_layered(start, graph)
+    (diameter, distance, count)
 }
 
 fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, usize) {
@@ -63,18 +63,11 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
         let adiameter = Arc::clone(&adiameter);
         let across = Arc::clone(&across);
         let handle = thread::spawn(move || {
-            let tup = bfs(v, agraph);
+            let (d, _, _) = bfs(v, across, agraph);
 
             {
                 let mut dia = adiameter.lock().unwrap();
-                *dia = dia.max(tup.1);
-            }
-
-            {
-                let mut cross = across.lock().unwrap();
-                for (v, _d) in tup.0 {
-                    cross[v] += 1;
-                }
+                *dia = dia.max(d);
             }
 
             print!(">");
@@ -192,26 +185,21 @@ fn main() {
 
         let mut handles = Vec::new();
         let triple = Arc::new(Mutex::new((0usize, 0usize, 0usize)));
+        let across = Arc::new(Mutex::new(vec![0usize; num_nodes]));
 
         for v in sampled {
             let ag = Arc::clone(&ag);
             let triple = Arc::clone(&triple);
+            let across = Arc::clone(&across);
             let handle = thread::spawn(move || {
-                let tup = bfs(v, ag);
-                let mut sum = 0usize;
-                let mut count = 0usize;
-
-                for (_v, d) in tup.0 {
-                    sum = sum + d;
-                    count = count + 1;
-                }
+                let (dia, sum, count) = bfs(v, across, ag);
 
                 {
                     let mut t = triple.lock().unwrap();
 
                     t.0 = t.0 + sum;
                     t.1 = t.1 + count;
-                    t.2 = t.2.max(tup.1);
+                    t.2 = t.2.max(dia);
                 }
 
                 print!("<");
