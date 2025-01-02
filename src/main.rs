@@ -17,8 +17,7 @@ fn bfs(
 ) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
     let mut diameter = 0usize;
-    let mut distance = 0usize;
-    let mut count = 0usize;
+    let mut distances = Vec::new();
     let mut seen = BitVec::new(graph.len());
 
     seen.set(start, true);
@@ -35,10 +34,7 @@ fn bfs(
 
                 if !seen.get(succ) {
                     seen.set(succ, true);
-                    let mut distances = across.lock().unwrap();
-                    distances[succ] += 1;
-                    count += 1;
-                    distance += diameter;
+                    distances.push((succ, diameter));
                     frontier_next.push(succ);
                 }
             }
@@ -47,28 +43,30 @@ fn bfs(
         frontier = frontier_next;
     }
 
-    (diameter, distance, count)
+    let mut distance = 0usize;
+    {
+        let mut cross = across.lock().unwrap();
+        for (succ, d) in distances.iter() {
+            cross[*succ] += *d;
+            distance += *d;
+        }
+    }
+
+    (diameter, distance, distances.len())
 }
 
-fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<usize>, usize) {
+fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> Vec<usize> {
     let num_nodes = agraph.len();
     let across = Arc::new(Mutex::new(vec![0usize; num_nodes]));
-    let adiameter = Arc::new(Mutex::new(0usize));
 
     let mut handles = Vec::new();
 
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
         let agraph = Arc::clone(agraph);
-        let adiameter = Arc::clone(&adiameter);
         let across = Arc::clone(&across);
         let handle = thread::spawn(move || {
-            let (d, _, _) = bfs(v, across, agraph);
-
-            {
-                let mut dia = adiameter.lock().unwrap();
-                *dia = dia.max(d);
-            }
+            bfs(v, across, agraph);
 
             print!(">");
             io::stdout().flush().expect("Unable to flush stdout");
@@ -80,8 +78,6 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
     for handle in handles {
         handle.join().unwrap();
     }
-
-    let diameter = *adiameter.lock().unwrap();
 
     print!("|");
 
@@ -114,7 +110,7 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> (Vec<us
 
     println!("s");
 
-    (sampled, diameter)
+    sampled
 }
 
 fn main() {
@@ -178,8 +174,7 @@ fn main() {
             if dummy {
                 (0..slot).map(|_j| r.gen_range(0..num_nodes)).collect()
             } else {
-                let (sampled, _) = sample(slot, &ag_t, &mut r);
-                sampled
+                sample(slot, &ag_t, &mut r)
             }
         };
 
