@@ -1,7 +1,7 @@
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
-use std::sync::{mpsc, Arc, Mutex};
+use std::sync::{Arc, Mutex};
 use std::{env, thread};
 use std::{
     io::{self, Write},
@@ -190,40 +190,47 @@ fn main() {
             }
         };
 
-        let mut sum = 0usize;
-        let mut count = 0usize;
-        let mut dia = 0;
-
-        let (tx, rx) = mpsc::channel();
+        let mut handles = Vec::new();
+        let triple = Arc::new(Mutex::new((0usize, 0usize, 0usize)));
 
         for v in sampled {
-            let tx1 = tx.clone();
             let ag = Arc::clone(&ag);
-            thread::spawn(move || {
+            let triple = Arc::clone(&triple);
+            let handle = thread::spawn(move || {
                 let tup = bfs(v, ag);
-                tx1.send(tup).unwrap();
+                let mut sum = 0usize;
+                let mut count = 0usize;
+
+                for (_v, d) in tup.0 {
+                    sum = sum + d;
+                    count = count + 1;
+                }
+
+                let mut t = triple.lock().unwrap();
+
+                t.0 = t.0 + sum;
+                t.1 = t.1 + count;
+                t.2 = t.2.max(tup.1);
+
                 print!("<");
                 io::stdout().flush().expect("Unable to flush stdout");
             });
+
+            handles.push(handle);
         }
 
-        drop(tx);
-
-        for (distances, d) in rx {
-            dia = dia.max(d);
-
-            for (_v, d) in distances {
-                sum = sum + d;
-                count = count + 1;
-            }
+        for handle in handles {
+            handle.join().unwrap();
         }
+
+        let (sum, count, dia) = *triple.lock().unwrap();
 
         println!("|");
 
         let adist = (sum as f64) / (count as f64);
         let adia = dia as f64;
 
-        println!("averages: distance {}, diameter {}.", adist, adia);
+        println!("averages: distance {:.3}, diameter {:.3}.", adist, adia);
 
         averages_dist.push(adist);
         averages_diameter.push(adia);
@@ -233,7 +240,7 @@ fn main() {
         let n = averages_dist.len() as f64;
 
         println!(
-            "average of averages: distance {}, diameter {}.",
+            "average of averages: distance {:.3}, diameter {:.3}.",
             avgdist / n,
             avgdia / n
         );
