@@ -59,26 +59,20 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     let (tx, rx) = std::sync::mpsc::channel();
 
-    let mut handles = Vec::new();
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
-        let agraph = Arc::clone(&agraph);
+        let agraph = agraph.clone();
         let tx = tx.clone();
-        let handle = thread::spawn(move || {
+        thread::spawn(move || {
             let instant = Instant::now();
             bfs(v, Some(&tx), agraph);
             print!(">: {:?} | ", instant.elapsed());
             io::stdout().flush().unwrap();
             drop(tx);
         });
-        handles.push(handle);
     }
 
     drop(tx);
-
-    for handle in handles {
-        handle.join().unwrap();
-    }
 
     let mut cross = vec![0usize; num_nodes];
 
