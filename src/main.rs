@@ -18,6 +18,7 @@ fn bfs<T: RandomAccessGraph>(
     let mut diameter = 0usize;
     let mut count = 0usize;
     let mut seen = BitVec::new(graph.num_nodes());
+    let mut local = Vec::new();
 
     seen.set(start, true);
 
@@ -35,21 +36,20 @@ fn bfs<T: RandomAccessGraph>(
                     seen.set(succ, true);
                     count += 1;
                     distance += ll;
+                    local.push((succ, ll));
                     frontier_next.push((succ, ll));
                 }
             }
         }
 
-        if !frontier_next.is_empty() {
-            if let Some(ch) = channel {
-                let mut ch = ch.lock().unwrap();
-                for (v, d) in frontier_next.iter() {
-                    ch[*v] += *d;
-                }
-            }
-        }
-
         frontier = frontier_next;
+    }
+
+    if let Some(ch) = channel {
+        let mut ch = ch.lock().unwrap();
+        for (v, d) in local.iter() {
+            ch[*v] += *d;
+        }
     }
 
     (diameter, distance, count)
