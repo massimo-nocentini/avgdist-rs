@@ -63,20 +63,25 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     let (tx, rx) = mpsc::channel();
 
+    let mut handles = Vec::new();
+
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
         let agraph = Arc::clone(&agraph);
         let tx = tx.clone();
-        thread::spawn(move || {
+        let handle = thread::spawn(move || {
             let instant = Instant::now();
             bfs(v, Some(&tx), agraph);
             print!(">: {:?} | ", instant.elapsed());
         });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
     }
 
     let mut cross = vec![0usize; num_nodes];
-
-    drop(tx);
 
     for (v, d) in rx {
         cross[v] += d;
@@ -171,20 +176,24 @@ fn main() {
         println!("sampled in {:?}", instant.elapsed());
 
         let (tx, rx) = mpsc::channel();
-
+        let mut handles = Vec::new();
         let instant = Instant::now();
         for v in sampled {
             let ag = Arc::clone(&ag);
             let tx = tx.clone();
-            thread::spawn(move || {
+            let handle = thread::spawn(move || {
                 let instant = Instant::now();
                 let (dia, sum, count) = bfs(v, None, ag);
                 print!("<: {:?} | ", instant.elapsed());
                 tx.send((sum, count, dia)).unwrap();
             });
+            handles.push(handle);
         }
 
-        drop(tx);
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
         let (mut sum, mut count, mut dia) = (0usize, 0usize, 0usize);
         for (s, c, d) in rx {
             sum += s;
