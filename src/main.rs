@@ -68,6 +68,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
             bfs(v, Some(&tx), agraph);
             print!(">: {:?} | ", instant.elapsed());
             io::stdout().flush().unwrap();
+            drop(tx);
         });
     }
 
