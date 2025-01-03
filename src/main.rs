@@ -1,7 +1,8 @@
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
-use std::sync::{Arc, Mutex};
+use std::sync::mpsc::Sender;
+use std::sync::{mpsc, Arc, Mutex};
 use std::{env, thread};
 use std::{
     io::{self, Write},
@@ -12,7 +13,7 @@ use webgraph::prelude::*;
 
 fn bfs(
     start: usize,
-    oacross: Option<&Arc<Mutex<Vec<usize>>>>,
+    channel: Option<&Sender<(usize, usize)>>,
     graph: Arc<Vec<Vec<usize>>>,
 ) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
@@ -45,10 +46,9 @@ fn bfs(
         }
 
         if !frontier_next.is_empty() {
-            if let Some(across) = oacross {
-                let mut cross = across.lock().unwrap();
+            if let Some(ch) = channel {
                 for (succ, d) in frontier_next.iter() {
-                    cross[*succ] += *d;
+                    ch.send((*succ, *d)).unwrap();
                 }
             }
         }
@@ -61,31 +61,28 @@ fn bfs(
 
 fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> Vec<usize> {
     let num_nodes = agraph.len();
-    let across = Arc::new(Mutex::new(vec![0usize; num_nodes]));
 
-    let mut handles = Vec::new();
+    let (tx, rx) = mpsc::channel();
 
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
         let agraph = Arc::clone(agraph);
-        let across = Arc::clone(&across);
-        let handle = thread::spawn(move || {
-            bfs(v, Some(&across), agraph);
+        let tx = tx.clone();
+        thread::spawn(move || {
+            bfs(v, Some(&tx), agraph);
 
             print!(">");
             io::stdout().flush().expect("Unable to flush stdout");
         });
-
-        handles.push(handle);
-    }
-
-    for handle in handles {
-        handle.join().unwrap();
     }
 
     print!("|");
 
-    let mut cross = across.lock().unwrap();
+    let mut cross = vec![0usize; num_nodes];
+
+    for (v, d) in rx {
+        cross[v] += d;
+    }
 
     for i in 1..num_nodes {
         cross[i] += cross[i - 1];
@@ -182,35 +179,27 @@ fn main() {
             }
         };
 
-        let mut handles = Vec::new();
-        let triple = Arc::new(Mutex::new((0usize, 0usize, 0usize)));
-
+        let (tx, rx) = mpsc::channel();
+        
         for v in sampled {
             let ag = Arc::clone(&ag);
-            let triple = Arc::clone(&triple);
-            let handle = thread::spawn(move || {
+            let tx = tx.clone();
+            thread::spawn(move || {
                 let (dia, sum, count) = bfs(v, None, ag);
 
-                {
-                    let mut t = triple.lock().unwrap();
-
-                    t.0 = t.0 + sum;
-                    t.1 = t.1 + count;
-                    t.2 = t.2.max(dia);
-                }
+                tx.send((sum, count, dia)).unwrap();
 
                 print!("<");
                 io::stdout().flush().expect("Unable to flush stdout");
             });
-
-            handles.push(handle);
         }
 
-        for handle in handles {
-            handle.join().unwrap();
+        let (mut sum, mut count, mut dia) = (0usize, 0usize, 0usize);
+        for (s, c, d) in rx {
+            sum += s;
+            count += c;
+            dia = dia.max(d);
         }
-
-        let (sum, count, dia) = *triple.lock().unwrap();
 
         println!("|");
 
