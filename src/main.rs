@@ -81,6 +81,8 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
         handle.join().unwrap();
     }
 
+    drop(tx);
+
     let mut cross = vec![0usize; num_nodes];
 
     for (v, d) in rx {
@@ -194,6 +196,7 @@ fn main() {
             handle.join().unwrap();
         }
 
+        drop(tx);
         let (mut sum, mut count, mut dia) = (0usize, 0usize, 0usize);
         for (s, c, d) in rx {
             sum += s;
