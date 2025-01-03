@@ -75,6 +75,8 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> Vec<usi
 
     let mut cross = vec![0usize; num_nodes];
 
+    drop(tx);
+
     for (v, d) in rx {
         cross[v] += d;
     }
@@ -189,14 +191,16 @@ fn main() {
                 tx.send((sum, count, dia)).unwrap();
             });
         }
-        println!("bfses in {:?}", instant.elapsed());
 
+        drop(tx);
         let (mut sum, mut count, mut dia) = (0usize, 0usize, 0usize);
         for (s, c, d) in rx {
             sum += s;
             count += c;
             dia = dia.max(d);
         }
+
+        println!("bfses in {:?}", instant.elapsed());
 
         let adist = (sum as f64) / (count as f64);
         let adia = dia as f64;
