@@ -1,8 +1,7 @@
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::ops::Div;
-use std::sync::mpsc::Sender;
-use std::sync::{mpsc, Arc};
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use std::{env, thread};
 use sux::bits::BitVec;
@@ -10,7 +9,7 @@ use webgraph::prelude::*;
 
 fn bfs<T: RandomAccessGraph>(
     start: usize,
-    channel: Option<&Sender<(usize, usize)>>,
+    channel: Option<&Arc<Mutex<Vec<usize>>>>,
     graph: Arc<T>,
 ) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
@@ -42,8 +41,9 @@ fn bfs<T: RandomAccessGraph>(
 
         if !frontier_next.is_empty() {
             if let Some(ch) = channel {
-                for (succ, d) in frontier_next.iter() {
-                    ch.send((*succ, *d)).unwrap();
+                let mut ch = ch.lock().unwrap();
+                for (v, d) in frontier_next.iter() {
+                    ch[*v] += *d;
                 }
             }
         }
@@ -61,29 +61,27 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 ) -> Vec<usize> {
     let num_nodes = agraph.num_nodes();
 
-    let (tx, rx) = mpsc::channel();
+    let across = Arc::new(Mutex::new(vec![0usize; num_nodes]));
 
     let mut handles = Vec::new();
 
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
         let agraph = Arc::clone(&agraph);
-        let tx = tx.clone();
+        let across = across.clone();
         let handle = thread::spawn(move || {
             let instant = Instant::now();
-            bfs(v, Some(&tx), agraph);
+            bfs(v, Some(&across), agraph);
             print!(">: {:?} | ", instant.elapsed());
         });
         handles.push(handle);
     }
 
-    drop(tx);
-
-    let mut cross = vec![0usize; num_nodes];
-
-    for (v, d) in rx {
-        cross[v] += d;
+    for handle in handles {
+        handle.join().unwrap();
     }
+
+    let mut cross = across.lock().unwrap();
 
     for i in 1..num_nodes {
         cross[i] += cross[i - 1];
@@ -173,28 +171,32 @@ fn main() {
         };
         println!("sampled in {:?}", instant.elapsed());
 
-        let (tx, rx) = mpsc::channel();
+        let triple = Arc::new(Mutex::new((0usize, 0usize, 0usize)));
         let mut handles = Vec::new();
         let instant = Instant::now();
         for v in sampled {
             let ag = Arc::clone(&ag);
-            let tx = tx.clone();
+            let tx = triple.clone();
             let handle = thread::spawn(move || {
                 let instant = Instant::now();
                 let (dia, sum, count) = bfs(v, None, ag);
+                {
+                    let mut tx = tx.lock().unwrap();
+
+                    tx.0 = tx.0.max(dia);
+                    tx.1 += sum;
+                    tx.2 += count;
+                }
                 print!("<: {:?} | ", instant.elapsed());
-                tx.send((sum, count, dia)).unwrap();
             });
             handles.push(handle);
         }
 
-        drop(tx);
-        let (mut sum, mut count, mut dia) = (0usize, 0usize, 0usize);
-        for (s, c, d) in rx {
-            sum += s;
-            count += c;
-            dia = dia.max(d);
+        for handle in handles {
+            handle.join().unwrap();
         }
+
+        let (dia, sum, count) = triple.lock().unwrap().clone();
 
         println!("bfses in {:?}", instant.elapsed());
 
