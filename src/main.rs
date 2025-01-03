@@ -77,10 +77,6 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
         handles.push(handle);
     }
 
-    for handle in handles {
-        handle.join().unwrap();
-    }
-
     drop(tx);
 
     let mut cross = vec![0usize; num_nodes];
@@ -190,10 +186,6 @@ fn main() {
                 tx.send((sum, count, dia)).unwrap();
             });
             handles.push(handle);
-        }
-
-        for handle in handles {
-            handle.join().unwrap();
         }
 
         drop(tx);
