@@ -1,5 +1,6 @@
 use rand::rngs::ThreadRng;
 use rand::Rng;
+use std::io::{self, Write};
 use std::ops::Div;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -73,6 +74,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
             let instant = Instant::now();
             bfs(v, Some(&across), agraph);
             print!(">: {:?} | ", instant.elapsed());
+            io::stdout().flush().unwrap();
         });
         handles.push(handle);
     }
@@ -188,6 +190,7 @@ fn main() {
                     tx.2 += count;
                 }
                 print!("<: {:?} | ", instant.elapsed());
+                io::stdout().flush().unwrap();
             });
             handles.push(handle);
         }
