@@ -2,6 +2,7 @@ use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::io::{self, Write};
 use std::ops::Div;
+use std::sync::mpsc::Sender;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use std::{env, thread};
@@ -10,7 +11,7 @@ use webgraph::prelude::*;
 
 fn bfs<T: RandomAccessGraph>(
     start: usize,
-    channel: Option<&Arc<Mutex<Vec<usize>>>>,
+    channel: Option<&Sender<(usize, usize)>>,
     graph: Arc<T>,
 ) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
@@ -18,7 +19,6 @@ fn bfs<T: RandomAccessGraph>(
     let mut diameter = 0usize;
     let mut count = 0usize;
     let mut seen = BitVec::new(graph.num_nodes());
-    let mut local = Vec::new();
 
     seen.set(start, true);
 
@@ -36,20 +36,15 @@ fn bfs<T: RandomAccessGraph>(
                     seen.set(succ, true);
                     count += 1;
                     distance += ll;
-                    local.push((succ, ll));
+                    if let Some(ch) = channel {
+                        ch.send((succ, ll)).unwrap();
+                    }
                     frontier_next.push((succ, ll));
                 }
             }
         }
 
         frontier = frontier_next;
-    }
-
-    if let Some(ch) = channel {
-        let mut ch = ch.lock().unwrap();
-        for (v, d) in local.iter() {
-            ch[*v] += *d;
-        }
     }
 
     (diameter, distance, count)
@@ -62,28 +57,27 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 ) -> Vec<usize> {
     let num_nodes = agraph.num_nodes();
 
-    let across = Arc::new(Mutex::new(vec![0usize; num_nodes]));
-
-    let mut handles = Vec::new();
+    let (tx, rx) = std::sync::mpsc::channel();
 
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
         let agraph = Arc::clone(&agraph);
-        let across = across.clone();
-        let handle = thread::spawn(move || {
+        let tx = tx.clone();
+        thread::spawn(move || {
             let instant = Instant::now();
-            bfs(v, Some(&across), agraph);
+            bfs(v, Some(&tx), agraph);
             print!(">: {:?} | ", instant.elapsed());
             io::stdout().flush().unwrap();
         });
-        handles.push(handle);
     }
 
-    for handle in handles {
-        handle.join().unwrap();
-    }
+    drop(tx);
 
-    let mut cross = across.lock().unwrap();
+    let mut cross = vec![0usize; num_nodes];
+
+    while let Ok((v, d)) = rx.recv() {
+        cross[v] += d;
+    }
 
     for i in 1..num_nodes {
         cross[i] += cross[i - 1];
