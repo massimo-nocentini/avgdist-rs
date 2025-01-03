@@ -125,7 +125,6 @@ fn main() {
 
     let mut r = rand::thread_rng();
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
-    let graph_t = BvGraph::with_basename(graph_filename_t).load().unwrap();
 
     let num_nodes = graph.num_nodes();
     let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
@@ -139,7 +138,6 @@ fn main() {
     );
 
     let ag = Arc::new(graph);
-    let ag_t = Arc::new(graph_t);
 
     let mut averages_dist = Vec::new();
     let mut averages_diameter = Vec::new();
@@ -167,7 +165,8 @@ fn main() {
             if dummy {
                 (0..slot).map(|_j| r.gen_range(0..num_nodes)).collect()
             } else {
-                let ag_t = Arc::clone(&ag_t);
+                let graph_t = BvGraph::with_basename(graph_filename_t).load().unwrap();
+                let ag_t = Arc::new(graph_t);
                 sample(slot, ag_t, &mut r)
             }
         };
