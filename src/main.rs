@@ -1,4 +1,3 @@
-use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::ops::Div;
@@ -9,16 +8,16 @@ use std::{env, thread};
 use sux::bits::BitVec;
 use webgraph::prelude::*;
 
-fn bfs(
+fn bfs<T: RandomAccessGraph>(
     start: usize,
     channel: Option<&Sender<(usize, usize)>>,
-    graph: Arc<Vec<Vec<usize>>>,
+    graph: Arc<T>,
 ) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
     let mut distance = 0usize;
     let mut diameter = 0usize;
     let mut count = 0usize;
-    let mut seen = BitVec::new(graph.len());
+    let mut seen = BitVec::new(graph.num_nodes());
 
     seen.set(start, true);
 
@@ -30,9 +29,7 @@ fn bfs(
         for (current_node, l) in frontier.iter() {
             let ll = *l + 1;
 
-            for each in graph[*current_node].iter() {
-                let succ = *each;
-
+            for succ in graph.successors(*current_node) {
                 if !seen.get(succ) {
                     diameter = diameter.max(ll);
                     seen.set(succ, true);
@@ -57,14 +54,18 @@ fn bfs(
     (diameter, distance, count)
 }
 
-fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> Vec<usize> {
-    let num_nodes = agraph.len();
+fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
+    k: usize,
+    agraph: Arc<T>,
+    r: &mut ThreadRng,
+) -> Vec<usize> {
+    let num_nodes = agraph.num_nodes();
 
     let (tx, rx) = mpsc::channel();
 
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
-        let agraph = Arc::clone(agraph);
+        let agraph = Arc::clone(&agraph);
         let tx = tx.clone();
         thread::spawn(move || {
             let instant = Instant::now();
@@ -126,16 +127,6 @@ fn main() {
     let num_nodes = graph.num_nodes();
     let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
 
-    let mut g = vec![Vec::new(); num_nodes];
-    for_!((src, succ) in graph {
-        g[src].extend(succ);
-    });
-
-    let mut g_t = vec![Vec::new(); num_nodes];
-    for_!((src, succ) in graph_t {
-        g_t[src].extend(succ);
-    });
-
     println!(
         "|V| = {}, |E| = {}, |S| = {}, s = {}.",
         num_nodes,
@@ -144,8 +135,8 @@ fn main() {
         slot
     );
 
-    let ag = Arc::new(g);
-    let ag_t = Arc::new(g_t);
+    let ag = Arc::new(graph);
+    let ag_t = Arc::new(graph_t);
 
     let mut averages_dist = Vec::new();
     let mut averages_diameter = Vec::new();
@@ -173,7 +164,8 @@ fn main() {
             if dummy {
                 (0..slot).map(|_j| r.gen_range(0..num_nodes)).collect()
             } else {
-                sample(slot, &ag_t, &mut r)
+                let ag_t = Arc::clone(&ag_t);
+                sample(slot, ag_t, &mut r)
             }
         };
         println!("sampled in {:?}", instant.elapsed());
