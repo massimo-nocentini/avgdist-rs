@@ -1,13 +1,11 @@
 use lender::for_;
 use rand::rngs::ThreadRng;
 use rand::Rng;
+use std::ops::Div;
 use std::sync::mpsc::Sender;
-use std::sync::{mpsc, Arc, Mutex};
+use std::sync::{mpsc, Arc};
+use std::time::Instant;
 use std::{env, thread};
-use std::{
-    io::{self, Write},
-    ops::Div,
-};
 use sux::bits::BitVec;
 use webgraph::prelude::*;
 
@@ -69,14 +67,11 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> Vec<usi
         let agraph = Arc::clone(agraph);
         let tx = tx.clone();
         thread::spawn(move || {
+            let instant = Instant::now();
             bfs(v, Some(&tx), agraph);
-
-            print!(">");
-            io::stdout().flush().expect("Unable to flush stdout");
+            print!(">: {:?} | ", instant.elapsed());
         });
     }
-
-    print!("|");
 
     let mut cross = vec![0usize; num_nodes];
 
@@ -108,8 +103,6 @@ fn sample(k: usize, agraph: &Arc<Vec<Vec<usize>>>, r: &mut ThreadRng) -> Vec<usi
 
         sampled[i] = l;
     }
-
-    println!("s");
 
     sampled
 }
@@ -158,6 +151,8 @@ fn main() {
     let mut remaining = k;
     let mut iteration = 1usize;
 
+    let instant = Instant::now();
+
     while remaining > 0 {
         slot = slot.min(remaining);
 
@@ -168,6 +163,7 @@ fn main() {
             remaining - slot
         );
 
+        let instant = Instant::now();
         let sampled: Vec<usize> = if truth {
             slot = remaining;
             (0..num_nodes).collect()
@@ -178,21 +174,22 @@ fn main() {
                 sample(slot, &ag_t, &mut r)
             }
         };
+        println!("sampled in {:?}", instant.elapsed());
 
         let (tx, rx) = mpsc::channel();
-        
+
+        let instant = Instant::now();
         for v in sampled {
             let ag = Arc::clone(&ag);
             let tx = tx.clone();
             thread::spawn(move || {
+                let instant = Instant::now();
                 let (dia, sum, count) = bfs(v, None, ag);
-
+                print!("<: {:?} | ", instant.elapsed());
                 tx.send((sum, count, dia)).unwrap();
-
-                print!("<");
-                io::stdout().flush().expect("Unable to flush stdout");
             });
         }
+        println!("bfses in {:?}", instant.elapsed());
 
         let (mut sum, mut count, mut dia) = (0usize, 0usize, 0usize);
         for (s, c, d) in rx {
@@ -201,12 +198,10 @@ fn main() {
             dia = dia.max(d);
         }
 
-        println!("|");
-
         let adist = (sum as f64) / (count as f64);
         let adia = dia as f64;
 
-        println!("averages: distance {:.3}, diameter {:.3}.", adist, adia);
+        println!("\naverages: distance {:.3}, diameter {:.3}.", adist, adia);
 
         averages_dist.push(adist);
         averages_diameter.push(adia);
@@ -224,4 +219,6 @@ fn main() {
         remaining -= slot;
         iteration += 1;
     }
+
+    println!("\nTotal time: {:?}", instant.elapsed());
 }
