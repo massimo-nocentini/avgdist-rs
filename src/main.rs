@@ -27,10 +27,10 @@ fn bfs<T: RandomAccessGraph>(
     while !frontier.is_empty() {
         let mut frontier_next = Vec::new();
 
-        for (current_node, l) in frontier.iter() {
-            let ll = *l + 1;
+        for (current_node, l) in frontier {
+            let ll = l + 1;
 
-            for succ in graph.successors(*current_node) {
+            for succ in graph.successors(current_node) {
                 if !seen.get(succ) {
                     diameter = diameter.max(ll);
                     seen.set(succ, true);
@@ -127,6 +127,7 @@ fn main() {
 
     let mut r = rand::thread_rng();
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
+    let graph_t = BvGraph::with_basename(graph_filename_t).load().unwrap();
 
     let num_nodes = graph.num_nodes();
     let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
@@ -140,6 +141,7 @@ fn main() {
     );
 
     let ag = Arc::new(graph);
+    let ag_t = Arc::new(graph_t);
 
     let mut averages_dist = Vec::new();
     let mut averages_diameter = Vec::new();
@@ -167,9 +169,7 @@ fn main() {
             if dummy {
                 (0..slot).map(|_j| r.gen_range(0..num_nodes)).collect()
             } else {
-                let graph_t = BvGraph::with_basename(graph_filename_t).load().unwrap();
-                let ag_t = Arc::new(graph_t);
-                sample(slot, ag_t, &mut r)
+                sample(slot, ag_t.clone(), &mut r)
             }
         };
         println!("sampled in {:?}", instant.elapsed());
@@ -178,7 +178,7 @@ fn main() {
         let mut handles = Vec::new();
         let instant = Instant::now();
         for v in sampled {
-            let ag = Arc::clone(&ag);
+            let ag = ag.clone();
             let tx = triple.clone();
             let handle = thread::spawn(move || {
                 let instant = Instant::now();
