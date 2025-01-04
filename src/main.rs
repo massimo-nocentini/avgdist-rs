@@ -11,7 +11,7 @@ use webgraph::prelude::*;
 
 fn bfs<T: RandomAccessGraph>(
     start: usize,
-    channel: Option<&Sender<(usize, usize)>>,
+    channel: Sender<(usize, usize)>,
     graph: Arc<T>,
 ) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
@@ -36,9 +36,7 @@ fn bfs<T: RandomAccessGraph>(
                     seen.set(succ, true);
                     count += 1;
                     distance += ll;
-                    if let Some(ch) = channel {
-                        ch.send((succ, 1)).unwrap();
-                    }
+                    channel.send((succ, 1)).unwrap();
                     frontier_next.push((succ, ll));
                 }
             }
@@ -59,20 +57,16 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     let (tx, rx) = std::sync::mpsc::channel();
 
-    let mut handles = Vec::new();
-
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
         let agraph = agraph.clone();
         let tx = tx.clone();
-        let handle = thread::spawn(move || {
+        thread::spawn(move || {
             let instant = Instant::now();
-            bfs(v, Some(&tx), agraph);
+            bfs(v, tx, agraph);
             print!(">: {:?} | ", instant.elapsed());
             io::stdout().flush().unwrap();
-            drop(tx);
         });
-        handles.push(handle);
     }
 
     drop(tx);
@@ -81,10 +75,6 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     while let Ok((v, d)) = rx.recv() {
         cross[v] += d;
-    }
-
-    for handle in handles {
-        handle.join().unwrap();
     }
 
     for i in 1..num_nodes {
@@ -177,14 +167,16 @@ fn main() {
         let triple = Arc::new(Mutex::new((0usize, 0usize, 0usize)));
         let mut handles = Vec::new();
         let instant = Instant::now();
+        let (tx, _rx) = std::sync::mpsc::channel();
         for v in sampled {
             let ag = ag.clone();
-            let tx = triple.clone();
+            let triple = triple.clone();
+            let tx = tx.clone();
             let handle = thread::spawn(move || {
                 let instant = Instant::now();
-                let (dia, sum, count) = bfs(v, None, ag);
+                let (dia, sum, count) = bfs(v, tx, ag);
                 {
-                    let mut tx = tx.lock().unwrap();
+                    let mut tx = triple.lock().unwrap();
 
                     tx.0 = tx.0.max(dia);
                     tx.1 += sum;
