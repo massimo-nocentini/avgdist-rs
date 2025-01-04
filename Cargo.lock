@@ -140,8 +140,10 @@ name = "avgdist-rs"
 version = "0.1.0"
 dependencies = [
  "bitvec",
+ "dsi-progress-logger",
  "lender",
  "rand",
+ "rayon",
  "sux",
  "webgraph",
  "webgraph-algo",

@@ -37,7 +37,7 @@ fn bfs<T: RandomAccessGraph>(
                     count += 1;
                     distance += ll;
                     if let Some(ch) = channel {
-                        ch.send((succ, ll)).unwrap();
+                        ch.send((succ, 1)).unwrap();
                     }
                     frontier_next.push((succ, ll));
                 }
@@ -59,17 +59,20 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     let (tx, rx) = std::sync::mpsc::channel();
 
+    let mut handles = Vec::new();
+
     for _ in 0..k {
         let v = r.gen_range(0..num_nodes);
         let agraph = agraph.clone();
         let tx = tx.clone();
-        thread::spawn(move || {
+        let handle = thread::spawn(move || {
             let instant = Instant::now();
             bfs(v, Some(&tx), agraph);
             print!(">: {:?} | ", instant.elapsed());
             io::stdout().flush().unwrap();
             drop(tx);
         });
+        handles.push(handle);
     }
 
     drop(tx);
@@ -78,6 +81,10 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     while let Ok((v, d)) = rx.recv() {
         cross[v] += d;
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
     }
 
     for i in 1..num_nodes {
