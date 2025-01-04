@@ -11,7 +11,7 @@ use webgraph::prelude::*;
 
 fn bfs<T: RandomAccessGraph>(
     start: usize,
-    channel: Sender<(usize, usize)>,
+    channel: Sender<BitVec>,
     graph: Arc<T>,
 ) -> (usize, usize, usize) {
     let mut frontier = Vec::new();
@@ -36,7 +36,6 @@ fn bfs<T: RandomAccessGraph>(
                     seen.set(succ, true);
                     count += 1;
                     distance += ll;
-                    channel.send((succ, 1)).unwrap();
                     frontier_next.push((succ, ll));
                 }
             }
@@ -44,6 +43,8 @@ fn bfs<T: RandomAccessGraph>(
 
         frontier = frontier_next;
     }
+
+    channel.send(seen).unwrap();
 
     (diameter, distance, count)
 }
@@ -73,8 +74,8 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     let mut cross = vec![0usize; num_nodes];
 
-    while let Ok((v, d)) = rx.recv() {
-        cross[v] += d;
+    while let Ok(seen) = rx.recv() {
+        seen.iter_ones().for_each(|v| cross[v] += 1);
     }
 
     for i in 1..num_nodes {
