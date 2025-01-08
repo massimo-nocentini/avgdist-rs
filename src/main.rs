@@ -1,61 +1,91 @@
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::io::{self, Write};
-use std::ops::Div;
+use std::ops::{Deref, Div};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::mpsc::Sender;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use std::{env, thread};
 use sux::bits::BitVec;
 use webgraph::prelude::*;
+use webgraph_algo::prelude::breadth_first::EventNoPred;
+use webgraph_algo::traits::Parallel;
 
-fn bfs<T: RandomAccessGraph>(
-    start: usize,
-    channel: Sender<BitVec>,
-    graph: Arc<T>,
-) -> (usize, usize, usize) {
-    let mut frontier = Vec::new();
+use dsi_progress_logger::no_logging;
+use std::ops::ControlFlow::Continue;
+use webgraph::prelude::BvGraph;
+use webgraph::traits::RandomAccessGraph;
+use webgraph::traits::SequentialLabeling;
+use webgraph_algo::threads;
+
+fn visit<G>(root: usize, graph: G) -> (BitVec, usize, usize, usize)
+where
+    G: RandomAccessGraph + Send + Sync,
+{
+    let num_nodes = graph.num_nodes();
     let mut distance = 0usize;
     let mut diameter = 0usize;
     let mut count = 0usize;
-    let mut seen = BitVec::new(graph.num_nodes());
+    let mut d = Vec::with_capacity(num_nodes);
 
-    seen.set(start, true);
+    for _ in 0..num_nodes {
+        d.push(AtomicUsize::new(0usize));
+    }
 
-    frontier.push((start, 0));
+    let mut visit = webgraph_algo::algo::visits::breadth_first::ParFairNoPred::new(graph, 1);
 
-    while !frontier.is_empty() {
-        let mut frontier_next = Vec::new();
-
-        for (current_node, l) in frontier {
-            let ll = l + 1;
-
-            for succ in graph.successors(current_node) {
-                if !seen.get(succ) {
-                    diameter = diameter.max(ll);
-                    seen.set(succ, true);
-                    count += 1;
-                    distance += ll;
-                    frontier_next.push((succ, ll));
+    visit
+        .par_visit(
+            root,
+            |event| {
+                if let EventNoPred::Unknown { curr, distance, .. } = event {
+                    d[curr].store(distance, Ordering::Relaxed);
                 }
-            }
+
+                Continue::<G>(())
+            },
+            &threads![],
+            no_logging![],
+        )
+        .continue_value();
+
+    let mut seen = BitVec::new(num_nodes);
+
+    for (v, au) in d.iter().enumerate() {
+        let dist = au.load(Ordering::Relaxed);
+
+        if dist < 1 {
+            continue;
         }
 
-        frontier = frontier_next;
+        distance += dist;
+        count += 1;
+        diameter = diameter.max(dist);
+
+        seen.set(v, true);
     }
+
+    (seen, diameter, distance, count)
+}
+
+fn bfs(
+    start: usize,
+    channel: Sender<BitVec>,
+    graph_filename: Arc<String>,
+) -> (usize, usize, usize) {
+    let graph = BvGraph::with_basename(graph_filename.deref())
+        .load()
+        .unwrap();
+
+    let (seen, diameter, distance, count) = visit(start, graph);
 
     channel.send(seen).unwrap();
 
     (diameter, distance, count)
 }
 
-fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
-    k: usize,
-    agraph: Arc<T>,
-    r: &mut ThreadRng,
-) -> Vec<usize> {
-    let num_nodes = agraph.num_nodes();
-
+fn sample(k: usize, num_nodes: usize, agraph: Arc<String>, r: &mut ThreadRng) -> Vec<usize> {
     let (tx, rx) = std::sync::mpsc::channel();
 
     for _ in 0..k {
@@ -109,16 +139,15 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let graph_filename = &args[1];
-    let graph_filename_t = &args[2];
+    let graph_filename = args[1].clone();
+    let graph_filename_t = args[2].clone();
     let mut slot: usize = args[3].parse().unwrap();
     let epsilon: f64 = args[4].parse().unwrap();
     let truth: bool = args[5].parse().unwrap();
     let dummy: bool = args[6].parse().unwrap();
 
     let mut r = rand::thread_rng();
-    let graph = BvGraph::with_basename(graph_filename).load().unwrap();
-    let graph_t = BvGraph::with_basename(graph_filename_t).load().unwrap();
+    let graph = BvGraph::with_basename(&graph_filename).load().unwrap();
 
     let num_nodes = graph.num_nodes();
     let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
@@ -131,8 +160,8 @@ fn main() {
         slot
     );
 
-    let ag = Arc::new(graph);
-    let ag_t = Arc::new(graph_t);
+    let ag = Arc::new(graph_filename);
+    let ag_t = Arc::new(graph_filename_t);
 
     let mut averages_dist = Vec::new();
     let mut averages_diameter = Vec::new();
@@ -160,7 +189,7 @@ fn main() {
             if dummy {
                 (0..slot).map(|_j| r.gen_range(0..num_nodes)).collect()
             } else {
-                sample(slot, ag_t.clone(), &mut r)
+                sample(slot, num_nodes, ag_t.clone(), &mut r)
             }
         };
         println!("sampled in {:?}", instant.elapsed());
