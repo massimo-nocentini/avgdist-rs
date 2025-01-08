@@ -12,3 +12,9 @@ webgraph:
 	webgraph from arcs --exact --source-column 1 --target-column 0 --num-nodes 1000 1k-10m-t < 1k-10m.csv
 	webgraph build ef 1k-10m
 	webgraph build ef 1k-10m-t
+
+run:
+	mkdir -p result
+	time cargo run --release --bin avgdist-rs ./1k-10m ./1k-10m-t 60 0.1 false true > result/1k-10m-01e-d.out
+	time cargo run --release --bin avgdist-rs ./1k-10m ./1k-10m-t 60 0.1 false false > result/1k-10m-01e.out
+	time cargo run --release --bin avgdist-rs ./1k-10m ./1k-10m-t 60 0.1 true false >> result/1k-10m-01e.out
