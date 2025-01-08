@@ -13,12 +13,12 @@ webgraph:
 	webgraph build ef 1k-10m
 	webgraph build ef 1k-10m-t
 
-	webgraph from arcs --exact --num-nodes 1000 2k-10m < 2k-10m.csv
+	webgraph from arcs --exact --num-nodes 2000 2k-10m < 2k-10m.csv
 	webgraph from arcs --exact --source-column 1 --target-column 0 --num-nodes 1000 2k-10m-t < 2k-10m.csv
 	webgraph build ef 2k-10m
 	webgraph build ef 2k-10m-t
 
-	webgraph from arcs --exact --num-nodes 1000 5k-10m < 5k-10m.csv
+	webgraph from arcs --exact --num-nodes 5000 5k-10m < 5k-10m.csv
 	webgraph from arcs --exact --source-column 1 --target-column 0 --num-nodes 1000 5k-10m-t < 5k-10m.csv
 	webgraph build ef 5k-10m
 	webgraph build ef 5k-10m-t
