@@ -10,14 +10,14 @@ use webgraph::traits::SequentialLabeling;
 use webgraph_algo::algo::visits::Parallel;
 use webgraph_algo::{prelude::breadth_first::EventNoPred, threads};
 
-fn visit<G>(root: usize, graph: G)
+fn visit<G>(root: usize, graph: G) -> Vec<(usize, usize)>
 where
     G: RandomAccessGraph + Send + Sync,
 {
     let mut d = Vec::with_capacity(graph.num_nodes());
 
     for _ in 0..graph.num_nodes() {
-        d.push(AtomicUsize::new(usize::MAX));
+        d.push(AtomicUsize::new(0usize));
     }
 
     let mut visit = webgraph_algo::algo::visits::breadth_first::ParFairNoPred::new(graph, 1);
@@ -26,7 +26,6 @@ where
         .par_visit(
             root,
             |event| {
-                // Set distance from 0
                 if let EventNoPred::Unknown { curr, distance, .. } = event {
                     d[curr].store(distance, Ordering::Relaxed);
                 }
@@ -37,6 +36,8 @@ where
             no_logging![],
         )
         .continue_value();
+
+    d.iter().enumerate().map(|(v, d)| (v, d.load(Ordering::Relaxed))).collect()
 }
 
 fn main() {
