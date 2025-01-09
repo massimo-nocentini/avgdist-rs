@@ -20,6 +20,8 @@ fn bfs<T: RandomAccessGraph>(
     let mut count = 0usize;
     let mut seen = BitVec::new(graph.num_nodes());
 
+    let mut good = BitVec::new(graph.num_nodes());
+
     seen.set(start, true);
 
     frontier.push((start, 0));
@@ -30,7 +32,9 @@ fn bfs<T: RandomAccessGraph>(
         for (current_node, l) in frontier {
             let ll = l + 1;
 
-            for succ in graph.successors(current_node) {
+            good.set(current_node, true);
+            for (i, succ) in graph.successors(current_node).into_iter().enumerate() {
+                good.set(current_node, i > 0);
                 if !seen.get(succ) {
                     diameter = diameter.max(ll);
                     seen.set(succ, true);
@@ -44,7 +48,7 @@ fn bfs<T: RandomAccessGraph>(
         frontier = frontier_next;
     }
 
-    channel.send(seen).unwrap();
+    channel.send(good).unwrap();
 
     (diameter, distance, count)
 }
