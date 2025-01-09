@@ -48,7 +48,8 @@ fn bfs<T: RandomAccessGraph>(
         frontier = frontier_next;
     }
 
-    channel.send(good).unwrap();
+    good.set(start, false);
+    channel.send(seen).unwrap();
 
     (diameter, distance, count)
 }
@@ -201,6 +202,9 @@ fn main() {
 
         println!("bfses in {:?}", instant.elapsed());
 
+        if count == 0 {
+            println!("----------------- sum in {:}", sum);
+        }
         let adist = (sum as f64) / (count as f64);
         let adia = dia as f64;
 
