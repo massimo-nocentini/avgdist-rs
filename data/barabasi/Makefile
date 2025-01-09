@@ -10,22 +10,22 @@ generate:
 
 webgraph:
 	webgraph from arcs --exact --num-nodes 1000 1k-10m < 1k-10m.csv
-	webgraph from arcs --exact --source-column 1 --target-column 0 --num-nodes 1000 1k-10m-t < 1k-10m.csv
+	webgraph transform transpose 1k-10m 1k-10m-t
 	webgraph build ef 1k-10m
 	webgraph build ef 1k-10m-t
 
 	webgraph from arcs --exact --num-nodes 2000 2k-10m < 2k-10m.csv
-	webgraph from arcs --exact --source-column 1 --target-column 0 --num-nodes 2000 2k-10m-t < 2k-10m.csv
+	webgraph transform transpose 2k-10m 2k-10m-t
 	webgraph build ef 2k-10m
 	webgraph build ef 2k-10m-t
 
 	webgraph from arcs --exact --num-nodes 5000 5k-10m < 5k-10m.csv
-	webgraph from arcs --exact --source-column 1 --target-column 0 --num-nodes 5000 5k-10m-t < 5k-10m.csv
+	webgraph transform transpose 5k-10m 5k-10m-t
 	webgraph build ef 5k-10m
 	webgraph build ef 5k-10m-t
 
 	webgraph from arcs --exact --num-nodes 10000 10k-10m < 10k-10m.csv
-	webgraph from arcs --exact --source-column 1 --target-column 0 --num-nodes 10000 10k-10m-t < 10k-10m.csv
+	webgraph transform transpose 10k-10m 10k-10m-t
 	webgraph build ef 10k-10m
 	webgraph build ef 10k-10m-t
 
