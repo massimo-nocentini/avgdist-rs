@@ -9,4 +9,4 @@ m = int(sys.argv[2])
 G = dual_barabasi_albert_graph (nodes, m, 3, 0.6)
 
 for u, v in G.edges():
-    print (str(u) + "," + str(v))
+    print (str(v) + "," + str(u))
