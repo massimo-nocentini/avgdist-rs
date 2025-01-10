@@ -48,7 +48,7 @@ fn bfs<T: RandomAccessGraph>(
         frontier = frontier_next;
     }
 
-    channel.send(good).unwrap();
+    channel.send(seen).unwrap();
 
     (diameter, distance, count)
 }
@@ -86,7 +86,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
         cross[i] += cross[i - 1];
     }
 
-    let maxc = *cross.last().unwrap();
+    let maxc = cross[num_nodes - 1];
 
     let mut sampled = vec![0usize; k];
 
@@ -201,16 +201,15 @@ fn main() {
 
         println!("bfses in {:?}", instant.elapsed());
 
-        if count == 0 {
-            println!("----------------- sum in {:}", sum);
+        if count > 0 {
+            let adist = (sum as f64) / (count as f64);
+            let adia = dia as f64;
+
+            println!("\naverages: distance {:.3}, diameter {:.3}.", adist, adia);
+
+            averages_dist.push(adist);
+            averages_diameter.push(adia);
         }
-        let adist = (sum as f64) / (count as f64);
-        let adia = dia as f64;
-
-        println!("\naverages: distance {:.3}, diameter {:.3}.", adist, adia);
-
-        averages_dist.push(adist);
-        averages_diameter.push(adia);
 
         let avgdist: f64 = averages_dist.iter().sum();
         let avgdia: f64 = averages_diameter.iter().sum();
