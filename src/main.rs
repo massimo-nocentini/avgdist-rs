@@ -48,8 +48,7 @@ fn bfs<T: RandomAccessGraph>(
         frontier = frontier_next;
     }
 
-    good.set(start, false);
-    channel.send(seen).unwrap();
+    channel.send(good).unwrap();
 
     (diameter, distance, count)
 }
