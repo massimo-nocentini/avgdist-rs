@@ -28,15 +28,15 @@ webgraph:
 
 run:
 	mkdir -p result
-	time cargo run --release --bin avgdist-rs ./1k-10m ./1k-10m-t 60 0.1 false true > result/1k-10m-01e-d.out
-	time cargo run --release --bin avgdist-rs ./1k-10m ./1k-10m-t 60 0.1 false false > result/1k-10m-01e.out
-	time cargo run --release --bin avgdist-rs ./1k-10m ./1k-10m-t 60 0.1 true false >> result/1k-10m-01e.out
-	time cargo run --release --bin avgdist-rs ./2k-10m ./2k-10m-t 60 0.1 false true > result/2k-10m-01e-d.out
-	time cargo run --release --bin avgdist-rs ./2k-10m ./2k-10m-t 60 0.1 false false > result/2k-10m-01e.out
-	time cargo run --release --bin avgdist-rs ./2k-10m ./2k-10m-t 60 0.1 true false >> result/2k-10m-01e.out
-	time cargo run --release --bin avgdist-rs ./5k-10m ./5k-10m-t 60 0.1 false true > result/5k-10m-01e-d.out
-	time cargo run --release --bin avgdist-rs ./5k-10m ./5k-10m-t 60 0.1 false false > result/5k-10m-01e.out
-	time cargo run --release --bin avgdist-rs ./5k-10m ./5k-10m-t 60 0.1 true false >> result/5k-10m-01e.out
-	time cargo run --release --bin avgdist-rs ./10k-10m ./10k-10m-t 60 0.1 false true > result/10k-10m-01e-d.out
-	time cargo run --release --bin avgdist-rs ./10k-10m ./10k-10m-t 60 0.1 false false > result/10k-10m-01e.out
-	time cargo run --release --bin avgdist-rs ./10k-10m ./10k-10m-t 60 0.1 true false >> result/10k-10m-01e.out
+	time cargo run --release --bin avgdist-rs ./1k-10m ./1k-10m-t 1 0.1 false true > result/1k-10m-01e-d.out
+	time cargo run --release --bin avgdist-rs ./1k-10m ./1k-10m-t 1 0.1 false false > result/1k-10m-01e.out
+	time cargo run --release --bin avgdist-rs ./1k-10m ./1k-10m-t 1 0.1 true false >> result/1k-10m-01e.out
+	time cargo run --release --bin avgdist-rs ./2k-10m ./2k-10m-t 1 0.1 false true > result/2k-10m-01e-d.out
+	time cargo run --release --bin avgdist-rs ./2k-10m ./2k-10m-t 1 0.1 false false > result/2k-10m-01e.out
+	time cargo run --release --bin avgdist-rs ./2k-10m ./2k-10m-t 1 0.1 true false >> result/2k-10m-01e.out
+	time cargo run --release --bin avgdist-rs ./5k-10m ./5k-10m-t 1 0.1 false true > result/5k-10m-01e-d.out
+	time cargo run --release --bin avgdist-rs ./5k-10m ./5k-10m-t 1 0.1 false false > result/5k-10m-01e.out
+	time cargo run --release --bin avgdist-rs ./5k-10m ./5k-10m-t 1 0.1 true false >> result/5k-10m-01e.out
+	time cargo run --release --bin avgdist-rs ./10k-10m ./10k-10m-t 1 0.1 false true > result/10k-10m-01e-d.out
+	time cargo run --release --bin avgdist-rs ./10k-10m ./10k-10m-t 1 0.1 false false > result/10k-10m-01e.out
+	time cargo run --release --bin avgdist-rs ./10k-10m ./10k-10m-t 1 0.1 true false >> result/10k-10m-01e.out
