@@ -1,45 +1,2155 @@
-|V| = 5000, |E| = 24935, |S| = 308, s = 60.
+|V| = 5000, |E| = 24935, |S| = 308, s = 1.
 
-*** iteration 1, batch size 60, remaining 248.
-sampled in 1.687µs
-<: 1.214215ms | <: 3.321657ms | <: 3.373774ms | <: 11.192µs | <: 3.351908ms | <: 3.277837ms | <: 3.284706ms | <: 3.322424ms | <: 3.324172ms | <: 2.961464ms | <: 3.273242ms | <: 3.293058ms | <: 3.296806ms | <: 3.323373ms | <: 3.352962ms | <: 3.300533ms | <: 3.304351ms | <: 3.305595ms | <: 3.33377ms | <: 3.1983ms | <: 3.329504ms | <: 3.304195ms | <: 3.334309ms | <: 3.317113ms | <: 3.022418ms | <: 3.322284ms | <: 3.321595ms | <: 3.317448ms | <: 3.323064ms | <: 3.332899ms | <: 3.332925ms | <: 3.36938ms | <: 3.383818ms | <: 3.389076ms | <: 3.337028ms | <: 3.359776ms | <: 3.288172ms | <: 3.06599ms | <: 3.343111ms | <: 3.367925ms | <: 3.366608ms | <: 3.308381ms | <: 3.256828ms | <: 3.300102ms | <: 3.293535ms | <: 3.213214ms | <: 3.254914ms | <: 3.108562ms | <: 3.28644ms | <: 3.304483ms | <: 3.334833ms | <: 3.045643ms | <: 3.31334ms | <: 3.287788ms | <: 3.400501ms | <: 3.097065ms | <: 3.384052ms | <: 3.372107ms | <: 5.09964ms | <: 5.097177ms | bfses in 10.929824ms
+*** iteration 1, batch size 1, remaining 307.
+sampled in 826ns
+<: 3.165714ms | bfses in 3.481185ms
 
-averages: distance 5.422, diameter 9.000.
-average of averages: distance 5.422, diameter 9.000.
+averages: distance 5.177, diameter 8.000.
+average of averages: distance 5.177, diameter 8.000.
 
-*** iteration 2, batch size 60, remaining 188.
-sampled in 2.052µs
-<: 2.281549ms | <: 1.526588ms | <: 3.161378ms | <: 2.258323ms | <: 3.20623ms | <: 3.200596ms | <: 2.275169ms | <: 3.154583ms | <: 3.150973ms | <: 3.216794ms | <: 3.147793ms | <: 3.225063ms | <: 3.155789ms | <: 3.22ms | <: 3.195354ms | <: 3.166445ms | <: 3.202ms | <: 3.242045ms | <: 2.657739ms | <: 3.239281ms | <: 3.248092ms | <: 3.214754ms | <: 3.253821ms | <: 3.211051ms | <: 3.247116ms | <: 3.213016ms | <: 3.233944ms | <: 3.66763ms | <: 3.252351ms | <: 1.278312ms | <: 3.272504ms | <: 3.2283ms | <: 3.253771ms | <: 3.284919ms | <: 3.31216ms | <: 3.247476ms | <: 3.303173ms | <: 3.249074ms | <: 3.278468ms | <: 3.269801ms | <: 3.295465ms | <: 3.104619ms | <: 3.383775ms | <: 3.385857ms | <: 2.860018ms | <: 2.309713ms | <: 2.432793ms | <: 3.377034ms | <: 3.382909ms | <: 3.400792ms | <: 3.293595ms | <: 3.42139ms | <: 3.286552ms | <: 2.207475ms | <: 3.22932ms | <: 3.195066ms | <: 3.362522ms | <: 3.291614ms | <: 3.395461ms | <: 3.783105ms | bfses in 7.298765ms
+*** iteration 2, batch size 1, remaining 306.
+sampled in 191ns
+<: 3.024002ms | bfses in 3.169891ms
 
-averages: distance 5.525, diameter 10.000.
-average of averages: distance 5.474, diameter 9.500.
+averages: distance 5.314, diameter 8.000.
+average of averages: distance 5.246, diameter 8.000.
 
-*** iteration 3, batch size 60, remaining 128.
-sampled in 3.008µs
-<: 4.15µs | <: 1.548414ms | <: 2.103891ms | <: 2.42773ms | <: 2.279859ms | <: 2.263751ms | <: 2.4918ms | <: 2.275968ms | <: 2.918094ms | <: 3.137595ms | <: 1.584128ms | <: 3.198166ms | <: 3.151392ms | <: 2.921127ms | <: 2.267535ms | <: 3.202575ms | <: 1.512297ms | <: 2.633891ms | <: 2.893118ms | <: 1.129802ms | <: 3.202974ms | <: 2.677547ms | <: 2.505437ms | <: 2.888761ms | <: 2.889406ms | <: 2.126506ms | <: 2.660143ms | <: 3.234483ms | <: 3.230717ms | <: 1.60723ms | <: 3.198052ms | <: 3.17652ms | <: 2.672208ms | <: 2.937299ms | <: 3.838016ms | <: 2.652641ms | <: 3.184823ms | <: 2.964084ms | <: 2.031258ms | <: 3.221857ms | <: 2.933226ms | <: 2.734332ms | <: 3.508584ms | <: 3.224269ms | <: 3.254489ms | <: 3.312997ms | <: 2.753043ms | <: 3.250757ms | <: 3.243587ms | <: 2.993862ms | <: 3.253804ms | <: 3.2879ms | <: 3.302684ms | <: 3.272091ms | <: 3.274978ms | <: 3.331752ms | <: 3.320671ms | <: 3.970784ms | <: 5.009027ms | <: 5.05926ms | bfses in 7.729736ms
+*** iteration 3, batch size 1, remaining 305.
+sampled in 86ns
+<: 4.053µs | bfses in 93.427µs
+average of averages: distance 5.246, diameter 8.000.
 
-averages: distance 5.396, diameter 9.000.
-average of averages: distance 5.448, diameter 9.333.
+*** iteration 4, batch size 1, remaining 304.
+sampled in 63ns
+<: 2.986636ms | bfses in 3.226672ms
 
-*** iteration 4, batch size 60, remaining 68.
-sampled in 1.834µs
-<: 2.271456ms | <: 2.137849ms | <: 2.587272ms | <: 2.979839ms | <: 2.741781ms | <: 3.00448ms | <: 2.990085ms | <: 3.049236ms | <: 3.043105ms | <: 3.166689ms | <: 3.336952ms | <: 2.974528ms | <: 2.450368ms | <: 1.169759ms | <: 3.207578ms | <: 3.227773ms | <: 3.194576ms | <: 3.035134ms | <: 3.261129ms | <: 3.167304ms | <: 3.178299ms | <: 3.055299ms | <: 2.959983ms | <: 3.248929ms | <: 1.745983ms | <: 3.252444ms | <: 3.229499ms | <: 3.219311ms | <: 3.259263ms | <: 3.31438ms | <: 2.138407ms | <: 2.673839ms | <: 3.233889ms | <: 3.258544ms | <: 3.197711ms | <: 2.552593ms | <: 3.254207ms | <: 3.097957ms | <: 2.971109ms | <: 3.252552ms | <: 3.429003ms | <: 3.244576ms | <: 3.316796ms | <: 2.020828ms | <: 2.337064ms | <: 2.717875ms | <: 3.251544ms | <: 3.233898ms | <: 3.229359ms | <: 3.294078ms | <: 3.277282ms | <: 3.307581ms | <: 3.409289ms | <: 3.258489ms | <: 3.325659ms | <: 3.305866ms | <: 3.769959ms | <: 3.782798ms | <: 4.825414ms | <: 4.818029ms | bfses in 7.534314ms
+averages: distance 4.828, diameter 8.000.
+average of averages: distance 5.106, diameter 8.000.
 
-averages: distance 5.515, diameter 10.000.
-average of averages: distance 5.465, diameter 9.500.
+*** iteration 5, batch size 1, remaining 303.
+sampled in 310ns
+<: 3.03502ms | bfses in 3.291989ms
 
-*** iteration 5, batch size 60, remaining 8.
-sampled in 1.86µs
-<: 1.96967ms | <: 2.419235ms | <: 2.419346ms | <: 2.113224ms | <: 2.507742ms | <: 2.621631ms | <: 2.627513ms | <: 2.842007ms | <: 2.622548ms | <: 2.901951ms | <: 2.629617ms | <: 2.469604ms | <: 3.02163ms | <: 3.010123ms | <: 3.022866ms | <: 3.198976ms | <: 2.99642ms | <: 3.187483ms | <: 2.959196ms | <: 1.150159ms | <: 3.008821ms | <: 2.357116ms | <: 3.170499ms | <: 2.992466ms | <: 2.910916ms | <: 1.778388ms | <: 2.984404ms | <: 3.19975ms | <: 2.887266ms | <: 2.995314ms | <: 2.970124ms | <: 2.45742ms | <: 3.214846ms | <: 2.283281ms | <: 2.962046ms | <: 2.658345ms | <: 2.662386ms | <: 3.195002ms | <: 3.187783ms | <: 2.108875ms | <: 3.066265ms | <: 3.214064ms | <: 2.015242ms | <: 3.118766ms | <: 3.221229ms | <: 3.080294ms | <: 3.087988ms | <: 2.697594ms | <: 3.095569ms | <: 2.913022ms | <: 3.268515ms | <: 3.24172ms | <: 3.275423ms | <: 2.515907ms | <: 3.324467ms | <: 3.237291ms | <: 3.008355ms | <: 3.229727ms | <: 3.343966ms | <: 3.339039ms | bfses in 6.110296ms
+averages: distance 5.178, diameter 8.000.
+average of averages: distance 5.124, diameter 8.000.
 
-averages: distance 5.513, diameter 10.000.
-average of averages: distance 5.474, diameter 9.600.
+*** iteration 6, batch size 1, remaining 302.
+sampled in 394ns
+<: 3.004215ms | bfses in 3.20645ms
 
-*** iteration 6, batch size 8, remaining 0.
-sampled in 784ns
-<: 1.661334ms | <: 2.237219ms | <: 2.483087ms | <: 3.166713ms | <: 3.143622ms | <: 3.077138ms | <: 3.210139ms | <: 3.213991ms | bfses in 3.605682ms
+averages: distance 5.468, diameter 8.000.
+average of averages: distance 5.193, diameter 8.000.
 
-averages: distance 5.400, diameter 9.000.
-average of averages: distance 5.462, diameter 9.500.
+*** iteration 7, batch size 1, remaining 301.
+sampled in 371ns
+<: 2.990436ms | bfses in 3.249718ms
 
-Total time: 43.584639ms
+averages: distance 5.244, diameter 8.000.
+average of averages: distance 5.202, diameter 8.000.
+
+*** iteration 8, batch size 1, remaining 300.
+sampled in 413ns
+<: 2.987191ms | bfses in 3.254973ms
+
+averages: distance 5.039, diameter 8.000.
+average of averages: distance 5.178, diameter 8.000.
+
+*** iteration 9, batch size 1, remaining 299.
+sampled in 483ns
+<: 2.996031ms | bfses in 3.262045ms
+
+averages: distance 5.489, diameter 9.000.
+average of averages: distance 5.217, diameter 8.125.
+
+*** iteration 10, batch size 1, remaining 298.
+sampled in 463ns
+<: 3.008627ms | bfses in 3.274936ms
+
+averages: distance 4.982, diameter 8.000.
+average of averages: distance 5.191, diameter 8.111.
+
+*** iteration 11, batch size 1, remaining 297.
+sampled in 474ns
+<: 2.989085ms | bfses in 3.198387ms
+
+averages: distance 5.245, diameter 8.000.
+average of averages: distance 5.196, diameter 8.100.
+
+*** iteration 12, batch size 1, remaining 296.
+sampled in 470ns
+<: 2.993565ms | bfses in 3.281625ms
+
+averages: distance 5.399, diameter 8.000.
+average of averages: distance 5.215, diameter 8.091.
+
+*** iteration 13, batch size 1, remaining 295.
+sampled in 584ns
+<: 3.015612ms | bfses in 3.294641ms
+
+averages: distance 5.392, diameter 8.000.
+average of averages: distance 5.230, diameter 8.083.
+
+*** iteration 14, batch size 1, remaining 294.
+sampled in 581ns
+<: 2.996673ms | bfses in 3.281704ms
+
+averages: distance 6.082, diameter 9.000.
+average of averages: distance 5.295, diameter 8.154.
+
+*** iteration 15, batch size 1, remaining 293.
+sampled in 577ns
+<: 1.072916ms | bfses in 1.309777ms
+
+averages: distance 5.497, diameter 8.000.
+average of averages: distance 5.310, diameter 8.143.
+
+*** iteration 16, batch size 1, remaining 292.
+sampled in 798ns
+<: 2.984664ms | bfses in 3.240241ms
+
+averages: distance 5.146, diameter 8.000.
+average of averages: distance 5.299, diameter 8.133.
+
+*** iteration 17, batch size 1, remaining 291.
+sampled in 773ns
+<: 2.98649ms | bfses in 3.29428ms
+
+averages: distance 5.489, diameter 9.000.
+average of averages: distance 5.311, diameter 8.188.
+
+*** iteration 18, batch size 1, remaining 290.
+sampled in 749ns
+<: 2.990733ms | bfses in 3.297902ms
+
+averages: distance 5.149, diameter 8.000.
+average of averages: distance 5.301, diameter 8.176.
+
+*** iteration 19, batch size 1, remaining 289.
+sampled in 826ns
+<: 2.95546ms | bfses in 3.194595ms
+
+averages: distance 5.711, diameter 8.000.
+average of averages: distance 5.324, diameter 8.167.
+
+*** iteration 20, batch size 1, remaining 288.
+sampled in 836ns
+<: 2.991811ms | bfses in 3.304306ms
+
+averages: distance 5.019, diameter 8.000.
+average of averages: distance 5.308, diameter 8.158.
+
+*** iteration 21, batch size 1, remaining 287.
+sampled in 800ns
+<: 2.986693ms | bfses in 3.318186ms
+
+averages: distance 5.273, diameter 8.000.
+average of averages: distance 5.306, diameter 8.150.
+
+*** iteration 22, batch size 1, remaining 286.
+sampled in 828ns
+<: 2.99415ms | bfses in 3.304043ms
+
+averages: distance 5.369, diameter 8.000.
+average of averages: distance 5.309, diameter 8.143.
+
+*** iteration 23, batch size 1, remaining 285.
+sampled in 1.584µs
+<: 2.995144ms | bfses in 3.317301ms
+
+averages: distance 5.351, diameter 8.000.
+average of averages: distance 5.311, diameter 8.136.
+
+*** iteration 24, batch size 1, remaining 284.
+sampled in 850ns
+<: 2.996593ms | bfses in 3.311088ms
+
+averages: distance 5.697, diameter 8.000.
+average of averages: distance 5.328, diameter 8.130.
+
+*** iteration 25, batch size 1, remaining 283.
+sampled in 827ns
+<: 3.004255ms | bfses in 3.323673ms
+
+averages: distance 5.353, diameter 8.000.
+average of averages: distance 5.329, diameter 8.125.
+
+*** iteration 26, batch size 1, remaining 282.
+sampled in 843ns
+<: 2.991038ms | bfses in 3.331895ms
+
+averages: distance 5.106, diameter 8.000.
+average of averages: distance 5.320, diameter 8.120.
+
+*** iteration 27, batch size 1, remaining 281.
+sampled in 845ns
+<: 2.986405ms | bfses in 3.305032ms
+
+averages: distance 5.917, diameter 9.000.
+average of averages: distance 5.343, diameter 8.154.
+
+*** iteration 28, batch size 1, remaining 280.
+sampled in 832ns
+<: 2.995899ms | bfses in 3.26145ms
+
+averages: distance 5.162, diameter 8.000.
+average of averages: distance 5.336, diameter 8.148.
+
+*** iteration 29, batch size 1, remaining 279.
+sampled in 844ns
+<: 2.980861ms | bfses in 3.270902ms
+
+averages: distance 5.645, diameter 8.000.
+average of averages: distance 5.347, diameter 8.143.
+
+*** iteration 30, batch size 1, remaining 278.
+sampled in 847ns
+<: 3.008412ms | bfses in 3.323491ms
+
+averages: distance 5.606, diameter 9.000.
+average of averages: distance 5.356, diameter 8.172.
+
+*** iteration 31, batch size 1, remaining 277.
+sampled in 836ns
+<: 3.003933ms | bfses in 3.329638ms
+
+averages: distance 6.106, diameter 9.000.
+average of averages: distance 5.381, diameter 8.200.
+
+*** iteration 32, batch size 1, remaining 276.
+sampled in 842ns
+<: 2.993407ms | bfses in 3.315433ms
+
+averages: distance 4.919, diameter 8.000.
+average of averages: distance 5.366, diameter 8.194.
+
+*** iteration 33, batch size 1, remaining 275.
+sampled in 862ns
+<: 2.973542ms | bfses in 3.31675ms
+
+averages: distance 5.251, diameter 8.000.
+average of averages: distance 5.363, diameter 8.188.
+
+*** iteration 34, batch size 1, remaining 274.
+sampled in 828ns
+<: 3.003357ms | bfses in 3.272672ms
+
+averages: distance 5.378, diameter 8.000.
+average of averages: distance 5.363, diameter 8.182.
+
+*** iteration 35, batch size 1, remaining 273.
+sampled in 850ns
+<: 2.99885ms | bfses in 3.334148ms
+
+averages: distance 5.425, diameter 8.000.
+average of averages: distance 5.365, diameter 8.176.
+
+*** iteration 36, batch size 1, remaining 272.
+sampled in 849ns
+<: 2.994725ms | bfses in 3.317939ms
+
+averages: distance 5.348, diameter 8.000.
+average of averages: distance 5.364, diameter 8.171.
+
+*** iteration 37, batch size 1, remaining 271.
+sampled in 877ns
+<: 3.000804ms | bfses in 3.325584ms
+
+averages: distance 5.719, diameter 9.000.
+average of averages: distance 5.374, diameter 8.194.
+
+*** iteration 38, batch size 1, remaining 270.
+sampled in 815ns
+<: 3.014068ms | bfses in 3.337057ms
+
+averages: distance 5.027, diameter 8.000.
+average of averages: distance 5.365, diameter 8.189.
+
+*** iteration 39, batch size 1, remaining 269.
+sampled in 838ns
+<: 2.992992ms | bfses in 3.329016ms
+
+averages: distance 5.179, diameter 8.000.
+average of averages: distance 5.360, diameter 8.184.
+
+*** iteration 40, batch size 1, remaining 268.
+sampled in 821ns
+<: 3.013231ms | bfses in 3.312343ms
+
+averages: distance 6.061, diameter 9.000.
+average of averages: distance 5.378, diameter 8.205.
+
+*** iteration 41, batch size 1, remaining 267.
+sampled in 1.59µs
+<: 3.004849ms | bfses in 3.324843ms
+
+averages: distance 5.312, diameter 8.000.
+average of averages: distance 5.376, diameter 8.200.
+
+*** iteration 42, batch size 1, remaining 266.
+sampled in 878ns
+<: 2.993866ms | bfses in 3.330343ms
+
+averages: distance 4.934, diameter 8.000.
+average of averages: distance 5.366, diameter 8.195.
+
+*** iteration 43, batch size 1, remaining 265.
+sampled in 920ns
+<: 3.015967ms | bfses in 3.361217ms
+
+averages: distance 5.185, diameter 8.000.
+average of averages: distance 5.361, diameter 8.190.
+
+*** iteration 44, batch size 1, remaining 264.
+sampled in 895ns
+<: 2.996906ms | bfses in 3.333937ms
+
+averages: distance 5.954, diameter 9.000.
+average of averages: distance 5.375, diameter 8.209.
+
+*** iteration 45, batch size 1, remaining 263.
+sampled in 893ns
+<: 3.003509ms | bfses in 3.344595ms
+
+averages: distance 5.928, diameter 9.000.
+average of averages: distance 5.388, diameter 8.227.
+
+*** iteration 46, batch size 1, remaining 262.
+sampled in 892ns
+<: 3.029269ms | bfses in 3.38408ms
+
+averages: distance 5.235, diameter 8.000.
+average of averages: distance 5.384, diameter 8.222.
+
+*** iteration 47, batch size 1, remaining 261.
+sampled in 901ns
+<: 2.991781ms | bfses in 3.330474ms
+
+averages: distance 5.476, diameter 8.000.
+average of averages: distance 5.386, diameter 8.217.
+
+*** iteration 48, batch size 1, remaining 260.
+sampled in 894ns
+<: 3.001491ms | bfses in 3.338425ms
+
+averages: distance 5.393, diameter 8.000.
+average of averages: distance 5.386, diameter 8.213.
+
+*** iteration 49, batch size 1, remaining 259.
+sampled in 888ns
+<: 3.0031ms | bfses in 3.38416ms
+
+averages: distance 6.118, diameter 9.000.
+average of averages: distance 5.402, diameter 8.229.
+
+*** iteration 50, batch size 1, remaining 258.
+sampled in 917ns
+<: 2.996401ms | bfses in 3.33806ms
+
+averages: distance 5.842, diameter 8.000.
+average of averages: distance 5.411, diameter 8.224.
+
+*** iteration 51, batch size 1, remaining 257.
+sampled in 918ns
+<: 3.000732ms | bfses in 3.352171ms
+
+averages: distance 5.708, diameter 8.000.
+average of averages: distance 5.417, diameter 8.220.
+
+*** iteration 52, batch size 1, remaining 256.
+sampled in 915ns
+<: 3.000021ms | bfses in 3.339657ms
+
+averages: distance 5.698, diameter 9.000.
+average of averages: distance 5.422, diameter 8.235.
+
+*** iteration 53, batch size 1, remaining 255.
+sampled in 946ns
+<: 2.984615ms | bfses in 3.263367ms
+
+averages: distance 5.631, diameter 8.000.
+average of averages: distance 5.426, diameter 8.231.
+
+*** iteration 54, batch size 1, remaining 254.
+sampled in 917ns
+<: 3.042389ms | bfses in 3.376269ms
+
+averages: distance 5.380, diameter 8.000.
+average of averages: distance 5.425, diameter 8.226.
+
+*** iteration 55, batch size 1, remaining 253.
+sampled in 922ns
+<: 1.422426ms | bfses in 1.710331ms
+
+averages: distance 6.812, diameter 10.000.
+average of averages: distance 5.451, diameter 8.259.
+
+*** iteration 56, batch size 1, remaining 252.
+sampled in 926ns
+<: 2.991745ms | bfses in 3.34541ms
+
+averages: distance 5.764, diameter 8.000.
+average of averages: distance 5.457, diameter 8.255.
+
+*** iteration 57, batch size 1, remaining 251.
+sampled in 910ns
+<: 1.428904ms | bfses in 1.678687ms
+
+averages: distance 5.149, diameter 8.000.
+average of averages: distance 5.451, diameter 8.250.
+
+*** iteration 58, batch size 1, remaining 250.
+sampled in 929ns
+<: 3.004751ms | bfses in 3.341855ms
+
+averages: distance 5.810, diameter 8.000.
+average of averages: distance 5.457, diameter 8.246.
+
+*** iteration 59, batch size 1, remaining 249.
+sampled in 912ns
+<: 2.998162ms | bfses in 3.339107ms
+
+averages: distance 5.519, diameter 8.000.
+average of averages: distance 5.458, diameter 8.241.
+
+*** iteration 60, batch size 1, remaining 248.
+sampled in 898ns
+<: 1.998241ms | bfses in 2.306707ms
+
+averages: distance 5.728, diameter 8.000.
+average of averages: distance 5.463, diameter 8.237.
+
+*** iteration 61, batch size 1, remaining 247.
+sampled in 1.644µs
+<: 3.010822ms | bfses in 3.349777ms
+
+averages: distance 5.584, diameter 9.000.
+average of averages: distance 5.465, diameter 8.250.
+
+*** iteration 62, batch size 1, remaining 246.
+sampled in 927ns
+<: 3.00425ms | bfses in 3.34278ms
+
+averages: distance 6.225, diameter 9.000.
+average of averages: distance 5.477, diameter 8.262.
+
+*** iteration 63, batch size 1, remaining 245.
+sampled in 926ns
+<: 2.997796ms | bfses in 3.365993ms
+
+averages: distance 5.153, diameter 8.000.
+average of averages: distance 5.472, diameter 8.258.
+
+*** iteration 64, batch size 1, remaining 244.
+sampled in 937ns
+<: 2.991337ms | bfses in 3.282687ms
+
+averages: distance 5.454, diameter 8.000.
+average of averages: distance 5.472, diameter 8.254.
+
+*** iteration 65, batch size 1, remaining 243.
+sampled in 893ns
+<: 2.998718ms | bfses in 3.337984ms
+
+averages: distance 5.256, diameter 8.000.
+average of averages: distance 5.469, diameter 8.250.
+
+*** iteration 66, batch size 1, remaining 242.
+sampled in 928ns
+<: 3.00284ms | bfses in 3.344665ms
+
+averages: distance 5.989, diameter 9.000.
+average of averages: distance 5.477, diameter 8.262.
+
+*** iteration 67, batch size 1, remaining 241.
+sampled in 917ns
+<: 2.998804ms | bfses in 3.349332ms
+
+averages: distance 4.991, diameter 8.000.
+average of averages: distance 5.469, diameter 8.258.
+
+*** iteration 68, batch size 1, remaining 240.
+sampled in 937ns
+<: 2.990774ms | bfses in 3.372283ms
+
+averages: distance 6.140, diameter 9.000.
+average of averages: distance 5.479, diameter 8.269.
+
+*** iteration 69, batch size 1, remaining 239.
+sampled in 927ns
+<: 2.988673ms | bfses in 3.326461ms
+
+averages: distance 5.698, diameter 9.000.
+average of averages: distance 5.482, diameter 8.279.
+
+*** iteration 70, batch size 1, remaining 238.
+sampled in 933ns
+<: 3.017474ms | bfses in 3.353451ms
+
+averages: distance 5.311, diameter 8.000.
+average of averages: distance 5.480, diameter 8.275.
+
+*** iteration 71, batch size 1, remaining 237.
+sampled in 917ns
+<: 2.994959ms | bfses in 3.277272ms
+
+averages: distance 5.481, diameter 9.000.
+average of averages: distance 5.480, diameter 8.286.
+
+*** iteration 72, batch size 1, remaining 236.
+sampled in 907ns
+<: 2.995286ms | bfses in 3.334922ms
+
+averages: distance 5.602, diameter 8.000.
+average of averages: distance 5.482, diameter 8.282.
+
+*** iteration 73, batch size 1, remaining 235.
+sampled in 925ns
+<: 2.989799ms | bfses in 3.350184ms
+
+averages: distance 5.078, diameter 8.000.
+average of averages: distance 5.476, diameter 8.278.
+
+*** iteration 74, batch size 1, remaining 234.
+sampled in 918ns
+<: 2.983674ms | bfses in 3.265387ms
+
+averages: distance 5.069, diameter 8.000.
+average of averages: distance 5.471, diameter 8.274.
+
+*** iteration 75, batch size 1, remaining 233.
+sampled in 930ns
+<: 3.015264ms | bfses in 3.388614ms
+
+averages: distance 5.382, diameter 8.000.
+average of averages: distance 5.469, diameter 8.270.
+
+*** iteration 76, batch size 1, remaining 232.
+sampled in 927ns
+<: 3.000558ms | bfses in 3.357492ms
+
+averages: distance 5.278, diameter 8.000.
+average of averages: distance 5.467, diameter 8.267.
+
+*** iteration 77, batch size 1, remaining 231.
+sampled in 914ns
+<: 2.995462ms | bfses in 3.342413ms
+
+averages: distance 4.959, diameter 8.000.
+average of averages: distance 5.460, diameter 8.263.
+
+*** iteration 78, batch size 1, remaining 230.
+sampled in 916ns
+<: 3.013593ms | bfses in 3.378217ms
+
+averages: distance 5.289, diameter 8.000.
+average of averages: distance 5.458, diameter 8.260.
+
+*** iteration 79, batch size 1, remaining 229.
+sampled in 909ns
+<: 2.998437ms | bfses in 3.342356ms
+
+averages: distance 5.137, diameter 8.000.
+average of averages: distance 5.454, diameter 8.256.
+
+*** iteration 80, batch size 1, remaining 228.
+sampled in 931ns
+<: 3.009013ms | bfses in 3.37423ms
+
+averages: distance 5.681, diameter 9.000.
+average of averages: distance 5.457, diameter 8.266.
+
+*** iteration 81, batch size 1, remaining 227.
+sampled in 869ns
+<: 3.029218ms | bfses in 3.337147ms
+
+averages: distance 5.648, diameter 9.000.
+average of averages: distance 5.459, diameter 8.275.
+
+*** iteration 82, batch size 1, remaining 226.
+sampled in 882ns
+<: 3.005368ms | bfses in 3.371311ms
+
+averages: distance 5.107, diameter 8.000.
+average of averages: distance 5.455, diameter 8.272.
+
+*** iteration 83, batch size 1, remaining 225.
+sampled in 887ns
+<: 2.997439ms | bfses in 3.350975ms
+
+averages: distance 5.290, diameter 8.000.
+average of averages: distance 5.453, diameter 8.268.
+
+*** iteration 84, batch size 1, remaining 224.
+sampled in 1.628µs
+<: 3.003462ms | bfses in 3.336997ms
+
+averages: distance 5.539, diameter 9.000.
+average of averages: distance 5.454, diameter 8.277.
+
+*** iteration 85, batch size 1, remaining 223.
+sampled in 915ns
+<: 2.990364ms | bfses in 3.327415ms
+
+averages: distance 5.840, diameter 9.000.
+average of averages: distance 5.458, diameter 8.286.
+
+*** iteration 86, batch size 1, remaining 222.
+sampled in 909ns
+<: 3.003823ms | bfses in 3.365394ms
+
+averages: distance 5.136, diameter 8.000.
+average of averages: distance 5.455, diameter 8.282.
+
+*** iteration 87, batch size 1, remaining 221.
+sampled in 955ns
+<: 2.991829ms | bfses in 3.360246ms
+
+averages: distance 5.274, diameter 8.000.
+average of averages: distance 5.452, diameter 8.279.
+
+*** iteration 88, batch size 1, remaining 220.
+sampled in 907ns
+<: 2.999224ms | bfses in 3.368839ms
+
+averages: distance 5.728, diameter 8.000.
+average of averages: distance 5.456, diameter 8.276.
+
+*** iteration 89, batch size 1, remaining 219.
+sampled in 942ns
+<: 2.995067ms | bfses in 3.328647ms
+
+averages: distance 5.602, diameter 9.000.
+average of averages: distance 5.457, diameter 8.284.
+
+*** iteration 90, batch size 1, remaining 218.
+sampled in 892ns
+<: 3.011771ms | bfses in 3.374906ms
+
+averages: distance 4.904, diameter 8.000.
+average of averages: distance 5.451, diameter 8.281.
+
+*** iteration 91, batch size 1, remaining 217.
+sampled in 916ns
+<: 3.00697ms | bfses in 3.368329ms
+
+averages: distance 5.624, diameter 9.000.
+average of averages: distance 5.453, diameter 8.289.
+
+*** iteration 92, batch size 1, remaining 216.
+sampled in 926ns
+<: 2.987752ms | bfses in 3.356394ms
+
+averages: distance 5.452, diameter 8.000.
+average of averages: distance 5.453, diameter 8.286.
+
+*** iteration 93, batch size 1, remaining 215.
+sampled in 939ns
+<: 3.010268ms | bfses in 3.356785ms
+
+averages: distance 5.621, diameter 8.000.
+average of averages: distance 5.455, diameter 8.283.
+
+*** iteration 94, batch size 1, remaining 214.
+sampled in 966ns
+<: 2.991168ms | bfses in 3.32931ms
+
+averages: distance 5.460, diameter 8.000.
+average of averages: distance 5.455, diameter 8.280.
+
+*** iteration 95, batch size 1, remaining 213.
+sampled in 926ns
+<: 3.002376ms | bfses in 3.345957ms
+
+averages: distance 5.242, diameter 8.000.
+average of averages: distance 5.453, diameter 8.277.
+
+*** iteration 96, batch size 1, remaining 212.
+sampled in 903ns
+<: 3.008846ms | bfses in 3.362506ms
+
+averages: distance 5.789, diameter 8.000.
+average of averages: distance 5.456, diameter 8.274.
+
+*** iteration 97, batch size 1, remaining 211.
+sampled in 948ns
+<: 3.011342ms | bfses in 3.351643ms
+
+averages: distance 5.797, diameter 9.000.
+average of averages: distance 5.460, diameter 8.281.
+
+*** iteration 98, batch size 1, remaining 210.
+sampled in 936ns
+<: 2.965446ms | bfses in 3.203932ms
+
+averages: distance 6.173, diameter 9.000.
+average of averages: distance 5.467, diameter 8.289.
+
+*** iteration 99, batch size 1, remaining 209.
+sampled in 873ns
+<: 3.004425ms | bfses in 3.364692ms
+
+averages: distance 5.407, diameter 8.000.
+average of averages: distance 5.466, diameter 8.286.
+
+*** iteration 100, batch size 1, remaining 208.
+sampled in 905ns
+<: 3.013467ms | bfses in 3.349519ms
+
+averages: distance 5.275, diameter 8.000.
+average of averages: distance 5.464, diameter 8.283.
+
+*** iteration 101, batch size 1, remaining 207.
+sampled in 890ns
+<: 2.998333ms | bfses in 3.347682ms
+
+averages: distance 5.581, diameter 9.000.
+average of averages: distance 5.466, diameter 8.290.
+
+*** iteration 102, batch size 1, remaining 206.
+sampled in 1.598µs
+<: 2.98809ms | bfses in 3.270723ms
+
+averages: distance 4.999, diameter 8.000.
+average of averages: distance 5.461, diameter 8.287.
+
+*** iteration 103, batch size 1, remaining 205.
+sampled in 898ns
+<: 2.996058ms | bfses in 3.364087ms
+
+averages: distance 5.543, diameter 9.000.
+average of averages: distance 5.462, diameter 8.294.
+
+*** iteration 104, batch size 1, remaining 204.
+sampled in 946ns
+<: 3.006643ms | bfses in 3.346732ms
+
+averages: distance 5.351, diameter 8.000.
+average of averages: distance 5.461, diameter 8.291.
+
+*** iteration 105, batch size 1, remaining 203.
+sampled in 1.013µs
+<: 2.996402ms | bfses in 3.324498ms
+
+averages: distance 5.576, diameter 8.000.
+average of averages: distance 5.462, diameter 8.288.
+
+*** iteration 106, batch size 1, remaining 202.
+sampled in 916ns
+<: 2.991373ms | bfses in 3.339582ms
+
+averages: distance 5.753, diameter 8.000.
+average of averages: distance 5.465, diameter 8.286.
+
+*** iteration 107, batch size 1, remaining 201.
+sampled in 946ns
+<: 2.984698ms | bfses in 3.264862ms
+
+averages: distance 5.075, diameter 8.000.
+average of averages: distance 5.461, diameter 8.283.
+
+*** iteration 108, batch size 1, remaining 200.
+sampled in 909ns
+<: 2.989822ms | bfses in 3.276339ms
+
+averages: distance 5.651, diameter 9.000.
+average of averages: distance 5.463, diameter 8.290.
+
+*** iteration 109, batch size 1, remaining 199.
+sampled in 908ns
+<: 2.997784ms | bfses in 3.33835ms
+
+averages: distance 5.825, diameter 9.000.
+average of averages: distance 5.466, diameter 8.296.
+
+*** iteration 110, batch size 1, remaining 198.
+sampled in 939ns
+<: 3.009051ms | bfses in 3.347851ms
+
+averages: distance 5.168, diameter 8.000.
+average of averages: distance 5.463, diameter 8.294.
+
+*** iteration 111, batch size 1, remaining 197.
+sampled in 918ns
+<: 2.99577ms | bfses in 3.330214ms
+
+averages: distance 5.513, diameter 8.000.
+average of averages: distance 5.464, diameter 8.291.
+
+*** iteration 112, batch size 1, remaining 196.
+sampled in 936ns
+<: 2.977213ms | bfses in 3.332602ms
+
+averages: distance 5.544, diameter 8.000.
+average of averages: distance 5.465, diameter 8.288.
+
+*** iteration 113, batch size 1, remaining 195.
+sampled in 928ns
+<: 3.003389ms | bfses in 3.349981ms
+
+averages: distance 6.006, diameter 9.000.
+average of averages: distance 5.469, diameter 8.295.
+
+*** iteration 114, batch size 1, remaining 194.
+sampled in 935ns
+<: 3.00851ms | bfses in 3.343085ms
+
+averages: distance 5.263, diameter 8.000.
+average of averages: distance 5.468, diameter 8.292.
+
+*** iteration 115, batch size 1, remaining 193.
+sampled in 972ns
+<: 3.003795ms | bfses in 3.347696ms
+
+averages: distance 5.672, diameter 8.000.
+average of averages: distance 5.469, diameter 8.289.
+
+*** iteration 116, batch size 1, remaining 192.
+sampled in 902ns
+<: 3.005306ms | bfses in 3.345892ms
+
+averages: distance 5.651, diameter 9.000.
+average of averages: distance 5.471, diameter 8.296.
+
+*** iteration 117, batch size 1, remaining 191.
+sampled in 906ns
+<: 2.957261ms | bfses in 3.299981ms
+
+averages: distance 5.824, diameter 9.000.
+average of averages: distance 5.474, diameter 8.302.
+
+*** iteration 118, batch size 1, remaining 190.
+sampled in 956ns
+<: 2.998554ms | bfses in 3.349046ms
+
+averages: distance 5.260, diameter 8.000.
+average of averages: distance 5.472, diameter 8.299.
+
+*** iteration 119, batch size 1, remaining 189.
+sampled in 963ns
+<: 2.996195ms | bfses in 3.320257ms
+
+averages: distance 5.098, diameter 8.000.
+average of averages: distance 5.469, diameter 8.297.
+
+*** iteration 120, batch size 1, remaining 188.
+sampled in 919ns
+<: 3.00649ms | bfses in 3.286669ms
+
+averages: distance 5.281, diameter 8.000.
+average of averages: distance 5.467, diameter 8.294.
+
+*** iteration 121, batch size 1, remaining 187.
+sampled in 913ns
+<: 2.989222ms | bfses in 3.325191ms
+
+averages: distance 5.876, diameter 9.000.
+average of averages: distance 5.471, diameter 8.300.
+
+*** iteration 122, batch size 1, remaining 186.
+sampled in 900ns
+<: 2.97333ms | bfses in 3.28191ms
+
+averages: distance 5.382, diameter 8.000.
+average of averages: distance 5.470, diameter 8.298.
+
+*** iteration 123, batch size 1, remaining 185.
+sampled in 859ns
+<: 2.994979ms | bfses in 3.285096ms
+
+averages: distance 5.381, diameter 8.000.
+average of averages: distance 5.469, diameter 8.295.
+
+*** iteration 124, batch size 1, remaining 184.
+sampled in 1.737µs
+<: 2.998277ms | bfses in 3.354488ms
+
+averages: distance 6.027, diameter 9.000.
+average of averages: distance 5.474, diameter 8.301.
+
+*** iteration 125, batch size 1, remaining 183.
+sampled in 922ns
+<: 3.0342ms | bfses in 3.356454ms
+
+averages: distance 5.735, diameter 9.000.
+average of averages: distance 5.476, diameter 8.306.
+
+*** iteration 126, batch size 1, remaining 182.
+sampled in 950ns
+<: 3.005358ms | bfses in 3.237909ms
+
+averages: distance 5.275, diameter 8.000.
+average of averages: distance 5.474, diameter 8.304.
+
+*** iteration 127, batch size 1, remaining 181.
+sampled in 916ns
+<: 3.002807ms | bfses in 3.343944ms
+
+averages: distance 5.932, diameter 9.000.
+average of averages: distance 5.478, diameter 8.310.
+
+*** iteration 128, batch size 1, remaining 180.
+sampled in 1.028µs
+<: 3.001661ms | bfses in 3.290118ms
+
+averages: distance 6.499, diameter 9.000.
+average of averages: distance 5.486, diameter 8.315.
+
+*** iteration 129, batch size 1, remaining 179.
+sampled in 906ns
+<: 2.962126ms | bfses in 3.15236ms
+
+averages: distance 5.215, diameter 8.000.
+average of averages: distance 5.484, diameter 8.312.
+
+*** iteration 130, batch size 1, remaining 178.
+sampled in 926ns
+<: 3.00168ms | bfses in 3.343935ms
+
+averages: distance 5.078, diameter 8.000.
+average of averages: distance 5.481, diameter 8.310.
+
+*** iteration 131, batch size 1, remaining 177.
+sampled in 859ns
+<: 3.012275ms | bfses in 3.272136ms
+
+averages: distance 5.340, diameter 8.000.
+average of averages: distance 5.480, diameter 8.308.
+
+*** iteration 132, batch size 1, remaining 176.
+sampled in 927ns
+<: 2.992422ms | bfses in 3.277921ms
+
+averages: distance 5.249, diameter 8.000.
+average of averages: distance 5.478, diameter 8.305.
+
+*** iteration 133, batch size 1, remaining 175.
+sampled in 936ns
+<: 2.997089ms | bfses in 3.344738ms
+
+averages: distance 6.485, diameter 9.000.
+average of averages: distance 5.486, diameter 8.311.
+
+*** iteration 134, batch size 1, remaining 174.
+sampled in 921ns
+<: 2.98923ms | bfses in 3.296019ms
+
+averages: distance 5.647, diameter 9.000.
+average of averages: distance 5.487, diameter 8.316.
+
+*** iteration 135, batch size 1, remaining 173.
+sampled in 923ns
+<: 2.999523ms | bfses in 3.287231ms
+
+averages: distance 5.929, diameter 9.000.
+average of averages: distance 5.490, diameter 8.321.
+
+*** iteration 136, batch size 1, remaining 172.
+sampled in 929ns
+<: 3.00034ms | bfses in 3.345237ms
+
+averages: distance 5.255, diameter 8.000.
+average of averages: distance 5.488, diameter 8.319.
+
+*** iteration 137, batch size 1, remaining 171.
+sampled in 944ns
+<: 3.010856ms | bfses in 3.24655ms
+
+averages: distance 5.673, diameter 9.000.
+average of averages: distance 5.490, diameter 8.324.
+
+*** iteration 138, batch size 1, remaining 170.
+sampled in 926ns
+<: 2.997411ms | bfses in 3.38899ms
+
+averages: distance 5.693, diameter 9.000.
+average of averages: distance 5.491, diameter 8.328.
+
+*** iteration 139, batch size 1, remaining 169.
+sampled in 933ns
+<: 2.986856ms | bfses in 3.322389ms
+
+averages: distance 5.676, diameter 8.000.
+average of averages: distance 5.493, diameter 8.326.
+
+*** iteration 140, batch size 1, remaining 168.
+sampled in 916ns
+<: 2.99508ms | bfses in 3.283557ms
+
+averages: distance 5.179, diameter 8.000.
+average of averages: distance 5.490, diameter 8.324.
+
+*** iteration 141, batch size 1, remaining 167.
+sampled in 1.679µs
+<: 2.995578ms | bfses in 3.341583ms
+
+averages: distance 4.996, diameter 8.000.
+average of averages: distance 5.487, diameter 8.321.
+
+*** iteration 142, batch size 1, remaining 166.
+sampled in 947ns
+<: 2.997598ms | bfses in 3.295408ms
+
+averages: distance 5.338, diameter 8.000.
+average of averages: distance 5.486, diameter 8.319.
+
+*** iteration 143, batch size 1, remaining 165.
+sampled in 916ns
+<: 2.998905ms | bfses in 3.288534ms
+
+averages: distance 5.478, diameter 9.000.
+average of averages: distance 5.486, diameter 8.324.
+
+*** iteration 144, batch size 1, remaining 164.
+sampled in 972ns
+<: 2.983067ms | bfses in 3.355323ms
+
+averages: distance 5.492, diameter 8.000.
+average of averages: distance 5.486, diameter 8.322.
+
+*** iteration 145, batch size 1, remaining 163.
+sampled in 923ns
+<: 3.003121ms | bfses in 3.310502ms
+
+averages: distance 6.595, diameter 9.000.
+average of averages: distance 5.493, diameter 8.326.
+
+*** iteration 146, batch size 1, remaining 162.
+sampled in 936ns
+<: 3.014666ms | bfses in 3.303258ms
+
+averages: distance 4.769, diameter 8.000.
+average of averages: distance 5.488, diameter 8.324.
+
+*** iteration 147, batch size 1, remaining 161.
+sampled in 924ns
+<: 3.007261ms | bfses in 3.364371ms
+
+averages: distance 5.519, diameter 8.000.
+average of averages: distance 5.489, diameter 8.322.
+
+*** iteration 148, batch size 1, remaining 160.
+sampled in 921ns
+<: 2.992361ms | bfses in 3.282121ms
+
+averages: distance 5.445, diameter 8.000.
+average of averages: distance 5.488, diameter 8.320.
+
+*** iteration 149, batch size 1, remaining 159.
+sampled in 913ns
+<: 3.001304ms | bfses in 3.340656ms
+
+averages: distance 5.915, diameter 8.000.
+average of averages: distance 5.491, diameter 8.318.
+
+*** iteration 150, batch size 1, remaining 158.
+sampled in 953ns
+<: 2.980775ms | bfses in 3.309864ms
+
+averages: distance 6.006, diameter 9.000.
+average of averages: distance 5.495, diameter 8.322.
+
+*** iteration 151, batch size 1, remaining 157.
+sampled in 926ns
+<: 2.990503ms | bfses in 3.277101ms
+
+averages: distance 5.376, diameter 8.000.
+average of averages: distance 5.494, diameter 8.320.
+
+*** iteration 152, batch size 1, remaining 156.
+sampled in 906ns
+<: 3.024358ms | bfses in 3.370947ms
+
+averages: distance 6.197, diameter 9.000.
+average of averages: distance 5.498, diameter 8.325.
+
+*** iteration 153, batch size 1, remaining 155.
+sampled in 926ns
+<: 3.005037ms | bfses in 3.288069ms
+
+averages: distance 5.417, diameter 8.000.
+average of averages: distance 5.498, diameter 8.322.
+
+*** iteration 154, batch size 1, remaining 154.
+sampled in 939ns
+<: 2.99598ms | bfses in 3.281399ms
+
+averages: distance 5.971, diameter 8.000.
+average of averages: distance 5.501, diameter 8.320.
+
+*** iteration 155, batch size 1, remaining 153.
+sampled in 917ns
+<: 3.007568ms | bfses in 3.349584ms
+
+averages: distance 5.016, diameter 8.000.
+average of averages: distance 5.498, diameter 8.318.
+
+*** iteration 156, batch size 1, remaining 152.
+sampled in 924ns
+<: 3.006434ms | bfses in 3.261805ms
+
+averages: distance 5.662, diameter 8.000.
+average of averages: distance 5.499, diameter 8.316.
+
+*** iteration 157, batch size 1, remaining 151.
+sampled in 898ns
+<: 2.993636ms | bfses in 3.28305ms
+
+averages: distance 5.517, diameter 8.000.
+average of averages: distance 5.499, diameter 8.314.
+
+*** iteration 158, batch size 1, remaining 150.
+sampled in 917ns
+<: 3.017514ms | bfses in 3.357186ms
+
+averages: distance 5.147, diameter 8.000.
+average of averages: distance 5.497, diameter 8.312.
+
+*** iteration 159, batch size 1, remaining 149.
+sampled in 926ns
+<: 2.998859ms | bfses in 3.24414ms
+
+averages: distance 5.286, diameter 8.000.
+average of averages: distance 5.495, diameter 8.310.
+
+*** iteration 160, batch size 1, remaining 148.
+sampled in 884ns
+<: 2.997501ms | bfses in 3.281982ms
+
+averages: distance 5.853, diameter 9.000.
+average of averages: distance 5.498, diameter 8.314.
+
+*** iteration 161, batch size 1, remaining 147.
+sampled in 877ns
+<: 2.999786ms | bfses in 3.338897ms
+
+averages: distance 5.559, diameter 8.000.
+average of averages: distance 5.498, diameter 8.312.
+
+*** iteration 162, batch size 1, remaining 146.
+sampled in 853ns
+<: 3.002709ms | bfses in 3.31878ms
+
+averages: distance 5.185, diameter 8.000.
+average of averages: distance 5.496, diameter 8.311.
+
+*** iteration 163, batch size 1, remaining 145.
+sampled in 1.678µs
+<: 3.013781ms | bfses in 3.365ms
+
+averages: distance 5.597, diameter 9.000.
+average of averages: distance 5.497, diameter 8.315.
+
+*** iteration 164, batch size 1, remaining 144.
+sampled in 929ns
+<: 2.993084ms | bfses in 3.347704ms
+
+averages: distance 5.507, diameter 9.000.
+average of averages: distance 5.497, diameter 8.319.
+
+*** iteration 165, batch size 1, remaining 143.
+sampled in 905ns
+<: 2.99448ms | bfses in 3.278774ms
+
+averages: distance 5.688, diameter 9.000.
+average of averages: distance 5.498, diameter 8.323.
+
+*** iteration 166, batch size 1, remaining 142.
+sampled in 920ns
+<: 3.015637ms | bfses in 3.359421ms
+
+averages: distance 5.984, diameter 9.000.
+average of averages: distance 5.501, diameter 8.327.
+
+*** iteration 167, batch size 1, remaining 141.
+sampled in 1.063µs
+<: 3.009633ms | bfses in 3.30491ms
+
+averages: distance 5.348, diameter 8.000.
+average of averages: distance 5.500, diameter 8.325.
+
+*** iteration 168, batch size 1, remaining 140.
+sampled in 931ns
+<: 3.007178ms | bfses in 3.240811ms
+
+averages: distance 5.360, diameter 8.000.
+average of averages: distance 5.499, diameter 8.323.
+
+*** iteration 169, batch size 1, remaining 139.
+sampled in 916ns
+<: 3.008356ms | bfses in 3.354176ms
+
+averages: distance 5.573, diameter 8.000.
+average of averages: distance 5.500, diameter 8.321.
+
+*** iteration 170, batch size 1, remaining 138.
+sampled in 934ns
+<: 2.989907ms | bfses in 3.296051ms
+
+averages: distance 5.043, diameter 8.000.
+average of averages: distance 5.497, diameter 8.320.
+
+*** iteration 171, batch size 1, remaining 137.
+sampled in 936ns
+<: 3.01846ms | bfses in 3.254971ms
+
+averages: distance 5.087, diameter 8.000.
+average of averages: distance 5.495, diameter 8.318.
+
+*** iteration 172, batch size 1, remaining 136.
+sampled in 937ns
+<: 2.99268ms | bfses in 3.331374ms
+
+averages: distance 5.495, diameter 8.000.
+average of averages: distance 5.495, diameter 8.316.
+
+*** iteration 173, batch size 1, remaining 135.
+sampled in 912ns
+<: 3.012381ms | bfses in 3.315608ms
+
+averages: distance 5.497, diameter 9.000.
+average of averages: distance 5.495, diameter 8.320.
+
+*** iteration 174, batch size 1, remaining 134.
+sampled in 936ns
+<: 2.965946ms | bfses in 3.15587ms
+
+averages: distance 5.265, diameter 8.000.
+average of averages: distance 5.493, diameter 8.318.
+
+*** iteration 175, batch size 1, remaining 133.
+sampled in 1.005µs
+<: 3.013436ms | bfses in 3.377075ms
+
+averages: distance 5.129, diameter 7.000.
+average of averages: distance 5.491, diameter 8.310.
+
+*** iteration 176, batch size 1, remaining 132.
+sampled in 916ns
+<: 3.001459ms | bfses in 3.306147ms
+
+averages: distance 5.585, diameter 9.000.
+average of averages: distance 5.492, diameter 8.314.
+
+*** iteration 177, batch size 1, remaining 131.
+sampled in 918ns
+<: 3.000257ms | bfses in 3.289424ms
+
+averages: distance 5.429, diameter 8.000.
+average of averages: distance 5.491, diameter 8.312.
+
+*** iteration 178, batch size 1, remaining 130.
+sampled in 949ns
+<: 3.001263ms | bfses in 3.343739ms
+
+averages: distance 5.600, diameter 9.000.
+average of averages: distance 5.492, diameter 8.316.
+
+*** iteration 179, batch size 1, remaining 129.
+sampled in 955ns
+<: 3.020698ms | bfses in 3.254074ms
+
+averages: distance 5.219, diameter 8.000.
+average of averages: distance 5.490, diameter 8.315.
+
+*** iteration 180, batch size 1, remaining 128.
+sampled in 916ns
+<: 2.996412ms | bfses in 3.277084ms
+
+averages: distance 5.071, diameter 8.000.
+average of averages: distance 5.488, diameter 8.313.
+
+*** iteration 181, batch size 1, remaining 127.
+sampled in 877ns
+<: 2.958489ms | bfses in 3.200615ms
+
+averages: distance 5.862, diameter 9.000.
+average of averages: distance 5.490, diameter 8.317.
+
+*** iteration 182, batch size 1, remaining 126.
+sampled in 901ns
+<: 2.992358ms | bfses in 3.283678ms
+
+averages: distance 5.554, diameter 8.000.
+average of averages: distance 5.490, diameter 8.315.
+
+*** iteration 183, batch size 1, remaining 125.
+sampled in 882ns
+<: 3.001808ms | bfses in 3.292977ms
+
+averages: distance 5.815, diameter 9.000.
+average of averages: distance 5.492, diameter 8.319.
+
+*** iteration 184, batch size 1, remaining 124.
+sampled in 1.689µs
+<: 3.007266ms | bfses in 3.362802ms
+
+averages: distance 5.039, diameter 8.000.
+average of averages: distance 5.490, diameter 8.317.
+
+*** iteration 185, batch size 1, remaining 123.
+sampled in 928ns
+<: 3.005249ms | bfses in 3.308069ms
+
+averages: distance 5.491, diameter 9.000.
+average of averages: distance 5.490, diameter 8.321.
+
+*** iteration 186, batch size 1, remaining 122.
+sampled in 933ns
+<: 2.958113ms | bfses in 3.148728ms
+
+averages: distance 6.187, diameter 9.000.
+average of averages: distance 5.494, diameter 8.324.
+
+*** iteration 187, batch size 1, remaining 121.
+sampled in 906ns
+<: 2.998434ms | bfses in 3.36214ms
+
+averages: distance 5.558, diameter 8.000.
+average of averages: distance 5.494, diameter 8.323.
+
+*** iteration 188, batch size 1, remaining 120.
+sampled in 943ns
+<: 2.994853ms | bfses in 3.299099ms
+
+averages: distance 5.376, diameter 8.000.
+average of averages: distance 5.493, diameter 8.321.
+
+*** iteration 189, batch size 1, remaining 119.
+sampled in 916ns
+<: 2.993967ms | bfses in 3.223005ms
+
+averages: distance 4.968, diameter 8.000.
+average of averages: distance 5.490, diameter 8.319.
+
+*** iteration 190, batch size 1, remaining 118.
+sampled in 940ns
+<: 2.992958ms | bfses in 3.32963ms
+
+averages: distance 5.963, diameter 9.000.
+average of averages: distance 5.493, diameter 8.323.
+
+*** iteration 191, batch size 1, remaining 117.
+sampled in 912ns
+<: 2.994181ms | bfses in 3.296139ms
+
+averages: distance 5.772, diameter 9.000.
+average of averages: distance 5.494, diameter 8.326.
+
+*** iteration 192, batch size 1, remaining 116.
+sampled in 899ns
+<: 2.985948ms | bfses in 3.271374ms
+
+averages: distance 5.495, diameter 8.000.
+average of averages: distance 5.494, diameter 8.325.
+
+*** iteration 193, batch size 1, remaining 115.
+sampled in 919ns
+<: 3.000712ms | bfses in 3.341272ms
+
+averages: distance 5.391, diameter 8.000.
+average of averages: distance 5.494, diameter 8.323.
+
+*** iteration 194, batch size 1, remaining 114.
+sampled in 920ns
+<: 2.996699ms | bfses in 3.37866ms
+
+averages: distance 5.192, diameter 8.000.
+average of averages: distance 5.492, diameter 8.321.
+
+*** iteration 195, batch size 1, remaining 113.
+sampled in 956ns
+<: 3.010377ms | bfses in 3.353867ms
+
+averages: distance 5.505, diameter 8.000.
+average of averages: distance 5.492, diameter 8.320.
+
+*** iteration 196, batch size 1, remaining 112.
+sampled in 920ns
+<: 2.991415ms | bfses in 3.297111ms
+
+averages: distance 5.242, diameter 8.000.
+average of averages: distance 5.491, diameter 8.318.
+
+*** iteration 197, batch size 1, remaining 111.
+sampled in 908ns
+<: 2.987047ms | bfses in 3.221847ms
+
+averages: distance 5.461, diameter 8.000.
+average of averages: distance 5.491, diameter 8.316.
+
+*** iteration 198, batch size 1, remaining 110.
+sampled in 892ns
+<: 3.003961ms | bfses in 3.290247ms
+
+averages: distance 5.392, diameter 8.000.
+average of averages: distance 5.490, diameter 8.315.
+
+*** iteration 199, batch size 1, remaining 109.
+sampled in 899ns
+<: 2.998536ms | bfses in 3.353836ms
+
+averages: distance 5.955, diameter 9.000.
+average of averages: distance 5.493, diameter 8.318.
+
+*** iteration 200, batch size 1, remaining 108.
+sampled in 866ns
+<: 2.99489ms | bfses in 3.282006ms
+
+averages: distance 5.680, diameter 8.000.
+average of averages: distance 5.494, diameter 8.317.
+
+*** iteration 201, batch size 1, remaining 107.
+sampled in 1.688µs
+<: 2.999733ms | bfses in 3.34399ms
+
+averages: distance 5.717, diameter 9.000.
+average of averages: distance 5.495, diameter 8.320.
+
+*** iteration 202, batch size 1, remaining 106.
+sampled in 969ns
+<: 2.989279ms | bfses in 3.288363ms
+
+averages: distance 5.677, diameter 9.000.
+average of averages: distance 5.496, diameter 8.323.
+
+*** iteration 203, batch size 1, remaining 105.
+sampled in 921ns
+<: 3.003034ms | bfses in 3.296503ms
+
+averages: distance 5.554, diameter 8.000.
+average of averages: distance 5.496, diameter 8.322.
+
+*** iteration 204, batch size 1, remaining 104.
+sampled in 905ns
+<: 3.000637ms | bfses in 3.34542ms
+
+averages: distance 5.855, diameter 9.000.
+average of averages: distance 5.498, diameter 8.325.
+
+*** iteration 205, batch size 1, remaining 103.
+sampled in 930ns
+<: 2.999504ms | bfses in 3.306781ms
+
+averages: distance 5.376, diameter 8.000.
+average of averages: distance 5.497, diameter 8.324.
+
+*** iteration 206, batch size 1, remaining 102.
+sampled in 932ns
+<: 3.003423ms | bfses in 3.297148ms
+
+averages: distance 5.137, diameter 8.000.
+average of averages: distance 5.495, diameter 8.322.
+
+*** iteration 207, batch size 1, remaining 101.
+sampled in 918ns
+<: 2.993038ms | bfses in 3.339278ms
+
+averages: distance 5.672, diameter 8.000.
+average of averages: distance 5.496, diameter 8.320.
+
+*** iteration 208, batch size 1, remaining 100.
+sampled in 998ns
+<: 2.99574ms | bfses in 3.231545ms
+
+averages: distance 5.042, diameter 8.000.
+average of averages: distance 5.494, diameter 8.319.
+
+*** iteration 209, batch size 1, remaining 99.
+sampled in 968ns
+<: 3.011061ms | bfses in 3.241283ms
+
+averages: distance 5.153, diameter 8.000.
+average of averages: distance 5.493, diameter 8.317.
+
+*** iteration 210, batch size 1, remaining 98.
+sampled in 984ns
+<: 2.838886ms | bfses in 3.121776ms
+
+averages: distance 5.504, diameter 9.000.
+average of averages: distance 5.493, diameter 8.321.
+
+*** iteration 211, batch size 1, remaining 97.
+sampled in 920ns
+<: 2.989185ms | bfses in 3.318688ms
+
+averages: distance 5.026, diameter 8.000.
+average of averages: distance 5.490, diameter 8.319.
+
+*** iteration 212, batch size 1, remaining 96.
+sampled in 970ns
+<: 2.995767ms | bfses in 3.285252ms
+
+averages: distance 5.502, diameter 8.000.
+average of averages: distance 5.490, diameter 8.318.
+
+*** iteration 213, batch size 1, remaining 95.
+sampled in 934ns
+<: 3.008771ms | bfses in 3.377084ms
+
+averages: distance 5.337, diameter 8.000.
+average of averages: distance 5.490, diameter 8.316.
+
+*** iteration 214, batch size 1, remaining 94.
+sampled in 899ns
+<: 3.003023ms | bfses in 3.324115ms
+
+averages: distance 5.133, diameter 8.000.
+average of averages: distance 5.488, diameter 8.315.
+
+*** iteration 215, batch size 1, remaining 93.
+sampled in 876ns
+<: 2.989917ms | bfses in 3.276844ms
+
+averages: distance 5.016, diameter 8.000.
+average of averages: distance 5.486, diameter 8.313.
+
+*** iteration 216, batch size 1, remaining 92.
+sampled in 912ns
+<: 3.004961ms | bfses in 3.338163ms
+
+averages: distance 5.128, diameter 8.000.
+average of averages: distance 5.484, diameter 8.312.
+
+*** iteration 217, batch size 1, remaining 91.
+sampled in 1.702µs
+<: 2.990137ms | bfses in 3.242883ms
+
+averages: distance 5.388, diameter 8.000.
+average of averages: distance 5.484, diameter 8.310.
+
+*** iteration 218, batch size 1, remaining 90.
+sampled in 942ns
+<: 2.729061ms | bfses in 3.00404ms
+
+averages: distance 5.115, diameter 8.000.
+average of averages: distance 5.482, diameter 8.309.
+
+*** iteration 219, batch size 1, remaining 89.
+sampled in 922ns
+<: 3.001638ms | bfses in 3.285636ms
+
+averages: distance 4.871, diameter 8.000.
+average of averages: distance 5.479, diameter 8.307.
+
+*** iteration 220, batch size 1, remaining 88.
+sampled in 905ns
+<: 2.993556ms | bfses in 3.33022ms
+
+averages: distance 5.364, diameter 8.000.
+average of averages: distance 5.479, diameter 8.306.
+
+*** iteration 221, batch size 1, remaining 87.
+sampled in 937ns
+<: 3.007131ms | bfses in 3.294832ms
+
+averages: distance 5.467, diameter 8.000.
+average of averages: distance 5.479, diameter 8.305.
+
+*** iteration 222, batch size 1, remaining 86.
+sampled in 911ns
+<: 2.967156ms | bfses in 3.189932ms
+
+averages: distance 5.396, diameter 8.000.
+average of averages: distance 5.478, diameter 8.303.
+
+*** iteration 223, batch size 1, remaining 85.
+sampled in 899ns
+<: 3.00291ms | bfses in 3.3427ms
+
+averages: distance 5.848, diameter 8.000.
+average of averages: distance 5.480, diameter 8.302.
+
+*** iteration 224, batch size 1, remaining 84.
+sampled in 1.002µs
+<: 3.016384ms | bfses in 3.251798ms
+
+averages: distance 5.245, diameter 8.000.
+average of averages: distance 5.479, diameter 8.300.
+
+*** iteration 225, batch size 1, remaining 83.
+sampled in 919ns
+<: 2.999184ms | bfses in 3.290495ms
+
+averages: distance 5.476, diameter 8.000.
+average of averages: distance 5.479, diameter 8.299.
+
+*** iteration 226, batch size 1, remaining 82.
+sampled in 920ns
+<: 2.999957ms | bfses in 3.350599ms
+
+averages: distance 5.661, diameter 9.000.
+average of averages: distance 5.480, diameter 8.302.
+
+*** iteration 227, batch size 1, remaining 81.
+sampled in 940ns
+<: 2.997139ms | bfses in 3.282725ms
+
+averages: distance 5.140, diameter 8.000.
+average of averages: distance 5.478, diameter 8.301.
+
+*** iteration 228, batch size 1, remaining 80.
+sampled in 953ns
+<: 3.002101ms | bfses in 3.338477ms
+
+averages: distance 5.971, diameter 8.000.
+average of averages: distance 5.480, diameter 8.300.
+
+*** iteration 229, batch size 1, remaining 79.
+sampled in 913ns
+<: 2.984665ms | bfses in 3.300485ms
+
+averages: distance 5.039, diameter 8.000.
+average of averages: distance 5.478, diameter 8.298.
+
+*** iteration 230, batch size 1, remaining 78.
+sampled in 899ns
+<: 2.993949ms | bfses in 3.279142ms
+
+averages: distance 5.312, diameter 8.000.
+average of averages: distance 5.478, diameter 8.297.
+
+*** iteration 231, batch size 1, remaining 77.
+sampled in 915ns
+<: 3.018183ms | bfses in 3.312516ms
+
+averages: distance 5.136, diameter 8.000.
+average of averages: distance 5.476, diameter 8.296.
+
+*** iteration 232, batch size 1, remaining 76.
+sampled in 938ns
+<: 2.98544ms | bfses in 3.288988ms
+
+averages: distance 6.662, diameter 9.000.
+average of averages: distance 5.481, diameter 8.299.
+
+*** iteration 233, batch size 1, remaining 75.
+sampled in 901ns
+<: 2.993264ms | bfses in 3.226509ms
+
+averages: distance 5.268, diameter 8.000.
+average of averages: distance 5.480, diameter 8.297.
+
+*** iteration 234, batch size 1, remaining 74.
+sampled in 926ns
+<: 2.996833ms | bfses in 3.33391ms
+
+averages: distance 4.973, diameter 8.000.
+average of averages: distance 5.478, diameter 8.296.
+
+*** iteration 235, batch size 1, remaining 73.
+sampled in 860ns
+<: 2.986584ms | bfses in 3.283782ms
+
+averages: distance 5.893, diameter 9.000.
+average of averages: distance 5.480, diameter 8.299.
+
+*** iteration 236, batch size 1, remaining 72.
+sampled in 866ns
+<: 2.993024ms | bfses in 3.304016ms
+
+averages: distance 5.043, diameter 8.000.
+average of averages: distance 5.478, diameter 8.298.
+
+*** iteration 237, batch size 1, remaining 71.
+sampled in 912ns
+<: 2.994688ms | bfses in 3.340752ms
+
+averages: distance 5.786, diameter 9.000.
+average of averages: distance 5.479, diameter 8.301.
+
+*** iteration 238, batch size 1, remaining 70.
+sampled in 1.709µs
+<: 3.006987ms | bfses in 3.297628ms
+
+averages: distance 5.422, diameter 8.000.
+average of averages: distance 5.479, diameter 8.300.
+
+*** iteration 239, batch size 1, remaining 69.
+sampled in 895ns
+<: 2.99787ms | bfses in 3.2843ms
+
+averages: distance 5.975, diameter 9.000.
+average of averages: distance 5.481, diameter 8.303.
+
+*** iteration 240, batch size 1, remaining 68.
+sampled in 915ns
+<: 2.999865ms | bfses in 3.347573ms
+
+averages: distance 5.240, diameter 8.000.
+average of averages: distance 5.480, diameter 8.301.
+
+*** iteration 241, batch size 1, remaining 67.
+sampled in 940ns
+<: 2.996561ms | bfses in 3.304873ms
+
+averages: distance 5.576, diameter 9.000.
+average of averages: distance 5.481, diameter 8.304.
+
+*** iteration 242, batch size 1, remaining 66.
+sampled in 927ns
+<: 3.019305ms | bfses in 3.248652ms
+
+averages: distance 5.024, diameter 8.000.
+average of averages: distance 5.479, diameter 8.303.
+
+*** iteration 243, batch size 1, remaining 65.
+sampled in 930ns
+<: 2.988774ms | bfses in 3.328958ms
+
+averages: distance 5.445, diameter 8.000.
+average of averages: distance 5.479, diameter 8.302.
+
+*** iteration 244, batch size 1, remaining 64.
+sampled in 930ns
+<: 2.991215ms | bfses in 3.294427ms
+
+averages: distance 5.919, diameter 9.000.
+average of averages: distance 5.480, diameter 8.305.
+
+*** iteration 245, batch size 1, remaining 63.
+sampled in 906ns
+<: 3.004175ms | bfses in 3.405292ms
+
+averages: distance 5.621, diameter 9.000.
+average of averages: distance 5.481, diameter 8.307.
+
+*** iteration 246, batch size 1, remaining 62.
+sampled in 907ns
+<: 2.995119ms | bfses in 3.328035ms
+
+averages: distance 5.531, diameter 9.000.
+average of averages: distance 5.481, diameter 8.310.
+
+*** iteration 247, batch size 1, remaining 61.
+sampled in 910ns
+<: 2.994212ms | bfses in 3.281764ms
+
+averages: distance 6.815, diameter 10.000.
+average of averages: distance 5.487, diameter 8.317.
+
+*** iteration 248, batch size 1, remaining 60.
+sampled in 906ns
+<: 3.01194ms | bfses in 3.389386ms
+
+averages: distance 5.253, diameter 8.000.
+average of averages: distance 5.486, diameter 8.316.
+
+*** iteration 249, batch size 1, remaining 59.
+sampled in 952ns
+<: 2.995546ms | bfses in 3.28074ms
+
+averages: distance 5.549, diameter 8.000.
+average of averages: distance 5.486, diameter 8.315.
+
+*** iteration 250, batch size 1, remaining 58.
+sampled in 1.017µs
+<: 3.012359ms | bfses in 3.300051ms
+
+averages: distance 6.313, diameter 9.000.
+average of averages: distance 5.489, diameter 8.317.
+
+*** iteration 251, batch size 1, remaining 57.
+sampled in 912ns
+<: 2.99974ms | bfses in 3.342361ms
+
+averages: distance 5.283, diameter 8.000.
+average of averages: distance 5.488, diameter 8.316.
+
+*** iteration 252, batch size 1, remaining 56.
+sampled in 1.036µs
+<: 2.98631ms | bfses in 3.222347ms
+
+averages: distance 5.823, diameter 9.000.
+average of averages: distance 5.490, diameter 8.319.
+
+*** iteration 253, batch size 1, remaining 55.
+sampled in 860ns
+<: 2.997569ms | bfses in 3.298922ms
+
+averages: distance 5.499, diameter 8.000.
+average of averages: distance 5.490, diameter 8.317.
+
+*** iteration 254, batch size 1, remaining 54.
+sampled in 1.702µs
+<: 3.006572ms | bfses in 3.356112ms
+
+averages: distance 5.761, diameter 9.000.
+average of averages: distance 5.491, diameter 8.320.
+
+*** iteration 255, batch size 1, remaining 53.
+sampled in 979ns
+<: 3.018764ms | bfses in 3.310569ms
+
+averages: distance 5.305, diameter 8.000.
+average of averages: distance 5.490, diameter 8.319.
+
+*** iteration 256, batch size 1, remaining 52.
+sampled in 977ns
+<: 3.011417ms | bfses in 3.357889ms
+
+averages: distance 5.443, diameter 8.000.
+average of averages: distance 5.490, diameter 8.318.
+
+*** iteration 257, batch size 1, remaining 51.
+sampled in 926ns
+<: 2.991892ms | bfses in 3.297207ms
+
+averages: distance 5.006, diameter 8.000.
+average of averages: distance 5.488, diameter 8.316.
+
+*** iteration 258, batch size 1, remaining 50.
+sampled in 927ns
+<: 2.994497ms | bfses in 3.283337ms
+
+averages: distance 5.169, diameter 8.000.
+average of averages: distance 5.487, diameter 8.315.
+
+*** iteration 259, batch size 1, remaining 49.
+sampled in 877ns
+<: 2.99618ms | bfses in 3.347064ms
+
+averages: distance 5.971, diameter 8.000.
+average of averages: distance 5.489, diameter 8.314.
+
+*** iteration 260, batch size 1, remaining 48.
+sampled in 928ns
+<: 3.001632ms | bfses in 3.309443ms
+
+averages: distance 5.199, diameter 8.000.
+average of averages: distance 5.488, diameter 8.313.
+
+*** iteration 261, batch size 1, remaining 47.
+sampled in 904ns
+<: 2.989392ms | bfses in 3.277127ms
+
+averages: distance 5.602, diameter 9.000.
+average of averages: distance 5.488, diameter 8.315.
+
+*** iteration 262, batch size 1, remaining 46.
+sampled in 940ns
+<: 3.009146ms | bfses in 3.387317ms
+
+averages: distance 5.311, diameter 8.000.
+average of averages: distance 5.487, diameter 8.314.
+
+*** iteration 263, batch size 1, remaining 45.
+sampled in 958ns
+<: 7.377µs | bfses in 276.601µs
+average of averages: distance 5.487, diameter 8.314.
+
+*** iteration 264, batch size 1, remaining 44.
+sampled in 292ns
+<: 2.98871ms | bfses in 3.257707ms
+
+averages: distance 5.953, diameter 9.000.
+average of averages: distance 5.489, diameter 8.317.
+
+*** iteration 265, batch size 1, remaining 43.
+sampled in 937ns
+<: 2.991609ms | bfses in 3.329612ms
+
+averages: distance 5.375, diameter 9.000.
+average of averages: distance 5.489, diameter 8.319.
+
+*** iteration 266, batch size 1, remaining 42.
+sampled in 942ns
+<: 2.994671ms | bfses in 3.280289ms
+
+averages: distance 4.914, diameter 8.000.
+average of averages: distance 5.487, diameter 8.318.
+
+*** iteration 267, batch size 1, remaining 41.
+sampled in 921ns
+<: 2.995249ms | bfses in 3.226643ms
+
+averages: distance 5.748, diameter 9.000.
+average of averages: distance 5.487, diameter 8.321.
+
+*** iteration 268, batch size 1, remaining 40.
+sampled in 938ns
+<: 2.996527ms | bfses in 3.341885ms
+
+averages: distance 5.711, diameter 9.000.
+average of averages: distance 5.488, diameter 8.323.
+
+*** iteration 269, batch size 1, remaining 39.
+sampled in 973ns
+<: 2.996713ms | bfses in 3.279855ms
+
+averages: distance 6.183, diameter 9.000.
+average of averages: distance 5.491, diameter 8.326.
+
+*** iteration 270, batch size 1, remaining 38.
+sampled in 903ns
+<: 2.982179ms | bfses in 3.355029ms
+
+averages: distance 5.586, diameter 8.000.
+average of averages: distance 5.491, diameter 8.325.
+
+*** iteration 271, batch size 1, remaining 37.
+sampled in 1.042µs
+<: 2.975583ms | bfses in 3.300503ms
+
+averages: distance 5.400, diameter 8.000.
+average of averages: distance 5.491, diameter 8.323.
+
+*** iteration 272, batch size 1, remaining 36.
+sampled in 927ns
+<: 2.995764ms | bfses in 3.28336ms
+
+averages: distance 5.795, diameter 9.000.
+average of averages: distance 5.492, diameter 8.326.
+
+*** iteration 273, batch size 1, remaining 35.
+sampled in 876ns
+<: 3.009572ms | bfses in 3.348157ms
+
+averages: distance 5.360, diameter 8.000.
+average of averages: distance 5.492, diameter 8.325.
+
+*** iteration 274, batch size 1, remaining 34.
+sampled in 902ns
+<: 2.993797ms | bfses in 3.288428ms
+
+averages: distance 5.533, diameter 9.000.
+average of averages: distance 5.492, diameter 8.327.
+
+*** iteration 275, batch size 1, remaining 33.
+sampled in 1.684µs
+<: 3.001384ms | bfses in 3.292934ms
+
+averages: distance 5.447, diameter 8.000.
+average of averages: distance 5.492, diameter 8.326.
+
+*** iteration 276, batch size 1, remaining 32.
+sampled in 927ns
+<: 3.002359ms | bfses in 3.339744ms
+
+averages: distance 5.509, diameter 9.000.
+average of averages: distance 5.492, diameter 8.328.
+
+*** iteration 277, batch size 1, remaining 31.
+sampled in 923ns
+<: 3.000742ms | bfses in 3.306604ms
+
+averages: distance 5.448, diameter 8.000.
+average of averages: distance 5.491, diameter 8.327.
+
+*** iteration 278, batch size 1, remaining 30.
+sampled in 947ns
+<: 2.997268ms | bfses in 3.28423ms
+
+averages: distance 5.160, diameter 8.000.
+average of averages: distance 5.490, diameter 8.326.
+
+*** iteration 279, batch size 1, remaining 29.
+sampled in 926ns
+<: 3.010535ms | bfses in 3.346759ms
+
+averages: distance 5.815, diameter 9.000.
+average of averages: distance 5.491, diameter 8.329.
+
+*** iteration 280, batch size 1, remaining 28.
+sampled in 999ns
+<: 3.003006ms | bfses in 3.29541ms
+
+averages: distance 5.418, diameter 9.000.
+average of averages: distance 5.491, diameter 8.331.
+
+*** iteration 281, batch size 1, remaining 27.
+sampled in 971ns
+<: 2.992142ms | bfses in 3.365599ms
+
+averages: distance 5.255, diameter 8.000.
+average of averages: distance 5.490, diameter 8.330.
+
+*** iteration 282, batch size 1, remaining 26.
+sampled in 932ns
+<: 2.989166ms | bfses in 3.318844ms
+
+averages: distance 5.418, diameter 8.000.
+average of averages: distance 5.490, diameter 8.329.
+
+*** iteration 283, batch size 1, remaining 25.
+sampled in 922ns
+<: 2.998442ms | bfses in 3.280646ms
+
+averages: distance 5.078, diameter 8.000.
+average of averages: distance 5.489, diameter 8.327.
+
+*** iteration 284, batch size 1, remaining 24.
+sampled in 930ns
+<: 2.998737ms | bfses in 3.347583ms
+
+averages: distance 5.703, diameter 9.000.
+average of averages: distance 5.489, diameter 8.330.
+
+*** iteration 285, batch size 1, remaining 23.
+sampled in 918ns
+<: 2.988592ms | bfses in 3.273366ms
+
+averages: distance 5.334, diameter 8.000.
+average of averages: distance 5.489, diameter 8.329.
+
+*** iteration 286, batch size 1, remaining 22.
+sampled in 907ns
+<: 3.004392ms | bfses in 3.292713ms
+
+averages: distance 6.014, diameter 9.000.
+average of averages: distance 5.491, diameter 8.331.
+
+*** iteration 287, batch size 1, remaining 21.
+sampled in 902ns
+<: 2.991517ms | bfses in 3.340085ms
+
+averages: distance 5.388, diameter 8.000.
+average of averages: distance 5.490, diameter 8.330.
+
+*** iteration 288, batch size 1, remaining 20.
+sampled in 910ns
+<: 2.994024ms | bfses in 3.276126ms
+
+averages: distance 5.808, diameter 8.000.
+average of averages: distance 5.491, diameter 8.329.
+
+*** iteration 289, batch size 1, remaining 19.
+sampled in 927ns
+<: 3.001712ms | bfses in 3.28699ms
+
+averages: distance 5.093, diameter 9.000.
+average of averages: distance 5.490, diameter 8.331.
+
+*** iteration 290, batch size 1, remaining 18.
+sampled in 916ns
+<: 2.991472ms | bfses in 3.330822ms
+
+averages: distance 5.203, diameter 8.000.
+average of averages: distance 5.489, diameter 8.330.
+
+*** iteration 291, batch size 1, remaining 17.
+sampled in 934ns
+<: 3.002129ms | bfses in 3.317003ms
+
+averages: distance 5.263, diameter 8.000.
+average of averages: distance 5.488, diameter 8.329.
+
+*** iteration 292, batch size 1, remaining 16.
+sampled in 1.81µs
+<: 3.004872ms | bfses in 3.398142ms
+
+averages: distance 5.225, diameter 8.000.
+average of averages: distance 5.487, diameter 8.328.
+
+*** iteration 293, batch size 1, remaining 15.
+sampled in 940ns
+<: 3.045615ms | bfses in 3.325895ms
+
+averages: distance 5.752, diameter 9.000.
+average of averages: distance 5.488, diameter 8.330.
+
+*** iteration 294, batch size 1, remaining 14.
+sampled in 921ns
+<: 3.004946ms | bfses in 3.239673ms
+
+averages: distance 5.370, diameter 8.000.
+average of averages: distance 5.488, diameter 8.329.
+
+*** iteration 295, batch size 1, remaining 13.
+sampled in 906ns
+<: 3.006281ms | bfses in 3.344094ms
+
+averages: distance 4.942, diameter 8.000.
+average of averages: distance 5.486, diameter 8.328.
+
+*** iteration 296, batch size 1, remaining 12.
+sampled in 928ns
+<: 2.987084ms | bfses in 3.294292ms
+
+averages: distance 5.516, diameter 8.000.
+average of averages: distance 5.486, diameter 8.327.
+
+*** iteration 297, batch size 1, remaining 11.
+sampled in 878ns
+<: 3.003339ms | bfses in 3.2892ms
+
+averages: distance 5.122, diameter 8.000.
+average of averages: distance 5.485, diameter 8.325.
+
+*** iteration 298, batch size 1, remaining 10.
+sampled in 917ns
+<: 2.991076ms | bfses in 3.336185ms
+
+averages: distance 5.428, diameter 8.000.
+average of averages: distance 5.485, diameter 8.324.
+
+*** iteration 299, batch size 1, remaining 9.
+sampled in 957ns
+<: 2.980974ms | bfses in 3.274167ms
+
+averages: distance 5.024, diameter 8.000.
+average of averages: distance 5.483, diameter 8.323.
+
+*** iteration 300, batch size 1, remaining 8.
+sampled in 950ns
+<: 2.992685ms | bfses in 3.274889ms
+
+averages: distance 5.401, diameter 8.000.
+average of averages: distance 5.483, diameter 8.322.
+
+*** iteration 301, batch size 1, remaining 7.
+sampled in 917ns
+<: 2.99749ms | bfses in 3.357133ms
+
+averages: distance 5.608, diameter 9.000.
+average of averages: distance 5.483, diameter 8.324.
+
+*** iteration 302, batch size 1, remaining 6.
+sampled in 890ns
+<: 2.992674ms | bfses in 3.295805ms
+
+averages: distance 5.817, diameter 9.000.
+average of averages: distance 5.484, diameter 8.327.
+
+*** iteration 303, batch size 1, remaining 5.
+sampled in 895ns
+<: 2.991273ms | bfses in 3.27629ms
+
+averages: distance 6.525, diameter 9.000.
+average of averages: distance 5.488, diameter 8.329.
+
+*** iteration 304, batch size 1, remaining 4.
+sampled in 933ns
+<: 2.998812ms | bfses in 3.337909ms
+
+averages: distance 6.017, diameter 9.000.
+average of averages: distance 5.490, diameter 8.331.
+
+*** iteration 305, batch size 1, remaining 3.
+sampled in 910ns
+<: 2.992237ms | bfses in 3.293171ms
+
+averages: distance 5.874, diameter 9.000.
+average of averages: distance 5.491, diameter 8.333.
+
+*** iteration 306, batch size 1, remaining 2.
+sampled in 865ns
+<: 2.997715ms | bfses in 3.298268ms
+
+averages: distance 5.394, diameter 8.000.
+average of averages: distance 5.491, diameter 8.332.
+
+*** iteration 307, batch size 1, remaining 1.
+sampled in 874ns
+<: 3.006045ms | bfses in 3.354879ms
+
+averages: distance 5.379, diameter 8.000.
+average of averages: distance 5.490, diameter 8.331.
+
+*** iteration 308, batch size 1, remaining 0.
+sampled in 867ns
+<: 3.004401ms | bfses in 3.294531ms
+
+averages: distance 5.927, diameter 9.000.
+average of averages: distance 5.492, diameter 8.333.
+
+Total time: 1.021622066s
