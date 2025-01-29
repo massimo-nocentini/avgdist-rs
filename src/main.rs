@@ -124,6 +124,8 @@ fn main() {
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
     let graph_t = BvGraph::with_basename(graph_filename_t).load().unwrap();
 
+    assert!(graph.num_nodes() == graph_t.num_nodes());
+
     let num_nodes = graph.num_nodes();
     let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
 
