@@ -3,7 +3,7 @@ echo:
 	echo "Invoke with a rule."
 
 webgraph:
-	webgraph from arcs --exact --num-nodes 2001 web < web.csv
+	webgraph from arcs --exact --num-nodes 875713 web < web.csv
 	webgraph transform transpose web web-t
 	webgraph build ef web
 	webgraph build ef web-t
