@@ -19,6 +19,6 @@ run:
 	time cargo run --release --bin avgdist-rs ./wiki ./wiki-t 1 0.1 false false > result/wiki-01e-1k.out
 	time cargo run --release --bin avgdist-rs ./wiki ./wiki-t 10 0.1 false false > result/wiki-01e-10k.out
 	time cargo run --release --bin avgdist-rs ./wiki ./wiki-t 100 0.1 false false > result/wiki-01e-100k.out
-	time cargo run --release --bin avgdist-rs ./wiki ./wiki-t 222 0.1 false false > result/wiki-01e-222k.out
+	time cargo run --release --bin avgdist-rs ./wiki ./wiki-t 346 0.1 false false > result/wiki-01e-346k.out
 	time cargo run --release --bin avgdist-rs ./wiki ./wiki-t 1 0.1 true false > result/wiki-01e-true.out
 
