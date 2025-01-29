@@ -217,10 +217,26 @@ fn main() {
         let avgdia: f64 = averages_diameter.iter().sum();
         let n = averages_dist.len() as f64;
 
+        let avgdist = avgdist / n;
+        let avgdist_var = averages_dist
+            .iter()
+            .map(|x| (x - avgdist).powi(2))
+            .sum::<f64>()
+            / (n - 1.0);
+
+        let avgdia = avgdia / n;
+        let avgdia_var = averages_diameter
+            .iter()
+            .map(|x| (x - avgdia).powi(2))
+            .sum::<f64>()
+            / (n - 1.0);
+
         println!(
-            "average of averages: distance {:.3}, diameter {:.3}.",
-            avgdist / n,
-            avgdia / n
+            "average of averages: distance {:.3} (std {:.3}), diameter {:.3} (std {:.3}).",
+            avgdist,
+            avgdist_var.sqrt(),
+            avgdia,
+            avgdia_var.sqrt()
         );
 
         remaining -= slot;
