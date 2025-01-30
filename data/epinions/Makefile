@@ -20,5 +20,5 @@ run:
 	time cargo run --release --bin avgdist-rs ./epinions ./epinions-t 10 0.1 false false > result/epinions-01e-10k.out
 	time cargo run --release --bin avgdist-rs ./epinions ./epinions-t 100 0.1 false false > result/epinions-01e-100k.out
 	time cargo run --release --bin avgdist-rs ./epinions ./epinions-t 346 0.1 false false > result/epinions-01e-346k.out
-	#time cargo run --release --bin avgdist-rs ./epinions ./epinions-t 1 0.1 true false > result/epinions-01e-true.out
+	time cargo run --release --bin avgdist-rs ./epinions ./epinions-t 1 0.1 true false > result/epinions-01e-true.out
 

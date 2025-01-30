@@ -127,7 +127,7 @@ fn main() {
     assert!(graph.num_nodes() == graph_t.num_nodes());
 
     let num_nodes = graph.num_nodes();
-    let k = (num_nodes as f64).log2().div(epsilon.powi(2)).ceil() as usize;
+    let k = (num_nodes as f64).log2().div(2.0 * epsilon.powi(2)).ceil() as usize;
 
     println!(
         "|V| = {}, |E| = {}, |S| = {}, s = {}.",
@@ -204,7 +204,7 @@ fn main() {
         println!("bfses in {:?}", instant.elapsed());
 
         if count > 0 {
-            let adist = (sum as f64) / (count as f64);
+            let adist = (sum as f64) / ((count * (num_nodes - 1)) as f64);
             let adia = dia as f64;
 
             println!("\naverages: distance {:.3}, diameter {:.3}.", adist, adia);
@@ -213,18 +213,16 @@ fn main() {
             averages_diameter.push(adia);
         }
 
-        let avgdist: f64 = averages_dist.iter().sum();
-        let avgdia: f64 = averages_diameter.iter().sum();
         let n = averages_dist.len() as f64;
+        let avgdist: f64 = averages_dist.iter().sum::<f64>() / n;
+        let avgdia: f64 = averages_diameter.iter().sum::<f64>() / n;
 
-        let avgdist = avgdist / n;
         let avgdist_var = averages_dist
             .iter()
             .map(|x| (x - avgdist).powi(2))
             .sum::<f64>()
             / (n - 1.0);
 
-        let avgdia = avgdia / n;
         let avgdia_var = averages_diameter
             .iter()
             .map(|x| (x - avgdia).powi(2))
@@ -232,9 +230,11 @@ fn main() {
             / (n - 1.0);
 
         println!(
-            "average of averages: distance {:.3} (std {:.3}), diameter {:.3} (std {:.3}).",
+            "average of averages: distance {:.9} (norm {:.3}), std {:.9} (norm {:.3}), diameter {:.3} (std {:.3}).",
             avgdist,
+            avgdist * ((num_nodes - 1) as f64),
             avgdist_var.sqrt(),
+            avgdist_var.sqrt() * ((num_nodes - 1) as f64),
             avgdia,
             avgdia_var.sqrt()
         );
