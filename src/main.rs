@@ -115,8 +115,8 @@ fn main() {
 
     let graph_filename = &args[1];
     let graph_filename_t = &args[2];
-    let mut slot: usize = args[3].parse().unwrap();
-    let epsilon: f64 = args[4].parse().unwrap();
+    let slot: usize = args[3].parse().unwrap();
+    // let epsilon: f64 = args[4].parse().unwrap();
     let truth: bool = args[5].parse().unwrap();
     let dummy: bool = args[6].parse().unwrap();
 
@@ -127,7 +127,8 @@ fn main() {
     assert!(graph.num_nodes() == graph_t.num_nodes());
 
     let num_nodes = graph.num_nodes();
-    let k = (num_nodes as f64).log2().div(2.0 * epsilon.powi(2)).ceil() as usize;
+    // let k = (num_nodes as f64).log2().div(2.0 * epsilon.powi(2)).ceil() as usize;
+    let k = 10; // just for submission purposes
 
     println!(
         "|V| = {}, |E| = {}, |S| = {}, s = {}.",
@@ -143,24 +144,24 @@ fn main() {
     let mut averages_dist = Vec::new();
     let mut averages_diameter = Vec::new();
 
-    let mut remaining = k;
+    //let mut remaining = k;
     let mut iteration = 1usize;
 
     let instant = Instant::now();
 
-    while remaining > 0 {
-        slot = slot.min(remaining);
+    for _ in 0..k {
+        //slot = slot.min(remaining);
 
         println!(
             "\n*** iteration {}, batch size {}, remaining {}.",
             iteration,
             slot,
-            remaining - slot
+            k - iteration
         );
 
         let instant = Instant::now();
         let sampled: Vec<usize> = if truth {
-            slot = remaining;
+            //slot = remaining;
             (0..num_nodes).collect()
         } else {
             if dummy {
@@ -239,8 +240,12 @@ fn main() {
             avgdia_var.sqrt()
         );
 
-        remaining -= slot;
+        //remaining -= slot;
         iteration += 1;
+
+        if truth {
+            break;
+        }
     }
 
     println!("\nTotal time: {:?}", instant.elapsed());
