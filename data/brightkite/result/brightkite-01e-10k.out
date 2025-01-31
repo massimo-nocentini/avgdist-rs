@@ -1,563 +1,73 @@
-|V| = 58228, |E| = 428156, |S| = 792, s = 10.
+|V| = 58228, |E| = 428156, |S| = 10, s = 10.
 
-*** iteration 1, batch size 10, remaining 782.
->: 14.747µs | >: 26.702532ms | >: 28.846826ms | >: 35.977901ms | >: 36.782619ms | >: 36.454731ms | >: 36.63274ms | >: 36.997412ms | >: 37.514036ms | >: 38.018346ms | sampled in 39.075608ms
-<: 24.453321ms | <: 24.719718ms | <: 24.63215ms | <: 24.962759ms | <: 25.413053ms | <: 31.808008ms | <: 35.164154ms | <: 36.4633ms | <: 36.498638ms | <: 36.554219ms | bfses in 37.183953ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000080482 (norm 4.686), std NaN (norm NaN), diameter 12.000 (std NaN).
-
-*** iteration 2, batch size 10, remaining 772.
->: 24.828987ms | >: 27.695881ms | >: 27.58771ms | >: 27.547521ms | >: 30.12932ms | >: 32.27217ms | >: 36.472934ms | >: 37.209861ms | >: 37.429046ms | >: 37.294032ms | sampled in 38.477323ms
-<: 24.65395ms | <: 24.69503ms | <: 26.447345ms | <: 26.471416ms | <: 31.610437ms | <: 31.684891ms | <: 33.944332ms | <: 34.532908ms | <: 34.863991ms | <: 37.510104ms | bfses in 37.868813ms
+*** iteration 1, batch size 10, remaining 9.
+>: 30.15485ms | >: 29.958673ms | >: 34.557808ms | >: 35.787337ms | >: 35.806258ms | >: 37.23648ms | >: 36.711714ms | >: 36.910659ms | >: 37.03894ms | >: 37.105455ms | sampled in 38.673062ms
+<: 24.90722ms | <: 25.137891ms | <: 25.012669ms | <: 25.020488ms | <: 25.997581ms | <: 28.48094ms | <: 36.8249ms | <: 36.812544ms | <: 36.810178ms | <: 37.050585ms | bfses in 37.492966ms
 
 averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000080244 (norm 4.672), std 0.000000336 (norm 0.020), diameter 12.500 (std 0.707).
+average of averages: distance 0.000083415 (norm 4.857), std NaN (norm NaN), diameter 13.000 (std NaN).
 
-*** iteration 3, batch size 10, remaining 762.
->: 24.7729ms | >: 24.832511ms | >: 24.830806ms | >: 25.126771ms | >: 24.95917ms | >: 27.212602ms | >: 28.467689ms | >: 29.761383ms | >: 29.723424ms | >: 35.567824ms | sampled in 36.494275ms
-<: 24.612975ms | <: 24.832028ms | <: 27.430031ms | <: 31.159435ms | <: 31.414698ms | <: 32.027128ms | <: 35.27334ms | <: 36.135005ms | <: 36.076474ms | <: 36.211198ms | bfses in 36.750381ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000080463 (norm 4.685), std 0.000000448 (norm 0.026), diameter 12.333 (std 0.577).
-
-*** iteration 4, batch size 10, remaining 752.
->: 23.983187ms | >: 24.151341ms | >: 24.434073ms | >: 24.552541ms | >: 24.942649ms | >: 24.795208ms | >: 24.886157ms | >: 24.770469ms | >: 33.516829ms | >: 33.824504ms | sampled in 34.633382ms
-<: 24.297729ms | <: 27.590522ms | <: 27.511139ms | <: 30.129593ms | <: 30.857415ms | <: 31.442806ms | <: 35.586373ms | <: 35.815799ms | <: 35.652025ms | <: 35.723912ms | bfses in 36.356478ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000080235 (norm 4.672), std 0.000000585 (norm 0.034), diameter 12.250 (std 0.500).
-
-*** iteration 5, batch size 10, remaining 742.
->: 24.257929ms | >: 24.738608ms | >: 24.695389ms | >: 24.571749ms | >: 24.6816ms | >: 24.671059ms | >: 24.702081ms | >: 28.593671ms | >: 28.830767ms | >: 31.495173ms | sampled in 32.193185ms
-<: 25.218659ms | <: 25.749879ms | <: 25.921234ms | <: 26.967028ms | <: 30.298593ms | <: 33.091085ms | <: 32.857704ms | <: 33.283243ms | <: 37.111487ms | <: 37.881497ms | bfses in 38.643971ms
+*** iteration 2, batch size 10, remaining 8.
+>: 3.415µs | >: 25.642446ms | >: 33.100144ms | >: 33.528695ms | >: 36.915478ms | >: 37.338258ms | >: 38.255589ms | >: 39.134185ms | >: 39.25721ms | >: 39.58128ms | sampled in 40.546072ms
+<: 25.356108ms | <: 25.682159ms | <: 25.54863ms | <: 25.887053ms | <: 25.542346ms | <: 33.327486ms | <: 33.150867ms | <: 33.147938ms | <: 36.486259ms | <: 38.737246ms | bfses in 39.236687ms
 
 averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000081216 (norm 4.729), std 0.000002251 (norm 0.131), diameter 12.400 (std 0.548).
+average of averages: distance 0.000083971 (norm 4.889), std 0.000000786 (norm 0.046), diameter 13.000 (std 0.000).
 
-*** iteration 6, batch size 10, remaining 732.
->: 24.603309ms | >: 24.823452ms | >: 24.866459ms | >: 30.892266ms | >: 31.347672ms | >: 33.756006ms | >: 34.165538ms | >: 35.948931ms | >: 37.625496ms | >: 38.153302ms | sampled in 38.837742ms
-<: 24.658947ms | <: 24.947711ms | <: 24.77337ms | <: 24.958671ms | <: 31.328162ms | <: 32.617759ms | <: 35.842619ms | <: 36.261861ms | <: 36.323059ms | <: 36.897548ms | bfses in 37.598064ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000080864 (norm 4.708), std 0.000002190 (norm 0.128), diameter 12.500 (std 0.548).
-
-*** iteration 7, batch size 10, remaining 722.
->: 9.139µs | >: 24.192598ms | >: 24.851534ms | >: 24.901394ms | >: 25.101447ms | >: 26.328564ms | >: 26.56855ms | >: 29.757909ms | >: 31.961824ms | >: 36.049956ms | sampled in 36.756737ms
-<: 24.502364ms | <: 24.766744ms | <: 24.965051ms | <: 30.316965ms | <: 31.170534ms | <: 31.805445ms | <: 32.017934ms | <: 32.561988ms | <: 33.623384ms | <: 38.925037ms | bfses in 39.373009ms
+*** iteration 3, batch size 10, remaining 7.
+>: 25.318883ms | >: 25.648132ms | >: 25.5969ms | >: 26.363939ms | >: 27.989376ms | >: 28.698069ms | >: 32.112438ms | >: 32.387745ms | >: 32.676084ms | >: 34.52496ms | sampled in 35.55381ms
+<: 25.726517ms | <: 25.604392ms | <: 28.322752ms | <: 28.2034ms | <: 29.125128ms | <: 30.237522ms | <: 30.609176ms | <: 35.795352ms | <: 35.933177ms | <: 36.083631ms | bfses in 36.64258ms
 
 averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000080895 (norm 4.710), std 0.000002001 (norm 0.117), diameter 12.714 (std 0.756).
+average of averages: distance 0.000083069 (norm 4.837), std 0.000001657 (norm 0.097), diameter 13.333 (std 0.577).
 
-*** iteration 8, batch size 10, remaining 712.
->: 24.209043ms | >: 24.165405ms | >: 24.497395ms | >: 24.683777ms | >: 24.81457ms | >: 25.068619ms | >: 27.613595ms | >: 30.807441ms | >: 31.230078ms | >: 33.512743ms | sampled in 34.506907ms
-<: 24.868434ms | <: 29.480661ms | <: 29.672588ms | <: 30.660017ms | <: 35.324042ms | <: 35.377228ms | <: 35.423232ms | <: 35.732668ms | <: 35.769385ms | <: 35.999846ms | bfses in 36.467798ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000080695 (norm 4.699), std 0.000001937 (norm 0.113), diameter 12.750 (std 0.707).
-
-*** iteration 9, batch size 10, remaining 702.
->: 24.638048ms | >: 24.490117ms | >: 24.822804ms | >: 24.712079ms | >: 27.138689ms | >: 27.865233ms | >: 31.072984ms | >: 31.280388ms | >: 37.523045ms | >: 38.406331ms | sampled in 39.16464ms
-<: 24.72062ms | <: 25.003594ms | <: 26.001135ms | <: 26.519554ms | <: 26.786424ms | <: 33.121791ms | <: 33.365495ms | <: 37.085267ms | <: 37.285126ms | <: 37.274472ms | bfses in 37.952038ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000080922 (norm 4.712), std 0.000001936 (norm 0.113), diameter 12.778 (std 0.667).
-
-*** iteration 10, batch size 10, remaining 692.
->: 24.607634ms | >: 24.544148ms | >: 26.712391ms | >: 26.74881ms | >: 27.523121ms | >: 29.923199ms | >: 32.24288ms | >: 32.387669ms | >: 35.396146ms | >: 35.590978ms | sampled in 36.560805ms
-<: 24.683188ms | <: 30.353333ms | <: 30.953388ms | <: 32.106769ms | <: 32.016281ms | <: 34.982773ms | <: 35.431706ms | <: 36.273655ms | <: 35.918009ms | <: 36.605122ms | bfses in 37.216183ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000080966 (norm 4.714), std 0.000001830 (norm 0.107), diameter 12.800 (std 0.632).
-
-*** iteration 11, batch size 10, remaining 682.
->: 5.535µs | >: 24.746695ms | >: 24.861939ms | >: 24.61577ms | >: 24.73869ms | >: 24.755732ms | >: 30.366557ms | >: 30.388205ms | >: 30.86555ms | >: 30.643384ms | sampled in 31.68294ms
-<: 24.385128ms | <: 25.010865ms | <: 27.614338ms | <: 28.567308ms | <: 28.684554ms | <: 28.620068ms | <: 29.013668ms | <: 30.819633ms | <: 30.944558ms | <: 33.764194ms | bfses in 34.426563ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000081172 (norm 4.726), std 0.000001866 (norm 0.109), diameter 12.727 (std 0.647).
-
-*** iteration 12, batch size 10, remaining 672.
->: 24.041638ms | >: 24.297219ms | >: 24.210076ms | >: 24.203841ms | >: 24.632355ms | >: 24.81583ms | >: 25.107743ms | >: 27.491896ms | >: 31.626396ms | >: 31.787544ms | sampled in 32.682995ms
-<: 24.657092ms | <: 25.437907ms | <: 27.043015ms | <: 27.245211ms | <: 28.963513ms | <: 33.45609ms | <: 33.927794ms | <: 33.844667ms | <: 34.073132ms | <: 36.497287ms | bfses in 36.898141ms
+*** iteration 4, batch size 10, remaining 6.
+>: 25.275808ms | >: 25.301333ms | >: 25.155119ms | >: 25.559864ms | >: 25.913791ms | >: 32.993657ms | >: 33.220631ms | >: 37.346939ms | >: 38.756028ms | >: 39.515683ms | sampled in 40.570631ms
+<: 25.542313ms | <: 30.546302ms | <: 30.519408ms | <: 30.632571ms | <: 30.823779ms | <: 33.006073ms | <: 32.821906ms | <: 33.222737ms | <: 39.231303ms | <: 39.462442ms | bfses in 39.826375ms
 
 averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000082008 (norm 4.775), std 0.000003397 (norm 0.198), diameter 12.833 (std 0.718).
+average of averages: distance 0.000084244 (norm 4.905), std 0.000002711 (norm 0.158), diameter 13.500 (std 0.577).
 
-*** iteration 13, batch size 10, remaining 662.
->: 10.329µs | >: 10.209µs | >: 24.382919ms | >: 24.431803ms | >: 24.845799ms | >: 24.804098ms | >: 26.392968ms | >: 26.401515ms | >: 26.944294ms | >: 32.109853ms | sampled in 32.929106ms
-<: 24.710166ms | <: 25.041276ms | <: 26.65421ms | <: 31.017969ms | <: 31.014635ms | <: 31.125788ms | <: 32.194978ms | <: 34.706088ms | <: 35.539876ms | <: 35.786717ms | bfses in 36.238975ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000082335 (norm 4.794), std 0.000003460 (norm 0.201), diameter 12.846 (std 0.689).
-
-*** iteration 14, batch size 10, remaining 652.
->: 13.578µs | >: 24.173861ms | >: 24.007747ms | >: 24.327579ms | >: 25.572836ms | >: 25.609181ms | >: 25.581273ms | >: 25.838075ms | >: 31.905057ms | >: 34.236753ms | sampled in 35.168521ms
-<: 24.807948ms | <: 27.171952ms | <: 31.049777ms | <: 31.100228ms | <: 35.464064ms | <: 35.54913ms | <: 35.518703ms | <: 35.668799ms | <: 35.57967ms | <: 36.288335ms | bfses in 36.633148ms
-
-averages: distance 0.000, diameter 15.000.
-average of averages: distance 0.000082946 (norm 4.830), std 0.000004035 (norm 0.235), diameter 13.000 (std 0.877).
-
-*** iteration 15, batch size 10, remaining 642.
->: 9.195µs | >: 24.684585ms | >: 24.436581ms | >: 24.677931ms | >: 24.590403ms | >: 24.639436ms | >: 25.08538ms | >: 31.292082ms | >: 31.886632ms | >: 33.892148ms | sampled in 34.579939ms
-<: 24.68855ms | <: 24.888579ms | <: 26.947169ms | <: 27.890623ms | <: 30.82034ms | <: 31.830558ms | <: 34.604001ms | <: 34.903463ms | <: 35.252876ms | <: 35.150555ms | bfses in 35.677708ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000083277 (norm 4.849), std 0.000004094 (norm 0.238), diameter 13.000 (std 0.845).
-
-*** iteration 16, batch size 10, remaining 632.
->: 24.194573ms | >: 24.31392ms | >: 24.509989ms | >: 24.838494ms | >: 24.650696ms | >: 25.283176ms | >: 27.165983ms | >: 27.941714ms | >: 31.069159ms | >: 31.243304ms | sampled in 32.063652ms
-<: 24.678ms | <: 24.622012ms | <: 25.586499ms | <: 26.403154ms | <: 26.583115ms | <: 27.232085ms | <: 30.088104ms | <: 33.093231ms | <: 37.071192ms | <: 38.25244ms | bfses in 38.970105ms
-
-averages: distance 0.000, diameter 15.000.
-average of averages: distance 0.000083837 (norm 4.882), std 0.000004546 (norm 0.265), diameter 13.125 (std 0.957).
-
-*** iteration 17, batch size 10, remaining 622.
->: 11.184µs | >: 24.578555ms | >: 24.728679ms | >: 24.917383ms | >: 30.119357ms | >: 30.405628ms | >: 30.978243ms | >: 34.993478ms | >: 35.855992ms | >: 37.658545ms | sampled in 38.64512ms
-<: 23.951582ms | <: 24.292929ms | <: 24.153418ms | <: 24.553393ms | <: 26.681714ms | <: 29.302013ms | <: 30.967993ms | <: 32.046561ms | <: 33.08542ms | <: 35.164808ms | bfses in 35.972281ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084055 (norm 4.894), std 0.000004492 (norm 0.262), diameter 13.118 (std 0.928).
-
-*** iteration 18, batch size 10, remaining 612.
->: 5.684µs | >: 29.729105ms | >: 32.391693ms | >: 32.354127ms | >: 32.723105ms | >: 35.729648ms | >: 35.824559ms | >: 35.950174ms | >: 36.480883ms | >: 37.622744ms | sampled in 38.210189ms
-<: 23.862609ms | <: 24.168492ms | <: 24.271444ms | <: 24.458697ms | <: 24.649685ms | <: 24.613712ms | <: 31.595564ms | <: 31.439897ms | <: 37.704397ms | <: 38.570799ms | bfses in 38.952157ms
+*** iteration 5, batch size 10, remaining 5.
+>: 24.508399ms | >: 25.151646ms | >: 25.633615ms | >: 25.326341ms | >: 25.490114ms | >: 25.570375ms | >: 32.273735ms | >: 32.497306ms | >: 35.919689ms | >: 39.378093ms | sampled in 40.216539ms
+<: 25.91219ms | <: 26.203181ms | <: 26.372896ms | <: 28.810297ms | <: 28.813758ms | <: 29.167321ms | <: 29.594114ms | <: 34.204104ms | <: 34.67395ms | <: 38.868243ms | bfses in 39.337132ms
 
 averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000084159 (norm 4.900), std 0.000004380 (norm 0.255), diameter 13.167 (std 0.924).
+average of averages: distance 0.000085095 (norm 4.955), std 0.000003023 (norm 0.176), diameter 13.600 (std 0.548).
 
-*** iteration 19, batch size 10, remaining 602.
->: 24.72405ms | >: 29.208862ms | >: 30.365647ms | >: 30.523576ms | >: 30.649676ms | >: 30.726201ms | >: 32.925872ms | >: 37.626742ms | >: 37.604258ms | >: 37.558068ms | sampled in 38.64815ms
-<: 24.565629ms | <: 24.759425ms | <: 24.757266ms | <: 25.096432ms | <: 29.145525ms | <: 32.606257ms | <: 32.486507ms | <: 32.93205ms | <: 33.943192ms | <: 34.379643ms | bfses in 34.727343ms
-
-averages: distance 0.000, diameter 16.000.
-average of averages: distance 0.000084286 (norm 4.908), std 0.000004293 (norm 0.250), diameter 13.316 (std 1.108).
-
-*** iteration 20, batch size 10, remaining 592.
->: 24.901893ms | >: 32.203412ms | >: 35.746757ms | >: 35.987292ms | >: 35.900814ms | >: 36.000284ms | >: 35.931998ms | >: 36.143147ms | >: 36.364465ms | >: 38.575544ms | sampled in 39.580649ms
-<: 23.868575ms | <: 24.338468ms | <: 24.234756ms | <: 24.648005ms | <: 31.014147ms | <: 31.78222ms | <: 36.907406ms | <: 37.624524ms | <: 37.626067ms | <: 38.137947ms | bfses in 38.744619ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084150 (norm 4.900), std 0.000004222 (norm 0.246), diameter 13.300 (std 1.081).
-
-*** iteration 21, batch size 10, remaining 582.
->: 5.285µs | >: 24.671088ms | >: 24.65704ms | >: 24.979668ms | >: 24.825348ms | >: 29.670248ms | >: 30.217853ms | >: 37.58463ms | >: 38.271501ms | >: 38.507112ms | sampled in 39.2152ms
-<: 24.144993ms | <: 24.205724ms | <: 24.451829ms | <: 24.232751ms | <: 28.94921ms | <: 35.06422ms | <: 36.074362ms | <: 35.637296ms | <: 36.23926ms | <: 36.251757ms | bfses in 36.733736ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084280 (norm 4.907), std 0.000004158 (norm 0.242), diameter 13.286 (std 1.056).
-
-*** iteration 22, batch size 10, remaining 572.
->: 24.870021ms | >: 24.705708ms | >: 27.030284ms | >: 30.006716ms | >: 31.285627ms | >: 31.467816ms | >: 35.289776ms | >: 35.233547ms | >: 35.553063ms | >: 35.544513ms | sampled in 36.769135ms
-<: 24.053201ms | <: 24.15148ms | <: 24.418128ms | <: 24.377912ms | <: 24.696969ms | <: 33.548534ms | <: 33.651454ms | <: 33.461454ms | <: 38.257706ms | <: 38.116858ms | bfses in 38.61796ms
-
-averages: distance 0.000, diameter 16.000.
-average of averages: distance 0.000084657 (norm 4.929), std 0.000004427 (norm 0.258), diameter 13.409 (std 1.182).
-
-*** iteration 23, batch size 10, remaining 562.
->: 24.587355ms | >: 24.576295ms | >: 29.263526ms | >: 29.515396ms | >: 32.969927ms | >: 32.968161ms | >: 33.119175ms | >: 37.567908ms | >: 38.217754ms | >: 38.467681ms | sampled in 39.164661ms
-<: 24.362316ms | <: 24.312857ms | <: 24.605565ms | <: 24.980858ms | <: 26.683811ms | <: 27.479755ms | <: 28.705339ms | <: 29.498553ms | <: 36.113213ms | <: 36.383408ms | bfses in 36.858381ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084601 (norm 4.926), std 0.000004334 (norm 0.252), diameter 13.391 (std 1.158).
-
-*** iteration 24, batch size 10, remaining 552.
->: 24.688773ms | >: 25.948027ms | >: 27.283928ms | >: 27.449946ms | >: 27.480108ms | >: 32.733741ms | >: 35.295183ms | >: 35.554832ms | >: 35.621013ms | >: 35.850139ms | sampled in 36.698188ms
-<: 23.868056ms | <: 24.094942ms | <: 24.191903ms | <: 24.414159ms | <: 24.498789ms | <: 24.749892ms | <: 24.768319ms | <: 30.54606ms | <: 33.471701ms | <: 37.253474ms | bfses in 37.991428ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084610 (norm 4.927), std 0.000004239 (norm 0.247), diameter 13.375 (std 1.135).
-
-*** iteration 25, batch size 10, remaining 542.
->: 8.656µs | >: 24.670377ms | >: 26.843756ms | >: 27.199915ms | >: 27.255375ms | >: 28.519505ms | >: 28.53885ms | >: 38.391413ms | >: 38.574338ms | >: 38.480248ms | sampled in 39.57565ms
-<: 24.206314ms | <: 24.394349ms | <: 24.364929ms | <: 29.104132ms | <: 29.391758ms | <: 32.945105ms | <: 35.563225ms | <: 36.056768ms | <: 36.350665ms | <: 37.886416ms | bfses in 38.591069ms
+*** iteration 6, batch size 10, remaining 4.
+>: 25.373324ms | >: 25.16457ms | >: 27.750891ms | >: 30.834519ms | >: 30.800298ms | >: 33.587027ms | >: 33.859917ms | >: 35.382745ms | >: 36.418646ms | >: 38.774982ms | sampled in 39.63873ms
+<: 25.915725ms | <: 25.96647ms | <: 26.003262ms | <: 26.351764ms | <: 26.92498ms | <: 27.323744ms | <: 27.455789ms | <: 30.964922ms | <: 33.534207ms | <: 37.284504ms | bfses in 37.789189ms
 
 averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000084777 (norm 4.936), std 0.000004233 (norm 0.246), diameter 13.400 (std 1.118).
+average of averages: distance 0.000085148 (norm 4.958), std 0.000002707 (norm 0.158), diameter 13.667 (std 0.516).
 
-*** iteration 26, batch size 10, remaining 532.
->: 9.876µs | >: 6.607µs | >: 24.675211ms | >: 24.752194ms | >: 24.868657ms | >: 25.644157ms | >: 26.331388ms | >: 31.485024ms | >: 36.125386ms | >: 36.532815ms | sampled in 37.154959ms
-<: 24.639781ms | <: 24.901497ms | <: 32.01086ms | <: 33.267827ms | <: 34.498473ms | <: 35.374262ms | <: 35.514026ms | <: 35.420733ms | <: 35.7735ms | <: 39.156495ms | bfses in 39.704554ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084640 (norm 4.928), std 0.000004206 (norm 0.245), diameter 13.385 (std 1.098).
-
-*** iteration 27, batch size 10, remaining 522.
->: 24.655072ms | >: 24.860397ms | >: 27.691079ms | >: 28.021805ms | >: 27.9496ms | >: 29.975894ms | >: 30.188807ms | >: 30.508048ms | >: 30.737408ms | >: 31.431768ms | sampled in 32.395402ms
-<: 24.599464ms | <: 24.769339ms | <: 24.72869ms | <: 24.958314ms | <: 24.728387ms | <: 24.871383ms | <: 32.682407ms | <: 38.175186ms | <: 38.321033ms | <: 38.768029ms | bfses in 39.322683ms
+*** iteration 7, batch size 10, remaining 3.
+>: 26.129115ms | >: 27.541563ms | >: 27.671821ms | >: 28.472513ms | >: 29.831873ms | >: 29.884395ms | >: 30.364452ms | >: 36.682334ms | >: 36.54213ms | >: 36.609052ms | sampled in 38.114618ms
+<: 25.432248ms | <: 25.599644ms | <: 27.445707ms | <: 28.120567ms | <: 28.120928ms | <: 28.339263ms | <: 30.582317ms | <: 36.535949ms | <: 37.840143ms | <: 38.25144ms | bfses in 38.703501ms
 
 averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000084573 (norm 4.924), std 0.000004139 (norm 0.241), diameter 13.333 (std 1.109).
+average of averages: distance 0.000085564 (norm 4.982), std 0.000002704 (norm 0.157), diameter 13.429 (std 0.787).
 
-*** iteration 28, batch size 10, remaining 512.
->: 25.114829ms | >: 28.439386ms | >: 28.869768ms | >: 29.344792ms | >: 32.861571ms | >: 34.159918ms | >: 35.838841ms | >: 35.817838ms | >: 35.850491ms | >: 35.780722ms | sampled in 37.015292ms
-<: 24.311286ms | <: 24.929808ms | <: 24.85342ms | <: 24.95785ms | <: 24.970932ms | <: 27.17014ms | <: 27.191399ms | <: 27.295614ms | <: 32.588714ms | <: 32.594506ms | bfses in 33.14568ms
+*** iteration 8, batch size 10, remaining 2.
+>: 25.321815ms | >: 25.225922ms | >: 25.633323ms | >: 27.90191ms | >: 28.065669ms | >: 33.270171ms | >: 33.42639ms | >: 36.442649ms | >: 36.984954ms | >: 38.882805ms | sampled in 39.721626ms
+<: 25.636625ms | <: 25.882071ms | <: 26.829244ms | <: 28.470464ms | <: 28.737579ms | <: 28.923975ms | <: 29.302523ms | <: 39.250323ms | <: 39.893241ms | <: 39.994539ms | bfses in 40.697067ms
 
 averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084714 (norm 4.933), std 0.000004129 (norm 0.240), diameter 13.321 (std 1.090).
+average of averages: distance 0.000086011 (norm 5.008), std 0.000002805 (norm 0.163), diameter 13.375 (std 0.744).
 
-*** iteration 29, batch size 10, remaining 502.
->: 24.762263ms | >: 24.927542ms | >: 31.030777ms | >: 31.317954ms | >: 31.365616ms | >: 35.143355ms | >: 35.130722ms | >: 35.231354ms | >: 35.482371ms | >: 37.788146ms | sampled in 38.565133ms
-<: 24.746904ms | <: 24.580525ms | <: 24.788766ms | <: 24.882416ms | <: 24.739262ms | <: 24.771035ms | <: 25.160306ms | <: 27.024286ms | <: 29.542904ms | <: 32.803662ms | bfses in 33.230484ms
+*** iteration 9, batch size 10, remaining 1.
+>: 24.939467ms | >: 24.983807ms | >: 25.486694ms | >: 25.62168ms | >: 27.025327ms | >: 27.86436ms | >: 29.935541ms | >: 32.65516ms | >: 34.939316ms | >: 38.552184ms | sampled in 39.427034ms
+<: 25.38003ms | <: 25.517723ms | <: 25.690373ms | <: 26.133211ms | <: 27.028748ms | <: 28.264763ms | <: 31.467685ms | <: 32.010954ms | <: 34.045996ms | <: 37.281552ms | bfses in 37.934039ms
+
+averages: distance 0.000, diameter 13.000.
+average of averages: distance 0.000085587 (norm 4.983), std 0.000002915 (norm 0.170), diameter 13.333 (std 0.707).
+
+*** iteration 10, batch size 10, remaining 0.
+>: 25.919335ms | >: 26.937803ms | >: 27.022857ms | >: 28.31668ms | >: 29.083438ms | >: 29.61208ms | >: 29.548948ms | >: 29.975067ms | >: 31.971935ms | >: 36.521805ms | sampled in 37.510166ms
+<: 26.849258ms | <: 28.039498ms | <: 28.17346ms | <: 28.206025ms | <: 29.512321ms | <: 30.231169ms | <: 36.383244ms | <: 36.704374ms | <: 37.116319ms | <: 37.599794ms | bfses in 37.914529ms
 
 averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000084637 (norm 4.928), std 0.000004076 (norm 0.237), diameter 13.276 (std 1.099).
+average of averages: distance 0.000085150 (norm 4.958), std 0.000003077 (norm 0.179), diameter 13.200 (std 0.789).
 
-*** iteration 30, batch size 10, remaining 492.
->: 24.760113ms | >: 31.757356ms | >: 31.869366ms | >: 33.524368ms | >: 35.05927ms | >: 35.239539ms | >: 35.419126ms | >: 36.094881ms | >: 36.285851ms | >: 38.817317ms | sampled in 39.672608ms
-<: 24.488605ms | <: 24.385441ms | <: 24.893153ms | <: 24.673716ms | <: 24.996703ms | <: 24.926227ms | <: 26.839084ms | <: 27.550638ms | <: 30.76264ms | <: 31.174515ms | bfses in 31.70001ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084530 (norm 4.922), std 0.000004048 (norm 0.236), diameter 13.267 (std 1.081).
-
-*** iteration 31, batch size 10, remaining 482.
->: 24.639775ms | >: 24.808055ms | >: 24.833929ms | >: 24.770993ms | >: 31.766638ms | >: 33.85715ms | >: 33.948578ms | >: 34.733477ms | >: 34.769241ms | >: 38.274385ms | sampled in 38.99476ms
-<: 24.570335ms | <: 24.480394ms | <: 24.563311ms | <: 24.602828ms | <: 24.587913ms | <: 26.611526ms | <: 26.774688ms | <: 30.587744ms | <: 30.473343ms | <: 30.780327ms | bfses in 31.026158ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084433 (norm 4.916), std 0.000004016 (norm 0.234), diameter 13.258 (std 1.064).
-
-*** iteration 32, batch size 10, remaining 472.
->: 24.751795ms | >: 24.881947ms | >: 28.363331ms | >: 30.864607ms | >: 31.162449ms | >: 31.473843ms | >: 33.790183ms | >: 34.506265ms | >: 34.417324ms | >: 34.375969ms | sampled in 35.53306ms
-<: 23.969196ms | <: 24.110792ms | <: 23.986884ms | <: 24.420424ms | <: 31.246679ms | <: 36.091583ms | <: 36.396401ms | <: 36.424612ms | <: 36.445967ms | <: 36.911023ms | bfses in 37.201578ms
-
-averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000084348 (norm 4.911), std 0.000003979 (norm 0.232), diameter 13.281 (std 1.054).
-
-*** iteration 33, batch size 10, remaining 462.
->: 12.172µs | >: 24.453576ms | >: 24.808723ms | >: 25.110894ms | >: 25.022947ms | >: 29.768155ms | >: 32.538625ms | >: 35.907802ms | >: 36.118798ms | >: 36.075083ms | sampled in 36.989189ms
-<: 24.79542ms | <: 24.951437ms | <: 25.140515ms | <: 28.033601ms | <: 29.342465ms | <: 31.873118ms | <: 32.220704ms | <: 35.957934ms | <: 35.786377ms | <: 36.077416ms | bfses in 36.676369ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084344 (norm 4.911), std 0.000003917 (norm 0.228), diameter 13.273 (std 1.039).
-
-*** iteration 34, batch size 10, remaining 452.
->: 30.116µs | >: 24.220854ms | >: 24.418306ms | >: 25.043587ms | >: 25.124064ms | >: 25.378859ms | >: 25.163279ms | >: 25.529708ms | >: 32.277855ms | >: 36.845761ms | sampled in 37.592593ms
-<: 24.597455ms | <: 24.96254ms | <: 28.621295ms | <: 32.179752ms | <: 32.124393ms | <: 32.240501ms | <: 35.422585ms | <: 35.905035ms | <: 35.915423ms | <: 35.954409ms | bfses in 36.473548ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084325 (norm 4.910), std 0.000003859 (norm 0.225), diameter 13.265 (std 1.024).
-
-*** iteration 35, batch size 10, remaining 442.
->: 24.643136ms | >: 24.447516ms | >: 24.591067ms | >: 24.766668ms | >: 26.805463ms | >: 28.497683ms | >: 28.667388ms | >: 32.78488ms | >: 34.171092ms | >: 35.573985ms | sampled in 36.241701ms
-<: 26.870847ms | <: 27.340716ms | <: 30.229744ms | <: 30.156816ms | <: 35.40084ms | <: 35.658411ms | <: 35.821922ms | <: 35.872364ms | <: 36.229781ms | <: 37.940892ms | bfses in 38.370614ms
-
-averages: distance 0.000, diameter 17.000.
-average of averages: distance 0.000084485 (norm 4.919), std 0.000003919 (norm 0.228), diameter 13.371 (std 1.190).
-
-*** iteration 36, batch size 10, remaining 432.
->: 24.855059ms | >: 24.811533ms | >: 24.922171ms | >: 24.773431ms | >: 28.026935ms | >: 28.250162ms | >: 28.364313ms | >: 28.322667ms | >: 31.179104ms | >: 33.440561ms | sampled in 34.147692ms
-<: 27.694643ms | <: 27.755779ms | <: 27.927976ms | <: 28.604956ms | <: 28.59254ms | <: 28.506445ms | <: 31.448782ms | <: 31.771747ms | <: 36.211939ms | <: 37.193856ms | bfses in 37.934883ms
-
-averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000084627 (norm 4.928), std 0.000003955 (norm 0.230), diameter 13.389 (std 1.178).
-
-*** iteration 37, batch size 10, remaining 422.
->: 24.571965ms | >: 25.120034ms | >: 24.939412ms | >: 25.863765ms | >: 26.203114ms | >: 27.334861ms | >: 32.712124ms | >: 32.661596ms | >: 34.72704ms | >: 39.416093ms | sampled in 40.20924ms
-<: 24.721793ms | <: 24.914582ms | <: 32.198267ms | <: 34.35555ms | <: 35.920863ms | <: 35.922487ms | <: 35.762017ms | <: 36.210331ms | <: 39.439823ms | <: 39.671015ms | bfses in 40.279199ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084600 (norm 4.926), std 0.000003903 (norm 0.227), diameter 13.378 (std 1.163).
-
-*** iteration 38, batch size 10, remaining 412.
->: 28.413664ms | >: 28.871725ms | >: 29.222495ms | >: 29.015758ms | >: 28.907007ms | >: 29.235053ms | >: 31.509664ms | >: 31.489552ms | >: 31.470308ms | >: 31.886831ms | sampled in 32.814535ms
-<: 24.375426ms | <: 24.669404ms | <: 24.761259ms | <: 24.695104ms | <: 24.587009ms | <: 24.611192ms | <: 25.251062ms | <: 30.585869ms | <: 33.091343ms | <: 33.17346ms | bfses in 33.668904ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084742 (norm 4.934), std 0.000003949 (norm 0.230), diameter 13.368 (std 1.149).
-
-*** iteration 39, batch size 10, remaining 402.
->: 25.369368ms | >: 28.849589ms | >: 29.19938ms | >: 29.140898ms | >: 29.12776ms | >: 29.407309ms | >: 29.978074ms | >: 30.786728ms | >: 32.557407ms | >: 32.543283ms | sampled in 33.567633ms
-<: 24.783055ms | <: 24.991642ms | <: 24.905461ms | <: 26.661917ms | <: 28.473296ms | <: 28.346033ms | <: 29.596194ms | <: 30.29039ms | <: 30.416664ms | <: 30.48483ms | bfses in 30.939031ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084786 (norm 4.937), std 0.000003906 (norm 0.227), diameter 13.359 (std 1.135).
-
-*** iteration 40, batch size 10, remaining 392.
->: 24.65839ms | >: 24.564857ms | >: 24.539482ms | >: 25.655956ms | >: 25.98258ms | >: 28.047819ms | >: 28.019617ms | >: 30.761802ms | >: 31.265796ms | >: 33.171991ms | sampled in 33.800532ms
-<: 25.110598ms | <: 24.864185ms | <: 28.204824ms | <: 30.218468ms | <: 32.382611ms | <: 32.89814ms | <: 33.009413ms | <: 33.510763ms | <: 33.622188ms | <: 37.953347ms | bfses in 38.468576ms
-
-averages: distance 0.000, diameter 15.000.
-average of averages: distance 0.000084883 (norm 4.942), std 0.000003904 (norm 0.227), diameter 13.400 (std 1.150).
-
-*** iteration 41, batch size 10, remaining 382.
->: 8.049µs | >: 24.686133ms | >: 28.291345ms | >: 29.346648ms | >: 29.74391ms | >: 31.400516ms | >: 31.89064ms | >: 34.144167ms | >: 35.288519ms | >: 37.704144ms | sampled in 38.462134ms
-<: 24.267243ms | <: 26.827084ms | <: 27.064029ms | <: 27.221144ms | <: 30.014131ms | <: 30.329848ms | <: 32.93009ms | <: 33.183914ms | <: 36.205161ms | <: 37.074168ms | bfses in 37.747599ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084910 (norm 4.944), std 0.000003859 (norm 0.225), diameter 13.390 (std 1.137).
-
-*** iteration 42, batch size 10, remaining 372.
->: 6.615µs | >: 27.00079ms | >: 27.475361ms | >: 27.161458ms | >: 29.03833ms | >: 28.913835ms | >: 31.213114ms | >: 31.782654ms | >: 33.819616ms | >: 38.022115ms | sampled in 38.9021ms
-<: 23.859922ms | <: 23.910282ms | <: 24.07346ms | <: 24.444608ms | <: 27.433294ms | <: 27.517118ms | <: 27.643593ms | <: 27.802068ms | <: 31.173228ms | <: 37.272375ms | bfses in 37.727709ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000085014 (norm 4.950), std 0.000003870 (norm 0.225), diameter 13.381 (std 1.125).
-
-*** iteration 43, batch size 10, remaining 362.
->: 24.345203ms | >: 24.545669ms | >: 25.360821ms | >: 30.390284ms | >: 32.766853ms | >: 33.439278ms | >: 34.679249ms | >: 35.48512ms | >: 35.780253ms | >: 36.013383ms | sampled in 36.894831ms
-<: 24.402401ms | <: 24.600233ms | <: 24.961665ms | <: 24.952639ms | <: 24.928773ms | <: 30.010643ms | <: 29.981984ms | <: 30.124033ms | <: 32.877771ms | <: 36.143709ms | bfses in 36.458468ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000085035 (norm 4.951), std 0.000003827 (norm 0.223), diameter 13.372 (std 1.113).
-
-*** iteration 44, batch size 10, remaining 352.
->: 16.258µs | >: 24.678859ms | >: 29.76106ms | >: 30.721492ms | >: 30.698707ms | >: 30.596199ms | >: 32.015204ms | >: 34.308431ms | >: 36.059925ms | >: 37.803141ms | sampled in 38.7975ms
-<: 24.628203ms | <: 24.555586ms | <: 24.763474ms | <: 29.777654ms | <: 29.907947ms | <: 32.300631ms | <: 34.354922ms | <: 34.867662ms | <: 36.082875ms | <: 35.957899ms | bfses in 36.592772ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000085074 (norm 4.954), std 0.000003791 (norm 0.221), diameter 13.364 (std 1.102).
-
-*** iteration 45, batch size 10, remaining 342.
->: 24.957851ms | >: 25.05637ms | >: 25.460166ms | >: 25.436999ms | >: 25.746124ms | >: 27.488109ms | >: 27.289378ms | >: 27.434121ms | >: 30.659839ms | >: 30.828515ms | sampled in 31.796984ms
-<: 24.440852ms | <: 24.917386ms | <: 24.813607ms | <: 29.429859ms | <: 29.678175ms | <: 29.815981ms | <: 32.020556ms | <: 33.79491ms | <: 34.832987ms | <: 39.640097ms | bfses in 40.388147ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000084945 (norm 4.946), std 0.000003846 (norm 0.224), diameter 13.333 (std 1.108).
-
-*** iteration 46, batch size 10, remaining 332.
->: 24.264337ms | >: 24.371466ms | >: 24.878266ms | >: 26.691255ms | >: 26.800756ms | >: 27.245789ms | >: 27.694353ms | >: 28.363147ms | >: 31.224857ms | >: 31.347244ms | sampled in 32.271737ms
-<: 24.730004ms | <: 30.038272ms | <: 30.328341ms | <: 30.675416ms | <: 30.816522ms | <: 32.36788ms | <: 32.387833ms | <: 32.680284ms | <: 35.749712ms | <: 36.190027ms | bfses in 36.979257ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084967 (norm 4.947), std 0.000003805 (norm 0.222), diameter 13.326 (std 1.097).
-
-*** iteration 47, batch size 10, remaining 322.
->: 6.216µs | >: 25.272904ms | >: 25.383639ms | >: 25.327879ms | >: 25.852778ms | >: 26.386793ms | >: 27.701018ms | >: 29.805654ms | >: 30.423565ms | >: 30.534791ms | sampled in 31.474947ms
-<: 23.948733ms | <: 24.564418ms | <: 24.539412ms | <: 24.448815ms | <: 27.962984ms | <: 31.182256ms | <: 31.535318ms | <: 33.402736ms | <: 38.295535ms | <: 38.26901ms | bfses in 38.599971ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084980 (norm 4.948), std 0.000003765 (norm 0.219), diameter 13.319 (std 1.086).
-
-*** iteration 48, batch size 10, remaining 312.
->: 24.891607ms | >: 24.883806ms | >: 26.865709ms | >: 27.401451ms | >: 28.557305ms | >: 28.844694ms | >: 29.646234ms | >: 32.953979ms | >: 34.145443ms | >: 38.533075ms | sampled in 39.43849ms
-<: 24.693804ms | <: 24.796003ms | <: 24.615771ms | <: 24.649693ms | <: 26.245725ms | <: 26.95717ms | <: 26.803219ms | <: 30.813927ms | <: 32.146109ms | <: 35.889807ms | bfses in 36.433669ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084892 (norm 4.943), std 0.000003774 (norm 0.220), diameter 13.312 (std 1.075).
-
-*** iteration 49, batch size 10, remaining 302.
->: 5.285µs | >: 29.975736ms | >: 30.100355ms | >: 32.594366ms | >: 34.576069ms | >: 35.729931ms | >: 36.00192ms | >: 35.927021ms | >: 36.166064ms | >: 37.015261ms | sampled in 37.752615ms
-<: 24.572091ms | <: 24.84136ms | <: 24.659783ms | <: 24.650613ms | <: 29.813435ms | <: 30.568311ms | <: 30.950613ms | <: 31.311983ms | <: 31.230703ms | <: 37.049378ms | bfses in 37.770534ms
-
-averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000084948 (norm 4.946), std 0.000003756 (norm 0.219), diameter 13.327 (std 1.068).
-
-*** iteration 50, batch size 10, remaining 292.
->: 24.565986ms | >: 24.694492ms | >: 24.675088ms | >: 24.998757ms | >: 24.973241ms | >: 29.553632ms | >: 37.269346ms | >: 37.302695ms | >: 37.906699ms | >: 38.517734ms | sampled in 39.26633ms
-<: 24.164375ms | <: 24.445531ms | <: 24.590462ms | <: 24.541958ms | <: 27.342121ms | <: 27.407361ms | <: 29.191151ms | <: 29.164167ms | <: 32.172061ms | <: 36.126083ms | bfses in 36.484054ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084924 (norm 4.945), std 0.000003721 (norm 0.217), diameter 13.320 (std 1.058).
-
-*** iteration 51, batch size 10, remaining 282.
->: 25.064698ms | >: 25.868513ms | >: 26.13361ms | >: 26.77763ms | >: 32.964748ms | >: 33.351512ms | >: 35.636895ms | >: 35.821277ms | >: 35.74455ms | >: 35.812817ms | sampled in 36.952052ms
-<: 23.951806ms | <: 24.134152ms | <: 24.334681ms | <: 24.450014ms | <: 25.682223ms | <: 26.76409ms | <: 27.147392ms | <: 30.330052ms | <: 30.258471ms | <: 33.145221ms | bfses in 33.785548ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000084967 (norm 4.947), std 0.000003696 (norm 0.215), diameter 13.294 (std 1.064).
-
-*** iteration 52, batch size 10, remaining 272.
->: 8.331µs | >: 24.90751ms | >: 30.39322ms | >: 33.204473ms | >: 33.110708ms | >: 35.165533ms | >: 35.225574ms | >: 35.402563ms | >: 35.556516ms | >: 36.991961ms | sampled in 38.01049ms
-<: 24.182279ms | <: 24.052432ms | <: 24.326247ms | <: 24.646035ms | <: 26.852091ms | <: 27.80868ms | <: 30.46426ms | <: 30.408366ms | <: 30.34042ms | <: 30.995543ms | bfses in 31.633036ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084843 (norm 4.940), std 0.000003767 (norm 0.219), diameter 13.288 (std 1.054).
-
-*** iteration 53, batch size 10, remaining 262.
->: 24.890703ms | >: 25.876388ms | >: 26.050525ms | >: 28.436017ms | >: 31.652955ms | >: 31.576722ms | >: 33.652181ms | >: 35.542656ms | >: 38.439451ms | >: 38.656957ms | sampled in 39.630337ms
-<: 24.335183ms | <: 24.815699ms | <: 24.908179ms | <: 26.908792ms | <: 27.06468ms | <: 27.045877ms | <: 27.151903ms | <: 27.00425ms | <: 30.598197ms | <: 30.629415ms | bfses in 31.111722ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084777 (norm 4.936), std 0.000003761 (norm 0.219), diameter 13.283 (std 1.045).
-
-*** iteration 54, batch size 10, remaining 252.
->: 5.312µs | >: 24.056649ms | >: 24.235948ms | >: 24.42809ms | >: 24.648214ms | >: 24.54358ms | >: 28.551293ms | >: 31.231643ms | >: 31.599732ms | >: 33.283116ms | sampled in 34.010716ms
-<: 24.95978ms | <: 29.891585ms | <: 31.243363ms | <: 31.603035ms | <: 32.324623ms | <: 35.104818ms | <: 35.241412ms | <: 35.310387ms | <: 35.434855ms | <: 36.185548ms | bfses in 36.515579ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000084706 (norm 4.932), std 0.000003762 (norm 0.219), diameter 13.259 (std 1.049).
-
-*** iteration 55, batch size 10, remaining 242.
->: 24.147951ms | >: 24.200205ms | >: 24.052417ms | >: 24.619824ms | >: 24.436839ms | >: 24.537758ms | >: 25.28259ms | >: 31.446331ms | >: 31.643266ms | >: 33.794643ms | sampled in 34.641722ms
-<: 26.972031ms | <: 26.95378ms | <: 26.779786ms | <: 27.927312ms | <: 31.303594ms | <: 31.576363ms | <: 31.684417ms | <: 31.716558ms | <: 32.189606ms | <: 35.529495ms | bfses in 36.158262ms
-
-averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000084751 (norm 4.935), std 0.000003741 (norm 0.218), diameter 13.273 (std 1.044).
-
-*** iteration 56, batch size 10, remaining 232.
->: 24.191394ms | >: 25.225177ms | >: 24.709939ms | >: 26.951976ms | >: 27.243824ms | >: 26.908399ms | >: 27.110645ms | >: 27.712905ms | >: 31.127527ms | >: 30.99034ms | sampled in 32.053021ms
-<: 24.703377ms | <: 24.575263ms | <: 24.768272ms | <: 29.251191ms | <: 30.729522ms | <: 31.327793ms | <: 32.001525ms | <: 32.154112ms | <: 35.678607ms | <: 38.868521ms | bfses in 39.374743ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084841 (norm 4.940), std 0.000003768 (norm 0.219), diameter 13.268 (std 1.036).
-
-*** iteration 57, batch size 10, remaining 222.
->: 24.462052ms | >: 25.565419ms | >: 26.877753ms | >: 27.113618ms | >: 27.868874ms | >: 31.432581ms | >: 31.848901ms | >: 33.743931ms | >: 33.826085ms | >: 38.877625ms | sampled in 40.002941ms
-<: 24.72746ms | <: 24.650318ms | <: 24.964013ms | <: 24.863288ms | <: 27.642366ms | <: 30.758084ms | <: 34.807731ms | <: 35.134738ms | <: 36.440718ms | <: 37.031088ms | bfses in 37.74648ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084846 (norm 4.940), std 0.000003734 (norm 0.217), diameter 13.263 (std 1.027).
-
-*** iteration 58, batch size 10, remaining 212.
->: 24.924024ms | >: 24.69496ms | >: 24.927507ms | >: 25.055629ms | >: 27.116052ms | >: 28.646533ms | >: 32.65524ms | >: 32.701633ms | >: 36.077142ms | >: 35.967563ms | sampled in 36.953288ms
-<: 24.652551ms | <: 25.106863ms | <: 24.969943ms | <: 32.653015ms | <: 34.405247ms | <: 35.437943ms | <: 35.438086ms | <: 35.440258ms | <: 35.401403ms | <: 37.508043ms | bfses in 38.075199ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084894 (norm 4.943), std 0.000003719 (norm 0.217), diameter 13.259 (std 1.018).
-
-*** iteration 59, batch size 10, remaining 202.
->: 24.846349ms | >: 27.781238ms | >: 28.782909ms | >: 29.025998ms | >: 29.048688ms | >: 29.366703ms | >: 31.257582ms | >: 31.509099ms | >: 33.101557ms | >: 33.301661ms | sampled in 34.113096ms
-<: 23.86111ms | <: 23.970017ms | <: 23.92779ms | <: 24.112536ms | <: 24.566948ms | <: 24.836862ms | <: 25.002121ms | <: 31.250099ms | <: 32.141693ms | <: 34.880129ms | bfses in 35.475202ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084972 (norm 4.948), std 0.000003735 (norm 0.217), diameter 13.254 (std 1.010).
-
-*** iteration 60, batch size 10, remaining 192.
->: 8.8µs | >: 7.348µs | >: 24.590056ms | >: 25.095289ms | >: 28.755681ms | >: 30.38233ms | >: 30.852711ms | >: 31.358788ms | >: 31.792154ms | >: 32.048392ms | sampled in 32.799092ms
-<: 24.569638ms | <: 24.684406ms | <: 24.684271ms | <: 24.690046ms | <: 25.090839ms | <: 31.682372ms | <: 32.238412ms | <: 35.175899ms | <: 36.631806ms | <: 38.217137ms | bfses in 38.891283ms
-
-averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000084952 (norm 4.946), std 0.000003707 (norm 0.216), diameter 13.267 (std 1.006).
-
-*** iteration 61, batch size 10, remaining 182.
->: 11.751µs | >: 24.394555ms | >: 24.425182ms | >: 24.815927ms | >: 26.949873ms | >: 26.776937ms | >: 26.882651ms | >: 27.168679ms | >: 31.014352ms | >: 33.079451ms | sampled in 33.632569ms
-<: 24.964292ms | <: 29.680446ms | <: 29.765324ms | <: 29.693785ms | <: 30.197267ms | <: 32.087805ms | <: 32.302738ms | <: 33.64768ms | <: 37.313814ms | <: 37.765922ms | bfses in 38.275532ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084970 (norm 4.948), std 0.000003679 (norm 0.214), diameter 13.262 (std 0.998).
-
-*** iteration 62, batch size 10, remaining 172.
->: 24.810309ms | >: 24.831176ms | >: 28.518046ms | >: 28.633197ms | >: 31.335579ms | >: 31.97046ms | >: 33.954803ms | >: 35.042578ms | >: 35.302511ms | >: 35.50951ms | sampled in 36.310624ms
-<: 24.761876ms | <: 25.009915ms | <: 25.205719ms | <: 25.917547ms | <: 27.324305ms | <: 27.177404ms | <: 27.529179ms | <: 28.605745ms | <: 29.631638ms | <: 35.124236ms | bfses in 35.545609ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084947 (norm 4.946), std 0.000003653 (norm 0.213), diameter 13.258 (std 0.991).
-
-*** iteration 63, batch size 10, remaining 162.
->: 24.733711ms | >: 24.886484ms | >: 24.750137ms | >: 29.744424ms | >: 32.264542ms | >: 34.545416ms | >: 35.412976ms | >: 35.225198ms | >: 35.237615ms | >: 35.448554ms | sampled in 36.646934ms
-<: 24.933318ms | <: 24.660578ms | <: 24.774599ms | <: 25.042475ms | <: 25.470424ms | <: 25.153356ms | <: 25.404839ms | <: 26.8969ms | <: 26.76509ms | <: 27.441308ms | bfses in 27.762687ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084998 (norm 4.949), std 0.000003646 (norm 0.212), diameter 13.254 (std 0.983).
-
-*** iteration 64, batch size 10, remaining 152.
->: 24.290953ms | >: 24.774059ms | >: 24.65368ms | >: 24.834704ms | >: 32.093413ms | >: 36.203502ms | >: 38.942207ms | >: 39.012871ms | >: 39.339094ms | >: 39.495501ms | sampled in 40.483936ms
-<: 24.847948ms | <: 27.619833ms | <: 27.638405ms | <: 29.504015ms | <: 32.268605ms | <: 32.229886ms | <: 33.431589ms | <: 34.430369ms | <: 35.730361ms | <: 38.286388ms | bfses in 38.766941ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084927 (norm 4.945), std 0.000003661 (norm 0.213), diameter 13.250 (std 0.976).
-
-*** iteration 65, batch size 10, remaining 142.
->: 24.898502ms | >: 24.880188ms | >: 25.132203ms | >: 25.338638ms | >: 25.473395ms | >: 26.834353ms | >: 27.283246ms | >: 32.168559ms | >: 36.727193ms | >: 38.218599ms | sampled in 39.04587ms
-<: 24.983773ms | <: 24.881397ms | <: 31.51348ms | <: 32.070148ms | <: 31.903574ms | <: 33.367073ms | <: 35.314064ms | <: 35.494259ms | <: 35.690902ms | <: 35.456274ms | bfses in 36.136544ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000084866 (norm 4.941), std 0.000003667 (norm 0.213), diameter 13.231 (std 0.981).
-
-*** iteration 66, batch size 10, remaining 132.
->: 23.914399ms | >: 24.254506ms | >: 24.274192ms | >: 24.195458ms | >: 27.346366ms | >: 29.230544ms | >: 29.494119ms | >: 29.748443ms | >: 29.522811ms | >: 32.381376ms | sampled in 33.272504ms
-<: 25.115305ms | <: 26.733036ms | <: 27.07262ms | <: 27.565223ms | <: 32.554072ms | <: 32.552188ms | <: 35.017769ms | <: 35.34339ms | <: 35.803951ms | <: 36.17373ms | bfses in 36.868243ms
-
-averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000084945 (norm 4.946), std 0.000003696 (norm 0.215), diameter 13.242 (std 0.978).
-
-*** iteration 67, batch size 10, remaining 122.
->: 24.047169ms | >: 24.165146ms | >: 24.466884ms | >: 25.020546ms | >: 26.697379ms | >: 26.986666ms | >: 29.341816ms | >: 29.30157ms | >: 29.608694ms | >: 32.235444ms | sampled in 33.105527ms
-<: 24.701655ms | <: 29.311453ms | <: 29.406228ms | <: 29.717446ms | <: 31.872498ms | <: 32.723671ms | <: 34.727456ms | <: 35.53461ms | <: 35.832581ms | <: 36.419656ms | bfses in 37.089317ms
-
-averages: distance 0.000, diameter 16.000.
-average of averages: distance 0.000085073 (norm 4.954), std 0.000003814 (norm 0.222), diameter 13.284 (std 1.027).
-
-*** iteration 68, batch size 10, remaining 112.
->: 24.915488ms | >: 25.081168ms | >: 25.307093ms | >: 25.244074ms | >: 29.506598ms | >: 31.248846ms | >: 31.175033ms | >: 31.970579ms | >: 34.33832ms | >: 36.757697ms | sampled in 37.715688ms
-<: 24.447358ms | <: 24.709321ms | <: 27.594624ms | <: 27.547177ms | <: 27.578281ms | <: 29.769362ms | <: 32.289222ms | <: 32.280045ms | <: 36.376021ms | <: 37.349429ms | bfses in 38.018874ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000085146 (norm 4.958), std 0.000003832 (norm 0.223), diameter 13.279 (std 1.020).
-
-*** iteration 69, batch size 10, remaining 102.
->: 24.184685ms | >: 24.918532ms | >: 25.939186ms | >: 26.036505ms | >: 26.061014ms | >: 26.89442ms | >: 26.852095ms | >: 26.990798ms | >: 30.304953ms | >: 30.102158ms | sampled in 31.229244ms
-<: 24.566949ms | <: 24.630235ms | <: 24.806736ms | <: 27.355503ms | <: 27.525636ms | <: 27.465365ms | <: 27.51249ms | <: 30.395079ms | <: 30.73995ms | <: 37.825737ms | bfses in 38.306359ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000085082 (norm 4.954), std 0.000003840 (norm 0.224), diameter 13.261 (std 1.024).
-
-*** iteration 70, batch size 10, remaining 92.
->: 26.761817ms | >: 26.796865ms | >: 28.686783ms | >: 28.842654ms | >: 28.953327ms | >: 28.857674ms | >: 34.240925ms | >: 35.562757ms | >: 35.608558ms | >: 35.489889ms | sampled in 36.83124ms
-<: 24.490199ms | <: 24.861498ms | <: 24.720259ms | <: 24.825424ms | <: 27.101145ms | <: 27.496149ms | <: 27.557658ms | <: 28.036636ms | <: 32.485165ms | <: 35.674123ms | bfses in 36.313258ms
-
-averages: distance 0.000, diameter 14.000.
-average of averages: distance 0.000085130 (norm 4.957), std 0.000003834 (norm 0.223), diameter 13.271 (std 1.020).
-
-*** iteration 71, batch size 10, remaining 82.
->: 24.235302ms | >: 25.046422ms | >: 26.213573ms | >: 26.72759ms | >: 26.906564ms | >: 30.446139ms | >: 30.83562ms | >: 31.061605ms | >: 33.682946ms | >: 35.822472ms | sampled in 36.677135ms
-<: 27.088617ms | <: 27.786654ms | <: 28.10381ms | <: 29.152523ms | <: 29.506541ms | <: 29.68858ms | <: 29.672048ms | <: 33.426695ms | <: 35.368432ms | <: 35.670736ms | bfses in 36.15179ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000085044 (norm 4.952), std 0.000003875 (norm 0.226), diameter 13.254 (std 1.024).
-
-*** iteration 72, batch size 10, remaining 72.
->: 9.362µs | >: 24.521438ms | >: 24.554447ms | >: 24.668364ms | >: 25.158108ms | >: 25.362534ms | >: 25.35671ms | >: 32.491147ms | >: 32.989765ms | >: 38.943753ms | sampled in 39.913361ms
-<: 24.611794ms | <: 31.251299ms | <: 31.496172ms | <: 37.49882ms | <: 38.014205ms | <: 38.041015ms | <: 38.072817ms | <: 38.501196ms | <: 38.445489ms | <: 38.47977ms | bfses in 38.99292ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000085051 (norm 4.952), std 0.000003848 (norm 0.224), diameter 13.250 (std 1.017).
-
-*** iteration 73, batch size 10, remaining 62.
->: 23.935887ms | >: 24.438326ms | >: 24.234806ms | >: 24.471931ms | >: 24.879318ms | >: 24.82804ms | >: 30.594548ms | >: 30.432112ms | >: 31.036311ms | >: 33.086213ms | sampled in 33.805722ms
-<: 24.851062ms | <: 26.681576ms | <: 29.351615ms | <: 29.439743ms | <: 30.374504ms | <: 30.709641ms | <: 31.357128ms | <: 32.148475ms | <: 32.2057ms | <: 32.556278ms | bfses in 33.231599ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000084970 (norm 4.948), std 0.000003883 (norm 0.226), diameter 13.233 (std 1.021).
-
-*** iteration 74, batch size 10, remaining 52.
->: 24.871117ms | >: 25.266545ms | >: 28.267566ms | >: 28.678456ms | >: 29.081656ms | >: 29.294761ms | >: 29.669955ms | >: 29.78674ms | >: 30.121287ms | >: 31.910072ms | sampled in 32.572864ms
-<: 24.467641ms | <: 24.853352ms | <: 24.820291ms | <: 25.038458ms | <: 24.960034ms | <: 26.6331ms | <: 27.465752ms | <: 27.703031ms | <: 28.731555ms | <: 29.168012ms | bfses in 29.538392ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084928 (norm 4.945), std 0.000003873 (norm 0.226), diameter 13.230 (std 1.014).
-
-*** iteration 75, batch size 10, remaining 42.
->: 24.618511ms | >: 24.374387ms | >: 24.671314ms | >: 24.628221ms | >: 24.811572ms | >: 25.063115ms | >: 25.138338ms | >: 27.417024ms | >: 28.984942ms | >: 35.863345ms | sampled in 36.722605ms
-<: 27.598094ms | <: 27.815205ms | <: 29.269106ms | <: 31.635226ms | <: 31.890224ms | <: 32.563647ms | <: 35.019004ms | <: 35.189083ms | <: 35.392077ms | <: 35.250094ms | bfses in 35.78057ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084899 (norm 4.943), std 0.000003856 (norm 0.225), diameter 13.227 (std 1.008).
-
-*** iteration 76, batch size 10, remaining 32.
->: 24.317713ms | >: 24.297286ms | >: 24.383344ms | >: 24.403306ms | >: 24.930853ms | >: 26.815475ms | >: 29.972943ms | >: 29.942298ms | >: 32.909156ms | >: 33.121544ms | sampled in 33.856803ms
-<: 24.67324ms | <: 24.957026ms | <: 24.831596ms | <: 30.491361ms | <: 30.512088ms | <: 30.943637ms | <: 31.036971ms | <: 32.511637ms | <: 34.813988ms | <: 36.654024ms | bfses in 37.377654ms
-
-averages: distance 0.000, diameter 12.000.
-average of averages: distance 0.000084906 (norm 4.944), std 0.000003830 (norm 0.223), diameter 13.211 (std 1.011).
-
-*** iteration 77, batch size 10, remaining 22.
->: 24.607387ms | >: 26.164396ms | >: 28.993378ms | >: 29.232496ms | >: 30.035928ms | >: 30.231784ms | >: 30.204869ms | >: 31.041382ms | >: 31.313169ms | >: 35.689974ms | sampled in 36.278974ms
-<: 24.036413ms | <: 24.373351ms | <: 24.415943ms | <: 24.556474ms | <: 24.52427ms | <: 24.867621ms | <: 25.569391ms | <: 27.716136ms | <: 29.508228ms | <: 29.747235ms | bfses in 30.01024ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084891 (norm 4.943), std 0.000003807 (norm 0.222), diameter 13.208 (std 1.004).
-
-*** iteration 78, batch size 10, remaining 12.
->: 10.777µs | >: 24.309111ms | >: 24.35715ms | >: 24.599934ms | >: 24.275236ms | >: 24.228296ms | >: 25.140653ms | >: 31.960339ms | >: 35.468609ms | >: 37.31486ms | sampled in 38.126189ms
-<: 24.567578ms | <: 25.677911ms | <: 26.142266ms | <: 32.793162ms | <: 35.73168ms | <: 38.111023ms | <: 38.441393ms | <: 38.745012ms | <: 38.671992ms | <: 38.714455ms | bfses in 39.354465ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000084937 (norm 4.946), std 0.000003804 (norm 0.222), diameter 13.205 (std 0.998).
-
-*** iteration 79, batch size 10, remaining 2.
->: 24.535399ms | >: 24.286008ms | >: 24.476044ms | >: 24.382808ms | >: 24.263669ms | >: 24.790085ms | >: 28.080323ms | >: 30.881762ms | >: 32.583475ms | >: 33.543324ms | sampled in 34.286984ms
-<: 24.755922ms | <: 30.548007ms | <: 30.539193ms | <: 30.523095ms | <: 30.738138ms | <: 31.681856ms | <: 31.830322ms | <: 32.21861ms | <: 34.983443ms | <: 35.638932ms | bfses in 36.053104ms
-
-averages: distance 0.000, diameter 15.000.
-average of averages: distance 0.000084996 (norm 4.949), std 0.000003816 (norm 0.222), diameter 13.228 (std 1.012).
-
-*** iteration 80, batch size 2, remaining 0.
->: 32.230476ms | >: 32.50021ms | sampled in 33.031359ms
-<: 23.585194ms | <: 35.363066ms | bfses in 35.627932ms
-
-averages: distance 0.000, diameter 13.000.
-average of averages: distance 0.000085187 (norm 4.960), std 0.000004160 (norm 0.242), diameter 13.225 (std 1.006).
-
-Total time: 5.819783779s
+Total time: 776.232272ms
