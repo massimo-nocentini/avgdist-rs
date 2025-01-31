@@ -3,7 +3,7 @@ echo:
 	echo "Invoke with a rule."
 
 webgraph:
-	webgraph from arcs --num-nodes 22687 github < github.csv
+	webgraph from arcs --num-nodes 37700 github < github.csv
 	webgraph transform transpose github github-t
 	webgraph build ef github
 	webgraph build ef github-t
