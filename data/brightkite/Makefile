@@ -3,7 +3,7 @@ echo:
 	echo "Invoke with a rule."
 
 webgraph:
-	webgraph from arcs --num-nodes 22687 brightkite < brightkite.csv
+	webgraph from arcs --num-nodes 58228 brightkite < brightkite.csv
 	webgraph transform transpose brightkite brightkite-t
 	webgraph build ef brightkite
 	webgraph build ef brightkite-t
