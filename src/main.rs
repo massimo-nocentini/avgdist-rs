@@ -61,9 +61,9 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
             let tup = bfs(v, agraph);
             let seen = tup.3;
 
-            let mut cross: Vec<usize> = Vec::new();
+            let cross: Vec<usize> = seen.iter_ones().collect();
 
-            seen.iter_ones().for_each(|v| cross.push(v));
+            //           seen.iter_ones().for_each(|v| cross.push(v));
 
             let l = r.gen_range(0..cross.len());
 
