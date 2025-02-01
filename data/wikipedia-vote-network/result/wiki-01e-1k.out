@@ -1,73 +1,73 @@
 |V| = 7115, |E| = 103689, |S| = 10, s = 1.
 
 *** iteration 1, batch size 1, remaining 9.
->: 22.447µs | sampled in 207.845µs
-<: 4.440525ms | bfses in 4.692077ms
+>: 27.208µs | sampled in 206.85µs
+<: 4.418901ms | bfses in 4.686417ms
 
-averages: distance 0.001, diameter 5.000.
-average of averages: distance 0.000512745 (norm 3.648), std NaN (norm NaN), diameter 5.000 (std NaN).
+averages: distance 0.000, diameter 5.000.
+average of averages: distance 0.000449077 (norm 3.195), std NaN (norm NaN), diameter 5.000 (std NaN).
 
 *** iteration 2, batch size 1, remaining 8.
->: 13.241µs | sampled in 163.51µs
-<: 4.341528ms | bfses in 4.551315ms
+>: 10.944343ms | sampled in 11.168603ms
+<: 4.056384ms | bfses in 4.343933ms
 
 averages: distance 0.000, diameter 5.000.
-average of averages: distance 0.000466465 (norm 3.318), std 0.000065449 (norm 0.466), diameter 5.000 (std 0.000).
+average of averages: distance 0.000439243 (norm 3.125), std 0.000013908 (norm 0.099), diameter 5.000 (std 0.000).
 
 *** iteration 3, batch size 1, remaining 7.
->: 8.711µs | sampled in 81.548µs
-<: 4.339172ms | bfses in 4.514299ms
+>: 7.407µs | sampled in 148.787µs
+<: 4.271187ms | bfses in 4.605931ms
 
 averages: distance 0.000, diameter 5.000.
-average of averages: distance 0.000464473 (norm 3.304), std 0.000046408 (norm 0.330), diameter 5.000 (std 0.000).
+average of averages: distance 0.000432890 (norm 3.080), std 0.000014757 (norm 0.105), diameter 5.000 (std 0.000).
 
 *** iteration 4, batch size 1, remaining 6.
->: 9.670202ms | sampled in 9.957682ms
-<: 4.273795ms | bfses in 4.61935ms
-
-averages: distance 0.000, diameter 4.000.
-average of averages: distance 0.000431830 (norm 3.072), std 0.000075485 (norm 0.537), diameter 4.750 (std 0.500).
-
-*** iteration 5, batch size 1, remaining 5.
->: 15.716µs | sampled in 228.385µs
-<: 6.378µs | bfses in 240.958µs
-
-averages: distance 0.000, diameter 1.000.
-average of averages: distance 0.000373578 (norm 2.658), std 0.000145740 (norm 1.037), diameter 4.000 (std 1.732).
-
-*** iteration 6, batch size 1, remaining 4.
->: 10.944456ms | sampled in 11.23604ms
-<: 4.471095ms | bfses in 4.796038ms
-
-averages: distance 0.000, diameter 4.000.
-average of averages: distance 0.000361075 (norm 2.569), std 0.000133903 (norm 0.953), diameter 4.000 (std 1.549).
-
-*** iteration 7, batch size 1, remaining 3.
->: 7.105µs | sampled in 152.174µs
-<: 4.330452ms | bfses in 4.642158ms
-
-averages: distance 0.000, diameter 5.000.
-average of averages: distance 0.000364690 (norm 2.594), std 0.000122610 (norm 0.872), diameter 4.143 (std 1.464).
-
-*** iteration 8, batch size 1, remaining 2.
->: 11.133858ms | sampled in 11.439647ms
-<: 4.301142ms | bfses in 4.624835ms
-
-averages: distance 0.001, diameter 7.000.
-average of averages: distance 0.000400062 (norm 2.846), std 0.000151312 (norm 1.076), diameter 4.500 (std 1.690).
-
-*** iteration 9, batch size 1, remaining 1.
->: 12.834µs | sampled in 276.375µs
-<: 4.288728ms | bfses in 4.598317ms
-
-averages: distance 0.000, diameter 5.000.
-average of averages: distance 0.000402298 (norm 2.862), std 0.000141698 (norm 1.008), diameter 4.556 (std 1.590).
-
-*** iteration 10, batch size 1, remaining 0.
->: 10.712076ms | sampled in 10.951216ms
-<: 4.204886ms | bfses in 4.528867ms
+>: 5.871388ms | sampled in 6.082098ms
+<: 4.28827ms | bfses in 4.588864ms
 
 averages: distance 0.001, diameter 6.000.
-average of averages: distance 0.000416463 (norm 2.963), std 0.000140903 (norm 1.002), diameter 4.700 (std 1.567).
+average of averages: distance 0.000464098 (norm 3.302), std 0.000063567 (norm 0.452), diameter 5.250 (std 0.500).
 
-Total time: 86.963308ms
+*** iteration 5, batch size 1, remaining 5.
+>: 12.541µs | sampled in 309.884µs
+<: 4.291161ms | bfses in 4.601847ms
+
+averages: distance 0.000, diameter 4.000.
+average of averages: distance 0.000437241 (norm 3.111), std 0.000081468 (norm 0.580), diameter 5.000 (std 0.707).
+
+*** iteration 6, batch size 1, remaining 4.
+>: 11.62µs | sampled in 153.502µs
+<: 11.429µs | bfses in 224.466µs
+
+averages: distance 0.000, diameter 1.000.
+average of averages: distance 0.000387795 (norm 2.759), std 0.000141346 (norm 1.006), diameter 4.333 (std 1.751).
+
+*** iteration 7, batch size 1, remaining 3.
+>: 12.826µs | sampled in 178.57µs
+<: 4.296494ms | bfses in 4.629095ms
+
+averages: distance 0.000, diameter 5.000.
+average of averages: distance 0.000388503 (norm 2.764), std 0.000129045 (norm 0.918), diameter 4.429 (std 1.618).
+
+*** iteration 8, batch size 1, remaining 2.
+>: 12.934µs | sampled in 212.529µs
+<: 4.024208ms | bfses in 4.326287ms
+
+averages: distance 0.000, diameter 5.000.
+average of averages: distance 0.000397608 (norm 2.829), std 0.000122216 (norm 0.869), diameter 4.500 (std 1.512).
+
+*** iteration 9, batch size 1, remaining 1.
+>: 19.176µs | sampled in 175.869µs
+<: 4.256963ms | bfses in 4.504811ms
+
+averages: distance 0.000, diameter 5.000.
+average of averages: distance 0.000400116 (norm 2.846), std 0.000114570 (norm 0.815), diameter 4.556 (std 1.424).
+
+*** iteration 10, batch size 1, remaining 0.
+>: 10.892601ms | sampled in 11.238354ms
+<: 4.307407ms | bfses in 4.656098ms
+
+averages: distance 0.001, diameter 6.000.
+average of averages: distance 0.000423038 (norm 3.009), std 0.000130085 (norm 0.925), diameter 4.700 (std 1.418).
+
+Total time: 71.434915ms

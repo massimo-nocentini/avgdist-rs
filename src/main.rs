@@ -1,7 +1,6 @@
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::io::{self, Write};
-use std::ops::Div;
 use std::sync::mpsc::Sender;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -79,7 +78,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     let mut cross = vec![0usize; num_nodes];
 
     while let Ok(seen) = rx.recv() {
-        seen.iter_ones().for_each(|v| cross[v] += 1);
+        seen.iter_ones().for_each(|v| cross[v] = 1);
     }
 
     for i in 1..num_nodes {
