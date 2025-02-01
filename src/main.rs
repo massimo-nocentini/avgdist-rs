@@ -1,25 +1,18 @@
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::io::{self, Write};
-use std::sync::mpsc::Sender;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use std::{env, thread};
 use sux::bits::BitVec;
 use webgraph::prelude::*;
 
-fn bfs<T: RandomAccessGraph>(
-    start: usize,
-    channel: Sender<BitVec>,
-    graph: Arc<T>,
-) -> (usize, usize, usize) {
+fn bfs<T: RandomAccessGraph>(start: usize, graph: Arc<T>) -> (usize, usize, usize, BitVec) {
     let mut frontier = Vec::new();
     let mut distance = 0usize;
     let mut diameter = 0usize;
     let mut count = 0usize;
     let mut seen = BitVec::new(graph.num_nodes());
-
-    let mut good = BitVec::new(graph.num_nodes());
 
     seen.set(start, true);
 
@@ -31,9 +24,7 @@ fn bfs<T: RandomAccessGraph>(
         for (current_node, l) in frontier {
             let ll = l + 1;
 
-            good.set(current_node, true);
-            for (i, succ) in graph.successors(current_node).into_iter().enumerate() {
-                good.set(current_node, i > 0);
+            for (_i, succ) in graph.successors(current_node).into_iter().enumerate() {
                 if !seen.get(succ) {
                     diameter = diameter.max(ll);
                     seen.set(succ, true);
@@ -47,9 +38,7 @@ fn bfs<T: RandomAccessGraph>(
         frontier = frontier_next;
     }
 
-    channel.send(seen).unwrap();
-
-    (diameter, distance, count)
+    (diameter, distance, count, seen)
 }
 
 fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
@@ -61,13 +50,25 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     let (tx, rx) = std::sync::mpsc::channel();
 
-    for _ in 0..k {
+    for i in 0..k {
         let v = r.gen_range(0..num_nodes);
         let agraph = agraph.clone();
         let tx = tx.clone();
+
         thread::spawn(move || {
+            let mut r = rand::thread_rng();
             let instant = Instant::now();
-            bfs(v, tx, agraph);
+            let tup = bfs(v, agraph);
+            let seen = tup.3;
+
+            let mut cross: Vec<usize> = Vec::new();
+
+            seen.iter_ones().for_each(|v| cross.push(v));
+
+            let l = r.gen_range(0..cross.len());
+
+            tx.send((i, cross[l])).unwrap();
+
             print!(">: {:?} | ", instant.elapsed());
             io::stdout().flush().unwrap();
         });
@@ -75,35 +76,10 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     drop(tx);
 
-    let mut cross = vec![0usize; num_nodes];
-
-    while let Ok(seen) = rx.recv() {
-        seen.iter_ones().for_each(|v| cross[v] = 1);
-    }
-
-    for i in 1..num_nodes {
-        cross[i] += cross[i - 1];
-    }
-
-    let maxc = cross[num_nodes - 1];
-
     let mut sampled = vec![0usize; k];
 
-    for i in 0..k {
-        let c = r.gen_range(0..=maxc);
-        let mut l = 0usize;
-        let mut h = num_nodes - 1;
-
-        while l < h {
-            let m = (h + l) >> 1;
-            if cross[m] < c {
-                l = m + 1;
-            } else {
-                h = m;
-            }
-        }
-
-        sampled[i] = l;
+    while let Ok((i, v)) = rx.recv() {
+        sampled[i] = v;
     }
 
     sampled
@@ -174,14 +150,12 @@ fn main() {
         let triple = Arc::new(Mutex::new((0usize, 0usize, 0usize)));
         let mut handles = Vec::new();
         let instant = Instant::now();
-        let (tx, _rx) = std::sync::mpsc::channel();
         for v in sampled {
             let ag = ag.clone();
             let triple = triple.clone();
-            let tx = tx.clone();
             let handle = thread::spawn(move || {
                 let instant = Instant::now();
-                let (dia, sum, count) = bfs(v, tx, ag);
+                let (dia, sum, count, _) = bfs(v, ag);
                 {
                     let mut tx = triple.lock().unwrap();
 
