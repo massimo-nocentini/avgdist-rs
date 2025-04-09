@@ -46,7 +46,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     k: usize,
     agraph: Arc<T>,
     _: &mut ThreadRng,
-) -> Vec<usize> {
+) -> Vec<(usize, usize, usize, usize)> {
     let num_nodes = agraph.num_nodes();
 
     let (tx, rx) = std::sync::mpsc::channel();
@@ -56,25 +56,23 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
         let tx = tx.clone();
         thread::spawn(move || {
             let instant = Instant::now();
-
             let mut r = rand::thread_rng();
-            let mut v = 0usize;
-            let mut connected = false; // still to be proved.
 
-            while !connected {
-                v = r.gen_range(0..num_nodes);
+            loop {
+                let v = r.gen_range(0..num_nodes);
                 let mut w = r.gen_range(0..num_nodes);
 
                 if v == w {
                     w = (v + 1) % num_nodes;
                 }
 
-                let (_, _, _, seen) = bfs(v, &agraph);
+                let (dia, dist, count, seen) = bfs(v, &agraph);
 
-                connected = seen.get(w);
+                if seen.get(w) {
+                    tx.send((dia, dist, count, v)).unwrap();
+                    break;
+                }
             }
-
-            tx.send(v).unwrap();
 
             print!(">: {:?} | ", instant.elapsed());
             io::stdout().flush().unwrap();
@@ -83,7 +81,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     drop(tx);
 
-    let mut sampled = vec![0usize; k];
+    let mut sampled = vec![(0usize, 0usize, 0usize, 0usize); k];
 
     while let Ok(v) = rx.recv() {
         sampled.push(v);
@@ -98,8 +96,6 @@ fn main() {
     let graph_filename = &args[1];
     let mut slot: usize = args[2].parse().unwrap();
     let epsilon: f64 = args[3].parse().unwrap();
-    let truth: bool = args[4].parse().unwrap();
-    let dummy: bool = args[5].parse().unwrap();
 
     let mut r = rand::thread_rng();
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
@@ -136,46 +132,19 @@ fn main() {
         );
 
         let instant = Instant::now();
-        let sampled: Vec<usize> = if truth {
-            slot = remaining;
-            (0..num_nodes).collect()
-        } else {
-            if dummy {
-                (0..slot).map(|_j| r.gen_range(0..num_nodes)).collect()
-            } else {
-                sample(slot, ag.clone(), &mut r)
-            }
-        };
+        let sampled = sample(slot, ag.clone(), &mut r);
+
         println!("sampled in {:?}", instant.elapsed());
 
-        let triple = Arc::new(Mutex::new((0usize, 0usize, 0usize)));
-        let mut handles = Vec::new();
+        let mut tx = (0usize, 0usize, 0usize);
         let instant = Instant::now();
-        for v in sampled {
-            let ag = ag.clone();
-            let triple = triple.clone();
-
-            let handle = thread::spawn(move || {
-                let instant = Instant::now();
-                let (dia, sum, count, _) = bfs(v, &ag);
-                {
-                    let mut tx = triple.lock().unwrap();
-
-                    tx.0 = tx.0.max(dia);
-                    tx.1 += sum;
-                    tx.2 += count;
-                }
-                print!("<: {:?} | ", instant.elapsed());
-                io::stdout().flush().unwrap();
-            });
-            handles.push(handle);
+        for (dia, sum, count, v) in sampled {
+            tx.0 = tx.0.max(dia);
+            tx.1 += sum;
+            tx.2 += count;
         }
 
-        for handle in handles {
-            handle.join().unwrap();
-        }
-
-        let (dia, sum, count) = triple.lock().unwrap().clone();
+        let (dia, sum, count) = tx;
 
         println!("bfses in {:?}", instant.elapsed());
 
