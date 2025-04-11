@@ -60,10 +60,10 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
             loop {
                 let v = r.gen_range(0..num_nodes);
-                let mut w = r.gen_range(0..num_nodes);
+                let w = r.gen_range(0..num_nodes);
 
                 if v == w {
-                    w = (v + 1) % num_nodes;
+                    continue;
                 }
 
                 let (dia, dist, count, seen) = bfs(v, &agraph);
@@ -81,7 +81,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     drop(tx);
 
-    let mut sampled = vec![(0usize, 0usize, 0usize, 0usize); k];
+    let mut sampled = Vec::new();
 
     while let Ok(v) = rx.recv() {
         sampled.push(v);
@@ -146,10 +146,8 @@ fn main() {
 
         let (dia, sum, count) = tx;
 
-        println!("bfses in {:?}", instant.elapsed());
-
         if count > 0 {
-            let adist = (sum as f64) / ((count * (num_nodes - 1)) as f64);
+            let adist = (sum as f64) / (count as f64);
             let adia = dia as f64;
 
             println!("\naverages: distance {:.3}, diameter {:.3}.", adist, adia);
@@ -175,11 +173,9 @@ fn main() {
             / (n - 1.0);
 
         println!(
-            "average of averages: distance {:.9} (norm {:.3}), std {:.9} (norm {:.3}), diameter {:.3} (std {:.3}).",
+            "average of averages: distance {:.9}, std {:.9}, diameter {:.3} (std {:.3}).",
             avgdist,
-            avgdist * ((num_nodes - 1) as f64),
             avgdist_var.sqrt(),
-            avgdist_var.sqrt() * ((num_nodes - 1) as f64),
             avgdia,
             avgdia_var.sqrt()
         );
