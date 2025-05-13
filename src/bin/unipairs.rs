@@ -2,7 +2,7 @@ use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::io::{self, Write};
 use std::ops::Div;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc};
 use std::time::Instant;
 use std::{env, thread};
 use sux::bits::BitVec;
@@ -27,7 +27,7 @@ fn bfs<T: RandomAccessGraph>(start: usize, graph: &Arc<T>) -> (usize, usize, usi
 
             for (_i, succ) in graph.successors(current_node).into_iter().enumerate() {
                 if !seen.get(succ) {
-                    diameter = diameter.max(ll);
+                    diameter = std::cmp::max(diameter, ll);
                     seen.set(succ, true);
                     count += 1;
                     distance += ll;
@@ -137,7 +137,6 @@ fn main() {
         println!("sampled in {:?}", instant.elapsed());
 
         let mut tx = (0usize, 0usize, 0usize);
-        let instant = Instant::now();
         for (dia, sum, count, v) in sampled {
             tx.0 = tx.0.max(dia);
             tx.1 += sum;
