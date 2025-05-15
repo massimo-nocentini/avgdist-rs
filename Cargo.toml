@@ -10,5 +10,5 @@ lender = "0.2.9"
 rand = "0.8.5"
 rayon = "1.10.0"
 sux = "0.4.6"
-webgraph = { git = "https://github.com/vigna/webgraph-rs", version = "0.2.0" }
+webgraph = { git = "https://github.com/vigna/webgraph-rs", version = "0.2.1" }
 webgraph-algo = { git = "https://github.com/vigna/webgraph-algo-rs", version = "0.1.0" }
