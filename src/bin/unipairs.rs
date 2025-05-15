@@ -137,7 +137,7 @@ fn main() {
         println!("sampled in {:?}", instant.elapsed());
 
         let mut tx = (0usize, 0usize, 0usize);
-        for (dia, sum, count, v) in sampled {
+        for (dia, sum, count, _v) in sampled {
             tx.0 = tx.0.max(dia);
             tx.1 += sum;
             tx.2 += count;
