@@ -2,18 +2,22 @@ use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::io::{self, Write};
 use std::ops::Div;
-use std::sync::{Arc};
+use std::sync::Arc;
 use std::time::Instant;
 use std::{env, thread};
 use sux::bits::BitVec;
 use webgraph::prelude::*;
 
-fn bfs<T: RandomAccessGraph>(start: usize, graph: &Arc<T>) -> (usize, usize, usize, BitVec) {
+fn bfs<T: RandomAccessGraph>(
+    start: usize,
+    graph: &Arc<T>,
+) -> (usize, usize, usize, BitVec, Vec<(usize, usize)>) {
     let mut frontier = Vec::new();
     let mut distance = 0usize;
     let mut diameter = 0usize;
     let mut count = 0usize;
     let mut seen = BitVec::new(graph.num_nodes());
+    let mut finite_distances = Vec::new();
 
     seen.set(start, true);
 
@@ -32,6 +36,7 @@ fn bfs<T: RandomAccessGraph>(start: usize, graph: &Arc<T>) -> (usize, usize, usi
                     count += 1;
                     distance += ll;
                     frontier_next.push((succ, ll));
+                    finite_distances.push((succ, ll));
                 }
             }
         }
@@ -39,14 +44,14 @@ fn bfs<T: RandomAccessGraph>(start: usize, graph: &Arc<T>) -> (usize, usize, usi
         frontier = frontier_next;
     }
 
-    (diameter, distance, count, seen)
+    (diameter, distance, count, seen, finite_distances)
 }
 
 fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     k: usize,
     agraph: Arc<T>,
     _: &mut ThreadRng,
-) -> Vec<(usize, usize, usize, usize)> {
+) -> Vec<(usize, usize, usize, usize, Vec<(usize, usize)>)> {
     let num_nodes = agraph.num_nodes();
 
     let (tx, rx) = std::sync::mpsc::channel();
@@ -66,10 +71,10 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
                     continue;
                 }
 
-                let (dia, dist, count, seen) = bfs(v, &agraph);
+                let (dia, dist, count, seen, finite_dist) = bfs(v, &agraph);
 
                 if seen.get(w) {
-                    tx.send((dia, dist, count, v)).unwrap();
+                    tx.send((dia, dist, count, v, finite_dist)).unwrap();
                     break;
                 }
             }
@@ -120,6 +125,9 @@ fn main() {
     let mut iteration = 1usize;
 
     let instant = Instant::now();
+    let mut sizes = vec![0usize, num_nodes];
+    let mut finite_ds = vec![0usize, num_nodes];
+    let mut sample_neighborhood = vec![0usize, num_nodes];
 
     while remaining > 0 {
         slot = slot.min(remaining);
@@ -137,10 +145,17 @@ fn main() {
         println!("sampled in {:?}", instant.elapsed());
 
         let mut tx = (0usize, 0usize, 0usize);
-        for (dia, sum, count, _v) in sampled {
+
+        for (dia, sum, count, _v, finite_dist) in sampled {
             tx.0 = tx.0.max(dia);
             tx.1 += sum;
             tx.2 += count;
+
+            for (node, dist) in finite_dist {
+                sizes[node] += 1;
+                finite_ds[node] += dist;
+                sample_neighborhood[node] += 1;
+            }
         }
 
         let (dia, sum, count) = tx;
@@ -181,6 +196,29 @@ fn main() {
 
         remaining -= slot;
         iteration += 1;
+    }
+
+    println!("\nCloseness centrality (node, centrality) ordered by most central vertices:");
+
+    let mut centralities: Vec<(usize, f64)> = (0..num_nodes)
+        .filter_map(|node| {
+            let reach = sizes[node];
+            let dist_sum = finite_ds[node];
+            if dist_sum > 0 {
+                Some((
+                    node,
+                    ((reach - 1) as f64).powf(2.0) / ((dist_sum + k - 1) as f64),
+                ))
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    centralities.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Less));
+
+    for (node, closeness) in centralities {
+        println!("{}, {:.6}", node, closeness);
     }
 
     println!("\nTotal time: {:?}", instant.elapsed());
