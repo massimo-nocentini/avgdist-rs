@@ -51,7 +51,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     k: usize,
     agraph: Arc<T>,
     _: &mut ThreadRng,
-) -> Vec<(usize, usize, usize, usize, Vec<(usize, usize)>)> {
+) -> (usize, usize, usize, Vec<usize>, Vec<usize>) {
     let num_nodes = agraph.num_nodes();
 
     let (tx, rx) = std::sync::mpsc::channel();
@@ -86,13 +86,23 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     drop(tx);
 
-    let mut sampled = Vec::new();
+    let mut tx = (0usize, 0usize, 0usize);
 
-    while let Ok(v) = rx.recv() {
-        sampled.push(v);
+    let mut sizes = vec![0usize; num_nodes];
+    let mut finite_ds = vec![0usize; num_nodes];
+
+    while let Ok((dia, sum, count, _v, finite_dist)) = rx.recv() {
+        tx.0 = std::cmp::max(tx.0, dia);
+        tx.1 += sum;
+        tx.2 += count;
+
+        for (node, dist) in finite_dist {
+            sizes[node] += 1;
+            finite_ds[node] += dist;
+        }
     }
 
-    sampled
+    (tx.0, tx.1, tx.2, sizes, finite_ds)
 }
 
 fn main() {
@@ -124,10 +134,10 @@ fn main() {
     let mut remaining = k;
     let mut iteration = 1usize;
 
+    let mut sizes = vec![0usize; num_nodes];
+    let mut finite_ds = vec![0usize; num_nodes];
+
     let instant = Instant::now();
-    let mut sizes = vec![0usize, num_nodes];
-    let mut finite_ds = vec![0usize, num_nodes];
-    let mut sample_neighborhood = vec![0usize, num_nodes];
 
     while remaining > 0 {
         slot = slot.min(remaining);
@@ -140,25 +150,14 @@ fn main() {
         );
 
         let instant = Instant::now();
-        let sampled = sample(slot, ag.clone(), &mut r);
+        let (dia, sum, count, v_sizes, v_finite_ds) = sample(slot, ag.clone(), &mut r);
 
         println!("sampled in {:?}", instant.elapsed());
 
-        let mut tx = (0usize, 0usize, 0usize);
-
-        for (dia, sum, count, _v, finite_dist) in sampled {
-            tx.0 = tx.0.max(dia);
-            tx.1 += sum;
-            tx.2 += count;
-
-            for (node, dist) in finite_dist {
-                sizes[node] += 1;
-                finite_ds[node] += dist;
-                sample_neighborhood[node] += 1;
-            }
+        for i in 0..num_nodes {
+            sizes[i] += v_sizes[i];
+            finite_ds[i] += v_finite_ds[i];
         }
-
-        let (dia, sum, count) = tx;
 
         if count > 0 {
             let adist = (sum as f64) / (count as f64);
