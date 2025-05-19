@@ -206,7 +206,7 @@ fn main() {
             if dist_sum > 0 {
                 Some((
                     node,
-                    ((reach - 1) as f64).powf(2.0) / ((dist_sum + k - 1) as f64),
+                    ((reach - 1) as f64).powf(2.0) / ((dist_sum * (k - 1)) as f64),
                 ))
             } else {
                 None
