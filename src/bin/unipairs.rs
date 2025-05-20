@@ -111,6 +111,7 @@ fn main() {
     let graph_filename = &args[1];
     let mut slot: usize = args[2].parse().unwrap();
     let epsilon: f64 = args[3].parse().unwrap();
+    let show_closeness: bool = args[4].parse().unwrap();
 
     let mut r = rand::thread_rng();
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
@@ -197,28 +198,30 @@ fn main() {
         iteration += 1;
     }
 
-    println!("\nCloseness centrality (node, centrality) ordered by most central vertices:");
+    if show_closeness {
+        println!("\nCloseness centrality (node, centrality) ordered by most central vertices:");
 
-    let mut centralities: Vec<(usize, f64)> = (0..num_nodes)
-        .filter_map(|node| {
-            let reach = sizes[node];
-            let dist_sum = finite_ds[node];
-            if dist_sum > 0 {
-                Some((
-                    node,
-                    ((reach - 1) as f64).powf(2.0) / ((dist_sum * (k - 1)) as f64),
-                ))
-            } else {
-                None
-            }
-        })
-        .collect();
+        let mut centralities: Vec<(usize, f64)> = (0..num_nodes)
+            .filter_map(|node| {
+                let reach = sizes[node];
+                let dist_sum = finite_ds[node];
+                if dist_sum > 0 {
+                    Some((
+                        node,
+                        ((reach - 1) as f64).powf(2.0) / ((dist_sum * (k - 1)) as f64),
+                    ))
+                } else {
+                    None
+                }
+            })
+            .collect();
 
-    centralities.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Less));
+        centralities.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Less));
 
-    for (node, closeness) in centralities {
-        println!("{}, {:.6}", node, closeness);
+        for (node, closeness) in centralities {
+            println!("{}, {:.6}", node, closeness);
+        }
     }
-
+    
     println!("\nTotal time: {:?}", instant.elapsed());
 }
