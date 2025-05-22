@@ -36,7 +36,7 @@ fn bfs<T: RandomAccessGraph>(
             for (i, succ) in graph.successors(current_node).into_iter().enumerate() {
                 good.set(current_node, i > 0);
                 if !seen.get(succ) {
-                    diameter = diameter.max(ll);
+                    diameter = std::cmp::max(diameter, ll);
                     seen.set(succ, true);
                     count += 1;
                     distance += ll;
