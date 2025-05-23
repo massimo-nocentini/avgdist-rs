@@ -163,7 +163,7 @@ fn main() {
             let adist = (sum as f64) / (count as f64);
             let adia = dia as f64;
 
-            println!("\naverages: distance {:.3}, diameter {:.3}.", adist, adia);
+            // println!("\naverages: distance {:.3}, diameter {:.3}.", adist, adia);
 
             averages_dist.push(adist);
             averages_diameter.push(adia);
@@ -185,36 +185,50 @@ fn main() {
             .sum::<f64>()
             / (n - 1.0);
 
-        println!(
-            "average of averages: distance {:.9}, std {:.9}, diameter {:.3} (std {:.3}).",
-            avgdist,
-            avgdist_var.sqrt(),
-            avgdia,
-            avgdia_var.sqrt()
-        );
+        // println!(
+        //     "average of averages: distance {:.9}, std {:.9}, diameter {:.3} (std {:.3}).",
+        //     avgdist,
+        //     avgdist_var.sqrt(),
+        //     avgdia,
+        //     avgdia_var.sqrt()
+        // );
 
         remaining -= slot;
         iteration += 1;
     }
 
-    println!("\nCloseness centrality (node, centrality) ordered by most central vertices:");
-
     let mut centralities: Vec<(usize, f64)> = (0..num_nodes)
         .filter_map(|node| {
             let reach = sizes[node];
             let dist_sum = finite_ds[node];
-            if dist_sum > 0 {
-                Some((
-                    node,
-                    ((reach - 1) as f64).powf(2.0) / ((dist_sum * (k - 1)) as f64),
-                ))
+            if reach > 0 && dist_sum > 0 {
+                Some((node, (reach as f64).powf(2.0) / ((dist_sum * k) as f64)))
             } else {
                 None
             }
         })
         .collect();
 
-    centralities.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Less));
+    let mut histogram = std::collections::BTreeMap::<u32, usize>::new();
+    let b = 1000000.0;
+    for &(_, centrality) in &centralities {
+        let bucket = (centrality * b).floor() as u32;
+        *histogram.entry(bucket).or_insert(0) += 1;
+    }
+
+    println!("\nHistogram of centralities (bucketed by {}):", 1.0 / b);
+    for (bucket, count) in histogram.iter().rev() {
+        println!(
+            "{:.6} - {:.6}: {}",
+            *bucket as f64 / b,
+            (*bucket as f64 + 1.0) / b,
+            count
+        );
+    }
+
+    println!("\nCloseness centrality (node, centrality) ordered by most central vertices:");
+
+    centralities.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
 
     for (node, closeness) in centralities {
         println!("{}, {:.6}", node, closeness);
