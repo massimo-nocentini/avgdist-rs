@@ -209,6 +209,20 @@ fn main() {
         })
         .collect();
 
+    // Group centralities by their floored value (to 6 decimal places)
+    let mut grouped = std::collections::BTreeMap::<u64, Vec<usize>>::new();
+    let b = 1_000_000_000.0;
+    for &(node, centrality) in &centralities {
+        let bucket = (centrality * b).floor() as u64;
+        grouped.entry(bucket).or_default().push(node);
+    }
+
+    println!("\nGrouped centralities (bucketed by {:.6}):", 1.0 / b);
+    for (bucket, nodes) in grouped.iter().rev() {
+        let centrality_value = *bucket as f64 / b;
+        println!("{:.6}: {} nodes {:?}", centrality_value, nodes.len(), nodes);
+    }
+
     let mut histogram = std::collections::BTreeMap::<u32, usize>::new();
     let b = 1000000.0;
     for &(_, centrality) in &centralities {
