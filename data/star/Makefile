@@ -23,4 +23,5 @@ run:
 
 unipairs:
 	time cargo run --bin unipairs --release -- ./star 222 0.1 > result/star-uni.out
-	time cargo run --bin closeness --release -- ./star-t 32 0.05 > result/star-closeness.out
+	time cargo run --bin closeness --release -- ./star-t 32 0.05 false > result/star-closeness.out
+	time cargo run --bin closeness --release -- ./star-t 32 0.05 true > result/star-closeness-true.out

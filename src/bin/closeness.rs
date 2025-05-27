@@ -50,32 +50,41 @@ fn bfs<T: RandomAccessGraph>(
 fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     k: usize,
     agraph: Arc<T>,
-    _: &mut ThreadRng,
+    exact_computation: bool,
 ) -> (usize, usize, usize, Vec<usize>, Vec<usize>) {
     let num_nodes = agraph.num_nodes();
 
     let (tx, rx) = std::sync::mpsc::channel();
 
-    for _ in 0..k {
+    let n = if exact_computation { num_nodes } else { k };
+
+    for each in 0..n {
         let agraph = agraph.clone();
         let tx = tx.clone();
         thread::spawn(move || {
             let instant = Instant::now();
             let mut r = rand::thread_rng();
 
-            loop {
-                let v = r.gen_range(0..num_nodes);
-                let w = r.gen_range(0..num_nodes);
+            if exact_computation {
+                // If exact computation is requested, we sample from all nodes
+                let (dia, dist, count, _, finite_dist) = bfs(each, &agraph);
 
-                if v == w {
-                    continue;
-                }
+                tx.send((dia, dist, count, each, finite_dist)).unwrap();
+            } else {
+                loop {
+                    let v = r.gen_range(0..num_nodes);
+                    let w = r.gen_range(0..num_nodes);
 
-                let (dia, dist, count, seen, finite_dist) = bfs(v, &agraph);
+                    if v == w {
+                        continue;
+                    }
 
-                if seen.get(w) {
-                    tx.send((dia, dist, count, v, finite_dist)).unwrap();
-                    break;
+                    let (dia, dist, count, seen, finite_dist) = bfs(v, &agraph);
+
+                    if seen.get(w) {
+                        tx.send((dia, dist, count, v, finite_dist)).unwrap();
+                        break;
+                    }
                 }
             }
 
@@ -111,6 +120,7 @@ fn main() {
     let graph_filename = &args[1];
     let mut slot: usize = args[2].parse().unwrap();
     let epsilon: f64 = args[3].parse().unwrap();
+    let exact_computation: bool = args[4].parse().unwrap();
 
     let mut r = rand::thread_rng();
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
@@ -150,7 +160,7 @@ fn main() {
         );
 
         let instant = Instant::now();
-        let (dia, sum, count, v_sizes, v_finite_ds) = sample(slot, ag.clone(), &mut r);
+        let (dia, sum, count, v_sizes, v_finite_ds) = sample(slot, ag.clone(), exact_computation);
 
         println!("sampled in {:?}", instant.elapsed());
 
@@ -169,21 +179,25 @@ fn main() {
             averages_diameter.push(adia);
         }
 
-        let n = averages_dist.len() as f64;
-        let avgdist: f64 = averages_dist.iter().sum::<f64>() / n;
-        let avgdia: f64 = averages_diameter.iter().sum::<f64>() / n;
+        if exact_computation {
+            break;
+        }
 
-        let avgdist_var = averages_dist
-            .iter()
-            .map(|x| (x - avgdist).powi(2))
-            .sum::<f64>()
-            / (n - 1.0);
+        // let n = averages_dist.len() as f64;
+        // let avgdist: f64 = averages_dist.iter().sum::<f64>() / n;
+        // let avgdia: f64 = averages_diameter.iter().sum::<f64>() / n;
 
-        let avgdia_var = averages_diameter
-            .iter()
-            .map(|x| (x - avgdia).powi(2))
-            .sum::<f64>()
-            / (n - 1.0);
+        // let avgdist_var = averages_dist
+        //     .iter()
+        //     .map(|x| (x - avgdist).powi(2))
+        //     .sum::<f64>()
+        //     / (n - 1.0);
+
+        // let avgdia_var = averages_diameter
+        //     .iter()
+        //     .map(|x| (x - avgdia).powi(2))
+        //     .sum::<f64>()
+        //     / (n - 1.0);
 
         // println!(
         //     "average of averages: distance {:.9}, std {:.9}, diameter {:.3} (std {:.3}).",
@@ -202,7 +216,11 @@ fn main() {
             let reach = sizes[node];
             let dist_sum = finite_ds[node];
             if reach > 0 && dist_sum > 0 {
-                Some((node, (reach as f64).powf(2.0) / ((dist_sum * k) as f64)))
+                Some((
+                    node,
+                    // (reach as f64).powf(2.0)                        / ((dist_sum * (if exact_computation { num_nodes } else { k })) as f64),
+                    1.0 / ((dist_sum * (if exact_computation { num_nodes } else { k })) as f64),
+                ))
             } else {
                 None
             }
