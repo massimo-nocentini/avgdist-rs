@@ -50,7 +50,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     sample_size: usize,
     agraph: Arc<T>,
     exact_computation: bool,
-) -> (usize, usize, usize, Vec<usize>, Vec<usize>) {
+) -> (usize, usize, usize, Vec<usize>, Vec<Option<f64>>) {
     let num_nodes = agraph.num_nodes();
 
     let (tx, rx) = std::sync::mpsc::channel();
@@ -81,7 +81,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     let mut tx = (0usize, 0usize, 0usize);
 
     let mut sizes = vec![0usize; num_nodes];
-    let mut finite_ds = vec![0usize; num_nodes];
+    let mut finite_ds = vec![None; num_nodes];
 
     while let Ok((dia, sum, count, _v, finite_dist)) = rx.recv() {
         tx.0 = std::cmp::max(tx.0, dia);
@@ -90,7 +90,15 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
         for (node, dist) in finite_dist {
             sizes[node] += 1;
-            finite_ds[node] += dist;
+
+            let dist_inv = 1.0 / ((1 + dist) as f64);
+
+            finite_ds[node] = match finite_ds[node] {
+                None => Some(dist_inv),
+                Some(existing_dist) => Some(existing_dist + dist_inv),
+            };
+
+            // finite_ds[node] += dist;
         }
     }
 
@@ -126,7 +134,7 @@ fn main() {
     let mut iteration = 1usize;
 
     let mut sizes = vec![0usize; num_nodes];
-    let mut finite_ds = vec![0usize; num_nodes];
+    let mut sums = vec![None; num_nodes];
 
     let instant = Instant::now();
 
@@ -152,19 +160,26 @@ fn main() {
 
         for i in 0..num_nodes {
             sizes[i] += v_sizes[i];
-            finite_ds[i] += v_finite_ds[i];
+
+            if let Some(sum) = v_finite_ds[i] {
+                let existing_sum = sums[i].unwrap_or(0.0);
+                sums[i] = Some(existing_sum + sum);
+            }
         }
 
         remaining -= slot;
         iteration += 1;
     }
 
+    // c(u)=(1/n) * sum_{v in V} 1/(1+d(u,v))
+    // c(u,U)= (1/|U|)* sum_{v in U} 1/(1+d(u,v))
+
+    let normalization = (sample_size as f64).recip();
+
     let mut centralities: Vec<(usize, f64)> = (0..num_nodes)
         .filter_map(|node| {
-            let reach = sizes[node];
-            let dist_sum = finite_ds[node];
-            if reach > 0 && dist_sum > 0 {
-                Some((node, 1.0 / ((dist_sum * sample_size) as f64)))
+            if let Some(sum) = sums[node] {
+                Some((node, normalization * sum))
             } else {
                 None
             }
@@ -190,7 +205,7 @@ fn main() {
 
     println!("\nCloseness centrality (node, centrality) ordered by most central vertices:");
 
-    centralities.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+    centralities.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
 
     for (node, closeness) in centralities {
         println!("{}\t{}", node, closeness);

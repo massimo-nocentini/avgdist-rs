@@ -6,7 +6,7 @@ generate:
 	python generate.py > star.csv
 
 webgraph:
-	webgraph from arcs --exact --num-nodes 2001 star < star.csv
+	webgraph from arcs --exact --num-nodes 20001 --separator=',' star < star.csv
 	webgraph transform transpose star star-t
 	webgraph build ef star
 	webgraph build ef star-t
