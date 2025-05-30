@@ -1,4 +1,3 @@
-use rand::rngs::ThreadRng;
 use rand::Rng;
 use std::io::{self, Write};
 use std::ops::Div;
@@ -8,10 +7,7 @@ use std::{env, thread};
 use sux::bits::BitVec;
 use webgraph::prelude::*;
 
-fn bfs<T: RandomAccessGraph>(
-    start: usize,
-    graph: &Arc<T>,
-) -> (usize, usize, usize, BitVec) {
+fn bfs<T: RandomAccessGraph>(start: usize, graph: &Arc<T>) -> (usize, usize, usize, BitVec) {
     let mut frontier = Vec::new();
     let mut distance = 0usize;
     let mut diameter = 0usize;
@@ -48,32 +44,37 @@ fn bfs<T: RandomAccessGraph>(
 fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     k: usize,
     agraph: Arc<T>,
-    _: &mut ThreadRng,
+    exact_computation: bool,
 ) -> (usize, usize, usize) {
     let num_nodes = agraph.num_nodes();
 
     let (tx, rx) = std::sync::mpsc::channel();
 
-    for _ in 0..k {
+    for each in 0..k {
         let agraph = agraph.clone();
         let tx = tx.clone();
         thread::spawn(move || {
             let instant = Instant::now();
             let mut r = rand::thread_rng();
 
-            loop {
-                let v = r.gen_range(0..num_nodes);
-                let w = r.gen_range(0..num_nodes);
+            if exact_computation {
+                let (dia, dist, count, _seen) = bfs(each, &agraph);
+                tx.send((dia, dist, count, each)).unwrap();
+            } else {
+                loop {
+                    let v = r.gen_range(0..num_nodes);
+                    let w = r.gen_range(0..num_nodes);
 
-                if v == w {
-                    continue;
-                }
+                    if v == w {
+                        continue;
+                    }
 
-                let (dia, dist, count, seen) = bfs(v, &agraph);
+                    let (dia, dist, count, seen) = bfs(v, &agraph);
 
-                if seen.get(w) {
-                    tx.send((dia, dist, count, v)).unwrap();
-                    break;
+                    if seen.get(w) {
+                        tx.send((dia, dist, count, v)).unwrap();
+                        break;
+                    }
                 }
             }
 
@@ -101,19 +102,21 @@ fn main() {
     let graph_filename = &args[1];
     let mut slot: usize = args[2].parse().unwrap();
     let epsilon: f64 = args[3].parse().unwrap();
+    let exact_computation: bool = args[4].parse().unwrap();
 
-    let mut r = rand::thread_rng();
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
 
     let num_nodes = graph.num_nodes();
     // let k = (num_nodes as f64).log2().div(2.0 * epsilon.powi(2)).ceil() as usize;
-    let k = 6.907.div(2.0 * epsilon.powi(2)).ceil() as usize; // according to the paper, 6.907 allows us to achieve a 99% confidence level.    
+    let k = (num_nodes as f64).div(2.0 * epsilon.powi(2)).ceil() as usize; // according to the paper, 6.907 allows us to achieve a 99% confidence level.
+
+    let sample_size = if exact_computation { num_nodes } else { k };
 
     println!(
         "|V| = {}, |E| = {}, |S| = {}, s = {}.",
         num_nodes,
         graph.num_arcs(),
-        k,
+        sample_size,
         slot
     );
 
@@ -122,13 +125,17 @@ fn main() {
     let mut averages_dist = Vec::new();
     let mut averages_diameter = Vec::new();
 
-    let mut remaining = k;
+    let mut remaining = sample_size;
     let mut iteration = 1usize;
 
     let instant = Instant::now();
 
     while remaining > 0 {
-        slot = slot.min(remaining);
+        slot = if exact_computation {
+            remaining
+        } else {
+            slot.min(remaining)
+        };
 
         println!(
             "\n*** iteration {}, batch size {}, remaining {}.",
@@ -138,7 +145,7 @@ fn main() {
         );
 
         let instant = Instant::now();
-        let (dia, sum, count) = sample(slot, ag.clone(), &mut r);
+        let (dia, sum, count) = sample(slot, ag.clone(), exact_computation);
 
         println!("sampled in {:?}", instant.elapsed());
 
@@ -179,6 +186,6 @@ fn main() {
         remaining -= slot;
         iteration += 1;
     }
-    
+
     println!("\nTotal time: {:?}", instant.elapsed());
 }
