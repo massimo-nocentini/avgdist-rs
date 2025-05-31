@@ -45,14 +45,13 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     k: usize,
     agraph: Arc<T>,
     exact_computation: bool,
-) -> (usize, usize, usize) {
-    let num_nodes = agraph.num_nodes();
-
+) -> (usize, usize, usize, f64, usize) {
     let (tx, rx) = std::sync::mpsc::channel();
 
     for each in 0..k {
         let agraph = agraph.clone();
         let tx = tx.clone();
+
         thread::spawn(move || {
             let instant = Instant::now();
             let mut r = rand::thread_rng();
@@ -61,6 +60,8 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
                 let (dia, dist, count, _seen) = bfs(each, &agraph);
                 tx.send((dia, dist, count, each)).unwrap();
             } else {
+                let num_nodes = agraph.num_nodes();
+
                 loop {
                     let v = r.gen_range(0..num_nodes);
                     let w = r.gen_range(0..num_nodes);
@@ -85,15 +86,19 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
     drop(tx);
 
-    let mut tx = (0usize, 0usize, 0usize);
+    let mut tx = (0usize, 0usize, 0usize, 0.0, 0);
 
     while let Ok((dia, sum, count, _v)) = rx.recv() {
         tx.0 = std::cmp::max(tx.0, dia);
         tx.1 += sum;
         tx.2 += count;
+        if count > 0 {
+            tx.3 += (sum as f64) / (count as f64);
+            tx.4 += 1;
+        }
     }
 
-    (tx.0, tx.1, tx.2)
+    tx
 }
 
 fn main() {
@@ -122,11 +127,14 @@ fn main() {
 
     let ag = Arc::new(graph);
 
-    let mut averages_dist = Vec::new();
-    let mut averages_diameter = Vec::new();
-
     let mut remaining = sample_size;
     let mut iteration = 1usize;
+
+    let mut D = 0usize; // maximum diameter
+    let mut S = 0usize; // sum of distances
+    let mut C = 0usize; // count of pairs
+    let mut R = 0.0; // ratio of pairs
+    let mut Rc = 0usize; // count of pairs
 
     let instant = Instant::now();
 
@@ -145,47 +153,28 @@ fn main() {
         );
 
         let instant = Instant::now();
-        let (dia, sum, count) = sample(slot, ag.clone(), exact_computation);
+        let (dia, sum, count, ratio, c) = sample(slot, ag.clone(), exact_computation);
+
+        D = std::cmp::max(D, dia);
+        S += sum;
+        C += count;
+        R += ratio;
+        Rc += c;
 
         println!("sampled in {:?}", instant.elapsed());
-
-        if count > 0 {
-            let adist = (sum as f64) / (count as f64);
-            let adia = dia as f64;
-
-            println!("\naverages: distance {:.3}, diameter {:.3}.", adist, adia);
-
-            averages_dist.push(adist);
-            averages_diameter.push(adia);
-        }
-
-        let n = averages_dist.len() as f64;
-        let avgdist: f64 = averages_dist.iter().sum::<f64>() / n;
-        let avgdia: f64 = averages_diameter.iter().sum::<f64>() / n;
-
-        let avgdist_var = averages_dist
-            .iter()
-            .map(|x| (x - avgdist).powi(2))
-            .sum::<f64>()
-            / (n - 1.0);
-
-        let avgdia_var = averages_diameter
-            .iter()
-            .map(|x| (x - avgdia).powi(2))
-            .sum::<f64>()
-            / (n - 1.0);
-
-        println!(
-            "average of averages: distance {:.9}, std {:.9}, diameter {:.3} (std {:.3}).",
-            avgdist,
-            avgdist_var.sqrt(),
-            avgdia,
-            avgdia_var.sqrt()
-        );
 
         remaining -= slot;
         iteration += 1;
     }
 
+    println!(
+        "\nRatios average distance: {:.6}.",
+        R / (sample_size as f64)
+    );
+    println!(
+        "\nWhole average distance: {:.6}, diameter: {}.",
+        (S as f64) / (C as f64),
+        D
+    );
     println!("\nTotal time: {:?}", instant.elapsed());
 }
