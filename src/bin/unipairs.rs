@@ -58,7 +58,6 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
         thread_pool.install(|| {
             let instant = Instant::now();
-            let mut r = rand::thread_rng();
 
             if exact_computation {
                 let (dia, dist, count, _seen) = bfs(each, &agraph);
@@ -66,9 +65,12 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
             } else {
                 let num_nodes = agraph.num_nodes();
 
+                let mut r = rand::rngs::ThreadRng::default();
+                let distr = rand::distributions::Uniform::new(0, num_nodes);
+
                 loop {
-                    let v = r.gen_range(0..num_nodes);
-                    let w = r.gen_range(0..num_nodes);
+                    let v = r.sample(distr);
+                    let w = r.sample(distr);
 
                     if v == w {
                         continue;
