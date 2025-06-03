@@ -1,9 +1,10 @@
 use rand::Rng;
+use std::env;
 use std::io::{self, Write};
 use std::ops::Div;
+use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 use std::time::Instant;
-use std::{env, thread};
 use sux::bits::BitVec;
 use webgraph::prelude::*;
 
@@ -24,7 +25,7 @@ fn bfs<T: RandomAccessGraph>(start: usize, graph: &Arc<T>) -> (usize, usize, usi
         for (current_node, l) in frontier {
             let ll = l + 1;
 
-            for (_i, succ) in graph.successors(current_node).into_iter().enumerate() {
+            for succ in graph.successors(current_node) {
                 if !seen.get(succ) {
                     diameter = std::cmp::max(diameter, ll);
                     seen.set(succ, true);
@@ -42,15 +43,14 @@ fn bfs<T: RandomAccessGraph>(start: usize, graph: &Arc<T>) -> (usize, usize, usi
 }
 
 fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
+    thread_pool: &rayon::ThreadPool,
     k: usize,
     agraph: Arc<T>,
     exact_computation: bool,
 ) -> (usize, usize, usize, f64, usize) {
     let (tx, rx) = std::sync::mpsc::channel();
 
-    let thread_pool = rayon::ThreadPoolBuilder::default()
-        .build()
-        .expect("Failed to create thread pool");
+    let remaining = AtomicUsize::new(k);
 
     for each in 0..k {
         let agraph = agraph.clone();
@@ -83,7 +83,9 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
                 }
             }
 
-            print!(">: {:?} | ", instant.elapsed());
+            let r = remaining.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
+
+            print!("((eta {:?}) (remaining {})) ", instant.elapsed(), r);
             io::stdout().flush().unwrap();
         });
     }
@@ -109,29 +111,30 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let graph_filename = &args[1];
-    let mut slot: usize = args[2].parse().unwrap();
+    // let mut slot: usize = args[2].parse().unwrap();
     let epsilon: f64 = args[3].parse().unwrap();
     let exact_computation: bool = args[4].parse().unwrap();
+
+    let thread_pool = rayon::ThreadPoolBuilder::default()
+        .build()
+        .expect("Failed to create thread pool");
 
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
 
     let num_nodes = graph.num_nodes();
     let k = (num_nodes as f64).log2().div(2.0 * epsilon.powi(2)).ceil() as usize;
-    
+
     let sample_size = if exact_computation { num_nodes } else { k };
 
     println!(
-        "|V| = {}, |E| = {}, |S| = {}, s = {}.",
+        "((|V| {}) (|E| {}) (|S| {}) (s {}))",
         num_nodes,
         graph.num_arcs(),
         sample_size,
-        slot
+        thread_pool.current_num_threads()
     );
 
     let ag = Arc::new(graph);
-
-    let mut remaining = sample_size;
-    let mut iteration = 1usize;
 
     let mut D = 0usize; // maximum diameter
     let mut S = 0usize; // sum of distances
@@ -141,17 +144,8 @@ fn main() {
 
     let instant = Instant::now();
 
-    slot = if exact_computation { remaining } else { k };
-
-    println!(
-        "\n*** iteration {}, batch size {}, remaining {}.",
-        iteration,
-        slot,
-        remaining - slot
-    );
-
-    let instant = Instant::now();
-    let (dia, sum, count, ratio, c) = sample(slot, ag.clone(), exact_computation);
+    let (dia, sum, count, ratio, c) =
+        sample(&thread_pool, sample_size, ag.clone(), exact_computation);
 
     D = std::cmp::max(D, dia);
     S += sum;
@@ -159,17 +153,12 @@ fn main() {
     R += ratio;
     Rc += c;
 
-    println!("sampled in {:?}", instant.elapsed());
-
-    remaining -= slot;
-    iteration += 1;
-
     println!(
         "\n((average distance {:.6}) (diameter {}) (eta {:?}))",
         if exact_computation {
             (S as f64) / (C as f64)
         } else {
-            (R / (sample_size as f64))
+            R / (sample_size as f64)
         },
         D,
         instant.elapsed()
