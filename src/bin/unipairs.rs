@@ -58,7 +58,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
         let agraph = agraph.clone();
         let tx = tx.clone();
 
-        thread_pool.install(|| {
+        thread_pool.spawn(move || {
             let instant = Instant::now();
 
             if exact_computation {
@@ -84,9 +84,9 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
                 }
             }
 
-            // let r = remaining.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
+            let rem = remaining.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
 
-            print!("((eta {:?}) (remaining {})) ", instant.elapsed(), 0);
+            print!("((eta {:?}) (remaining {})) ", instant.elapsed(), rem);
             io::stdout().flush().unwrap();
         });
     }
