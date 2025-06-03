@@ -168,13 +168,13 @@ fn main() {
     }
 
     println!(
-        "\nRatios average distance: {:.6}.",
-        R / (sample_size as f64)
+        "\n((average distance {:.6}) (diameter {}) (eta {:?}))",
+        if exact_computation {
+            (S as f64) / (C as f64)
+        } else {
+            (R / (sample_size as f64))
+        },
+        D,
+        instant.elapsed()
     );
-    println!(
-        "\nWhole average distance: {:.6}, diameter: {}.",
-        (S as f64) / (C as f64),
-        D
-    );
-    println!("\nTotal time: {:?}", instant.elapsed());
 }

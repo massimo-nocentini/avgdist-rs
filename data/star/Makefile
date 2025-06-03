@@ -22,7 +22,7 @@ run:
 	time cargo run --release --bin avgdist-rs ./star ./star-t 346 0.1 false false > result/star-01e-346k.out
 
 unipairs:
-	time cargo run --bin unipairs --release -- ./star 1 0.1 false > result/star-uni.out
+	time cargo run --bin unipairs --release -- ./star 100 0.1 false > result/star-uni.out
 	time cargo run --bin unipairs --release -- ./star 1 0.1 true > result/star-uni-exact.out
 
 closeness:
