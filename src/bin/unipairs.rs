@@ -112,8 +112,7 @@ fn main() {
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
 
     let num_nodes = graph.num_nodes();
-    // let k = (num_nodes as f64).log2().div(2.0 * epsilon.powi(2)).ceil() as usize;
-    let k = (num_nodes as f64).div(2.0 * epsilon.powi(2)).ceil() as usize; // according to the paper, 6.907 allows us to achieve a 99% confidence level.
+    let k = (num_nodes as f64).log2().div(2.0 * epsilon.powi(2)).ceil() as usize;
 
     let sample_size = if exact_computation { num_nodes } else { k };
 
