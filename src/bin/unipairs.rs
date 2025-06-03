@@ -50,7 +50,9 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 ) -> (usize, usize, usize, f64, usize) {
     let (tx, rx) = std::sync::mpsc::channel();
 
+    let num_nodes = agraph.num_nodes();
     let remaining = AtomicUsize::new(k);
+    let distr = rand::distributions::Uniform::new(0, num_nodes);
 
     for each in 0..k {
         let agraph = agraph.clone();
@@ -63,10 +65,7 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
                 let (dia, dist, count, _seen) = bfs(each, &agraph);
                 tx.send((dia, dist, count, each)).unwrap();
             } else {
-                let num_nodes = agraph.num_nodes();
-
                 let mut r = rand::rngs::ThreadRng::default();
-                let distr = rand::distributions::Uniform::new(0, num_nodes);
 
                 loop {
                     let v = r.sample(distr);
@@ -85,9 +84,9 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
                 }
             }
 
-            let r = remaining.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
+            // let r = remaining.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
 
-            print!("((eta {:?}) (remaining {})) ", instant.elapsed(), r);
+            print!("((eta {:?}) (remaining {})) ", instant.elapsed(), 0);
             io::stdout().flush().unwrap();
         });
     }
