@@ -62,9 +62,10 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
         thread_pool.spawn(move || {
             let instant = Instant::now();
 
-            if exact_computation {
+            let current_avgdist = if exact_computation {
                 let (dia, dist, count, _seen) = bfs(each, &agraph);
                 tx.send((dia, dist, count, each)).unwrap();
+                (dist as f64) / (count as f64)
             } else {
                 let mut r = rand::rngs::ThreadRng::default();
 
@@ -80,15 +81,21 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
                     if seen.get(w) {
                         tx.send((dia, dist, count, v)).unwrap();
-                        break;
+
+                        break (dist as f64) / (count as f64);
                     }
                 }
-            }
+            };
 
             {
                 let rem = remaining.fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
 
-                print!("((eta {:?}) (remaining {})) ", instant.elapsed(), rem);
+                println!(
+                    "((avgdist {:.6}) (eta {:?}) (remaining {}))",
+                    current_avgdist,
+                    instant.elapsed(),
+                    rem
+                );
                 io::stdout().flush().unwrap();
             }
         });
