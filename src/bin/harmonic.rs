@@ -47,25 +47,25 @@ fn bfs<T: RandomAccessGraph>(
 }
 
 fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
+    thread_pool: &rayon::ThreadPool,
     sample_size: usize,
     agraph: Arc<T>,
     exact_computation: bool,
 ) -> (usize, usize, usize, Vec<usize>, Vec<Option<f64>>) {
     let num_nodes = agraph.num_nodes();
-
+    let distr = rand::distributions::Uniform::new(0, num_nodes);
     let (tx, rx) = std::sync::mpsc::channel();
 
     for each in 0..sample_size {
         let agraph = agraph.clone();
         let tx = tx.clone();
-        thread::spawn(move || {
+        thread_pool.spawn(move || {
             let instant = Instant::now();
 
             let vertex = if exact_computation {
                 each
             } else {
-                let mut r = rand::thread_rng();
-                r.gen_range(0..num_nodes)
+                rand::rngs::ThreadRng::default().sample(distr)
             };
 
             let (dia, dist, count, _seen, finite_dist) = bfs(vertex, &agraph);
@@ -97,8 +97,6 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
                 None => Some(dist_inv),
                 Some(existing_dist) => Some(existing_dist + dist_inv),
             };
-
-            // finite_ds[node] += dist;
         }
     }
 
@@ -109,9 +107,13 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let graph_filename = &args[1];
-    let mut slot: usize = args[2].parse().unwrap();
+    // let mut slot: usize = args[2].parse().unwrap();
     let epsilon: f64 = args[3].parse().unwrap();
     let exact_computation: bool = args[4].parse().unwrap();
+
+    let thread_pool = rayon::ThreadPoolBuilder::default()
+        .build()
+        .expect("Failed to create thread pool");
 
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
 
@@ -125,50 +127,27 @@ fn main() {
         num_nodes,
         graph.num_arcs(),
         sample_size,
-        slot
+        thread_pool.current_num_threads()
     );
 
     let ag = Arc::new(graph);
-
-    let mut remaining = sample_size;
-    let mut iteration = 1usize;
 
     let mut sizes = vec![0usize; num_nodes];
     let mut sums = vec![None; num_nodes];
 
     let instant = Instant::now();
+    let (_dia, _sum, _count, v_sizes, v_finite_ds) =
+        sample(&thread_pool, sample_size, ag.clone(), exact_computation);
 
-    while remaining > 0 {
-        slot = if exact_computation {
-            remaining
-        } else {
-            slot.min(remaining)
-        };
+    println!("sampled in {:?}", instant.elapsed());
 
-        println!(
-            "\n*** iteration {}, batch size {}, remaining {}.",
-            iteration,
-            slot,
-            remaining - slot
-        );
+    for i in 0..num_nodes {
+        sizes[i] += v_sizes[i];
 
-        let instant = Instant::now();
-        let (_dia, _sum, _count, v_sizes, v_finite_ds) =
-            sample(slot, ag.clone(), exact_computation);
-
-        println!("sampled in {:?}", instant.elapsed());
-
-        for i in 0..num_nodes {
-            sizes[i] += v_sizes[i];
-
-            if let Some(sum) = v_finite_ds[i] {
-                let existing_sum = sums[i].unwrap_or(0.0);
-                sums[i] = Some(existing_sum + sum);
-            }
+        if let Some(sum) = v_finite_ds[i] {
+            let existing_sum = sums[i].unwrap_or(0.0);
+            sums[i] = Some(existing_sum + sum);
         }
-
-        remaining -= slot;
-        iteration += 1;
     }
 
     // c(u)=(1/n) * sum_{v in V} 1/(1+d(u,v))

@@ -1,7 +1,7 @@
 use rand::Rng;
 use std::env;
 use std::io::{self, Write};
-use std::ops::{Div, SubAssign};
+use std::ops::Div;
 use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 use std::time::Instant;

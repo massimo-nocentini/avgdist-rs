@@ -132,7 +132,6 @@ dependencies = [
  "rayon",
  "sux 0.4.6",
  "webgraph",
- "webgraph-algo",
 ]
 
 [[package]]
@@ -1067,18 +1066,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "no-break"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "abe9436731d9b5064ab1ea61b956a6224710b088a029d81246675e1c0166f219"
-
-[[package]]
-name = "nonmax"
-version = "0.5.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "610a5acd306ec67f907abe5567859a3c693fb9886eb1f012ab8f2a47bef3db51"
-
-[[package]]
 name = "normalize-line-endings"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1151,15 +1138,6 @@ name = "oorandom"
 version = "11.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6790f58c7ff633d8771f42965289203411a5e5c68388703c06e14f24770b41e"
-
-[[package]]
-name = "parallel_frontier"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38a1703e84f54676175da5c1872825b7e9ba245d4f611900243cccac4232689b"
-dependencies = [
- "rayon",
-]
 
 [[package]]
 name = "partition"
@@ -1902,7 +1880,8 @@ dependencies = [
 
 [[package]]
 name = "webgraph"
-version = "0.2.1"
+version = "0.3.0"
+source = "git+https://github.com/vigna/webgraph-rs.git#e5432f48953db226b294b073b6a971ffea4a95c6"
 dependencies = [
  "anyhow",
  "bitflags 2.9.1",
@@ -1928,24 +1907,6 @@ dependencies = [
  "sux 0.7.4",
  "sync-cell-slice",
  "tempfile",
-]
-
-[[package]]
-name = "webgraph-algo"
-version = "0.1.1"
-dependencies = [
- "anyhow",
- "dsi-progress-logger 0.8.1",
- "lender 0.3.1",
- "no-break",
- "nonmax",
- "parallel_frontier",
- "rayon",
- "sealed",
- "sux 0.7.4",
- "sync-cell-slice",
- "thiserror 2.0.12",
- "webgraph",
 ]
 
 [[package]]

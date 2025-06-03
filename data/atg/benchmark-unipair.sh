@@ -2,5 +2,5 @@
 
 mkdir -p result
 
-time cargo run --bin unipairs --release -- /data/bitcoin/atg/atg 222 0.1 > result/atg-uni-222.out
-time cargo run --bin closeness --release -- /data/bitcoin/atg/atg-t 32 0.1 > result/atg-uni-222-closeness.out
+time cargo run --bin unipairs --release -- /data/bitcoin/atg/atg 0 0.1 false > result/avgdist-uni.out
+time cargo run --bin harmonic --release -- /data/bitcoin/atg/atg-t 0 0.1 false > result/harmonic.out
