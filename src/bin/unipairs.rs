@@ -1,7 +1,7 @@
 use rand::Rng;
 use std::env;
 use std::io::{self, Write};
-use std::ops::Div;
+use std::ops::{Div, SubAssign};
 use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 use std::time::Instant;
@@ -51,12 +51,13 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
     let (tx, rx) = std::sync::mpsc::channel();
 
     let num_nodes = agraph.num_nodes();
-    let remaining = AtomicUsize::new(k);
+    let remaining = Arc::new(AtomicUsize::new(k));
     let distr = rand::distributions::Uniform::new(0, num_nodes);
 
     for each in 0..k {
         let agraph = agraph.clone();
         let tx = tx.clone();
+        let remaining = remaining.clone();
 
         thread_pool.spawn(move || {
             let instant = Instant::now();
@@ -84,10 +85,12 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
                 }
             }
 
-            let rem = remaining.fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
+            {
+                let rem = remaining.fetch_sub(1, std::sync::atomic::Ordering::SeqCst);
 
-            print!("((eta {:?}) (remaining {})) ", instant.elapsed(), rem);
-            io::stdout().flush().unwrap();
+                print!("((eta {:?}) (remaining {})) ", instant.elapsed(), rem);
+                io::stdout().flush().unwrap();
+            }
         });
     }
 
