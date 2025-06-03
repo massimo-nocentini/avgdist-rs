@@ -48,11 +48,15 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
 ) -> (usize, usize, usize, f64, usize) {
     let (tx, rx) = std::sync::mpsc::channel();
 
+    let thread_pool = rayon::ThreadPoolBuilder::default()
+        .build()
+        .expect("Failed to create thread pool");
+
     for each in 0..k {
         let agraph = agraph.clone();
         let tx = tx.clone();
 
-        thread::spawn(move || {
+        thread_pool.install(|| {
             let instant = Instant::now();
             let mut r = rand::thread_rng();
 
@@ -113,7 +117,7 @@ fn main() {
 
     let num_nodes = graph.num_nodes();
     let k = (num_nodes as f64).log2().div(2.0 * epsilon.powi(2)).ceil() as usize;
-
+    
     let sample_size = if exact_computation { num_nodes } else { k };
 
     println!(
@@ -137,34 +141,28 @@ fn main() {
 
     let instant = Instant::now();
 
-    while remaining > 0 {
-        slot = if exact_computation {
-            remaining
-        } else {
-            slot.min(remaining)
-        };
+    slot = if exact_computation { remaining } else { k };
 
-        println!(
-            "\n*** iteration {}, batch size {}, remaining {}.",
-            iteration,
-            slot,
-            remaining - slot
-        );
+    println!(
+        "\n*** iteration {}, batch size {}, remaining {}.",
+        iteration,
+        slot,
+        remaining - slot
+    );
 
-        let instant = Instant::now();
-        let (dia, sum, count, ratio, c) = sample(slot, ag.clone(), exact_computation);
+    let instant = Instant::now();
+    let (dia, sum, count, ratio, c) = sample(slot, ag.clone(), exact_computation);
 
-        D = std::cmp::max(D, dia);
-        S += sum;
-        C += count;
-        R += ratio;
-        Rc += c;
+    D = std::cmp::max(D, dia);
+    S += sum;
+    C += count;
+    R += ratio;
+    Rc += c;
 
-        println!("sampled in {:?}", instant.elapsed());
+    println!("sampled in {:?}", instant.elapsed());
 
-        remaining -= slot;
-        iteration += 1;
-    }
+    remaining -= slot;
+    iteration += 1;
 
     println!(
         "\n((average distance {:.6}) (diameter {}) (eta {:?}))",
