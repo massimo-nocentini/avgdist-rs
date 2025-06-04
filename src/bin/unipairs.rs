@@ -122,11 +122,12 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let graph_filename = &args[1];
-    // let mut slot: usize = args[2].parse().unwrap();
+    let num_threads: usize = args[2].parse().unwrap();
     let epsilon: f64 = args[3].parse().unwrap();
     let exact_computation: bool = args[4].parse().unwrap();
 
     let thread_pool = rayon::ThreadPoolBuilder::default()
+        .num_threads(num_threads)
         .build()
         .expect("Failed to create thread pool");
 
