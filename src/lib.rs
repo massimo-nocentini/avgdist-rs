@@ -1,3 +1,4 @@
+use core::panic;
 use rand::Rng;
 use std::io::{self, Write};
 use std::sync::atomic::AtomicUsize;
@@ -222,13 +223,11 @@ const LOG_HTSIZE: usize = BASE - 7;
 const HTSIZE: usize = 1 << LOG_HTSIZE;
 
 struct Simpath {
-    maxn: usize,
-    maxm: u64,
     mem: Vec<usize>,
     tail: usize,
     boundary: usize,
     head: usize,
-    htable: Vec<u32>,
+    htable: Vec<usize>,
     htid: usize,
     htcount: usize,
     wrap: usize,
@@ -245,7 +244,92 @@ fn trunc(addr: usize) -> usize {
     addr & (MEMSIZE - 1)
 }
 
-fn printstate(a: usize, b: usize, c: usize) {}
+fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) {
+    let mut h: usize;
+    let mut hh: usize;
+    let mut t: usize;
+    let mut tt: usize;
+    let mut hash: usize;
+
+    t = j;
+    while t < jj {
+        if simpath.mate[t] > 0 && simpath.mate[t] != t {
+            break;
+        }
+        t += 1;
+    }
+
+    if t < jj {
+        print!("0");
+    } else if ll < jj {
+        print!("0");
+    } else {
+        let ss = ll + 1 - jj;
+        if simpath.head + ss - simpath.tail > MEMSIZE {
+            panic!(
+                "Oops, I'm out of memory (memsize={}, serial={})!",
+                MEMSIZE, simpath.serial
+            );
+        }
+
+        t = jj;
+        h = trunc(simpath.head);
+        hash = 0;
+        while t <= ll {
+            simpath.mem[h] = simpath.mate[t];
+            hash = hash * 31415926525 + simpath.mate[t];
+
+            t += 1;
+            h = trunc(h + 1)
+        }
+
+        hash = hash & (HTSIZE - 1);
+        loop {
+            hh = simpath.htable[hash];
+
+            if (hh ^ simpath.htid) >= MEMSIZE {
+                simpath.htcount += 1;
+                if simpath.htcount > (HTSIZE >> 1) {
+                    panic!(
+                        "Sorry, the hash table is full (htsize={}, serial={})!",
+                        HTSIZE, simpath.serial
+                    );
+                }
+                hh = trunc(simpath.head);
+                simpath.htable[hash] = simpath.htid + hh;
+                simpath.head += ss;
+                break;
+            }
+
+            hh = trunc(hh);
+            t = hh;
+            h = trunc(simpath.head);
+            tt = trunc(t + ss - 1);
+            
+            let should_continue = loop {
+                if simpath.mem[t] != simpath.mem[h] {
+                    break true;
+                }
+
+                if t == tt {
+                    break false;
+                }
+
+                t = trunc(t + 1);
+                h = trunc(h + 1);
+            };
+
+            if should_continue {
+                hash = (hash + 1) & (HTSIZE - 1);
+            } else {
+                break;
+            }
+        }
+
+        h = trunc(hh - simpath.boundary) / ss;
+        print!("{}", simpath.newserial + h);
+    }
+}
 
 pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
     graph: &T,
@@ -255,8 +339,6 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
     let num_nodes = graph.num_nodes();
 
     let mut simpath = Simpath {
-        maxn: num_nodes,
-        maxm: graph.num_arcs(),
         mem: vec![0; MEMSIZE],
         tail: 0,
         boundary: 0,
@@ -274,6 +356,7 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
         newserial: 0,
     };
 
+    /*
     for v in 0..num_nodes {
         let a: Vec<usize> = graph.successors(v).into_iter().collect();
         for (i, u) in a.iter().enumerate() {
@@ -290,6 +373,7 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
             // }
         }
     }
+    */
 
     // if (source == g->vertices)
     // {
@@ -475,7 +559,7 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
                     simpath.tail += 1;
                 }
 
-                printstate(j, jj, ll);
+                printstate(&mut simpath, j, jj, ll);
 
                 print!(",");
 
@@ -504,7 +588,7 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
                     simpath.mate[k] = 0;
                     simpath.mate[jm] = km;
                     simpath.mate[km] = jm;
-                    printstate(j, jj, ll);
+                    printstate(&mut simpath, j, jj, ll);
                     simpath.mate[jm] = j;
                     simpath.mate[km] = k;
                     simpath.mate[j] = jm;
