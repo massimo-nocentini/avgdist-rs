@@ -328,7 +328,7 @@ fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) {
         }
 
         h = trunc(hh - simpath.boundary) / ss;
-        print!("{}", simpath.newserial + h);
+        print!("{:#x}", simpath.newserial + h);
     }
 }
 
@@ -447,12 +447,12 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
     for i in 0..m {
         let i_succ = i + 1;
         println!("#{}:", i_succ);
-        println!(
-            "Beginning arc {} (serial={}, head-tail={})",
-            i_succ,
-            simpath.serial,
-            simpath.head - simpath.tail
-        );
+        // println!(
+        //     "Beginning arc {} (serial={}, head-tail={})",
+        //     i_succ,
+        //     simpath.serial,
+        //     simpath.head - simpath.tail
+        // );
 
         simpath.boundary = simpath.head;
         simpath.htcount = 0;
@@ -476,7 +476,7 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
         }
         ll = if k > l { k } else { l };
         while simpath.tail < simpath.boundary {
-            print!("{}:", simpath.serial);
+            print!("{:#x}:", simpath.serial);
             simpath.serial += 1;
 
             for t in j..=l {

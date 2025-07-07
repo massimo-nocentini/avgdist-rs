@@ -6,7 +6,7 @@ generate:
 	python generate.py > star.csv
 
 webgraph:
-	webgraph from arcs --exact --num-nodes 20001 --separator=',' star < star.csv
+	webgraph from arcs --exact --num-nodes 21 --separator=',' star < star.csv
 	webgraph transform transpose star star-t
 	webgraph build ef star
 	webgraph build ef star-t
@@ -34,4 +34,4 @@ harmonic:
 	time cargo run --bin harmonic --release -- ./star-t 32 0.1 true > result/star-harmonic-true.out
 
 simpath:
-	RUST_BACKTRACE=full time cargo run --bin simpath --release -- star 0 10001 > out.bdd 
+	RUST_BACKTRACE=full time cargo run --bin simpath --release -- star 0 11 > out.bdd 
