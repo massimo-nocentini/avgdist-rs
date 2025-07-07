@@ -223,6 +223,7 @@ const LOG_HTSIZE: usize = BASE - 7;
 const HTSIZE: usize = 1 << LOG_HTSIZE;
 
 struct Simpath {
+    n: usize,
     mem: Vec<usize>,
     tail: usize,
     boundary: usize,
@@ -305,7 +306,7 @@ fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) {
             t = hh;
             h = trunc(simpath.head);
             tt = trunc(t + ss - 1);
-            
+
             let should_continue = loop {
                 if simpath.mem[t] != simpath.mem[h] {
                     break true;
@@ -331,81 +332,45 @@ fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) {
     }
 }
 
-pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
-    graph: &T,
-    source: usize,
-    target: usize,
-) {
-    let num_nodes = graph.num_nodes();
-
-    let mut simpath = Simpath {
-        mem: vec![0; MEMSIZE],
-        tail: 0,
-        boundary: 0,
-        head: 0,
-        htable: vec![0; HTSIZE],
-        htid: 0,
-        htcount: 0,
-        wrap: 1,
-        vert: vec![0; num_nodes + 1],
-        num: vec![0; num_nodes],
-        arcto: vec![0; graph.num_arcs().try_into().unwrap()],
-        firstarc: vec![0; num_nodes + 2],
-        mate: vec![0; num_nodes + 3],
-        serial: 0,
-        newserial: 0,
-    };
-
-    /*
-    for v in 0..num_nodes {
-        let a: Vec<usize> = graph.successors(v).into_iter().collect();
-        for (i, u) in a.iter().enumerate() {
-            if *u == v {
-                panic!("Self-loop detected at node {}", v);
-            }
-
-            // let b = a[if v < *u { i + 1 } else { i - 1 }];
-            // if b != v {
-            //     panic!(
-            //         "Sorry, the graph isn't undirected! ({:?} -> {:?} has mate pointing to {:?})",
-            //         v, u, b
-            //     );
-            // }
+impl Simpath {
+    pub fn new<T: RandomAccessGraph + Send + Sync>(graph: &T) -> Self {
+        let num_nodes = graph.num_nodes();
+        Simpath {
+            n: num_nodes,
+            mem: vec![0; MEMSIZE],
+            tail: 0,
+            boundary: 0,
+            head: 0,
+            htable: vec![0; HTSIZE],
+            htid: 0,
+            htcount: 0,
+            wrap: 1,
+            vert: vec![0; num_nodes + 1],
+            num: vec![0; num_nodes],
+            arcto: vec![0; graph.num_arcs().try_into().unwrap()],
+            firstarc: vec![0; num_nodes + 2],
+            mate: vec![0; num_nodes + 3],
+            serial: 0,
+            newserial: 0,
         }
     }
-    */
+}
 
-    // if (source == g->vertices)
-    // {
-    //     for (k = 0; k < n; k++)
-    //         (g->vertices + k)->num = k + 1, vert[k + 1] = g->vertices + k;
-    // }
+pub fn simpath<T: RandomAccessGraph + Send + Sync>(graph: &T, source: usize, target: usize) {
+    let mut simpath = Simpath::new(graph);
+
     if source == 0 {
-        for k in 0..num_nodes {
-            simpath.num[k] = k + 1;
-            simpath.vert[k + 1] = k;
+        let mut k = 0;
+        while k < simpath.n {
+            let k_succ = k + 1;
+            simpath.num[k] = k_succ;
+            simpath.vert[k_succ] = k;
+            k = k_succ;
         }
     } else {
-        // for (k = 0; k < n; k++)
-        //     (g->vertices + k)->num = 0;
-        // for k in 0..num_nodes {
-        //     simpath.num[k] = 0;
-        // }
-
-        // vert[1] = source, source->num = 1;
         simpath.vert[1] = source;
         simpath.num[source] = 1;
 
-        // for (j = 0, k = 1; j < k; j++)
-        // {
-        //     v = vert[j + 1];
-        //     for (a = v->arcs; a; a = a->next)
-        //     {
-        //         u = a->tip;
-        //         if (u->num == 0)
-        //             u->num = ++k, vert[k] = u;
-        //     }
-        // }
         let mut k = 1;
         let mut j = 0;
         while j < k {
@@ -420,15 +385,9 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
             }
         }
 
-        // if (target->num == 0)
-        // {
-        //     fprintf(stderr, "Sorry, there's no path from %s to %s in the graph!\n",
-        //             argv[2], argv[3]);
-        //     exit(-8);
+        // for v in simpath.num.iter().filter(|&each| *each > 0) {
+        //     println!("{} ", simpath.vert[*v]);
         // }
-        for v in simpath.num.iter().filter(|&each| *each > 0) {
-            println!("{} ", simpath.vert[*v]);
-        }
 
         if simpath.num[target] == 0 {
             panic!(
@@ -437,47 +396,25 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
             );
         }
 
-        // if (k < n)
-        // {
-        //     fprintf(stderr, "The graph isn't connected (%d<%d)!\n", k, n);
-        //     fprintf(stderr, "But that's OK; I'll work with the component of %s.\n",
-        //             argv[2]);
-        //     n = k;
-        // }
-        if k < num_nodes {
-            println!("The graph isn't connected ({} < {})! But that's OK; I'll work with the component of {}.", k, num_nodes, source);
+        if k < simpath.n {
+            println!("The graph isn't connected ({} < {})! But that's OK; I'll work with the component of {}.", k, simpath.n, source);
+            simpath.n = k;
         }
     }
 
     {
-        // for (m = 0, k = 1; k <= n; k++)
-        // {
-        //     firstarc[k] = m;
-        //     v = vert[k];
-        //     printf("%ld(%s)\n", v->num, v->name);
-        //     for (a = v->arcs; a; a = a->next)
-        //     {
-        //         u = a->tip;
-        //         if (u->num > k)
-        //         {
-        //             arcto[m++] = u->num;
-        //             if (a->len == 1)
-        //                 printf(" -> %ld(%s) #%d\n", u->num, u->name, m);
-        //             else
-        //                 printf(" -> %ld(%s,%ld) #%d\n", u->num, u->name, a->len, m);
-        //         }
-        //     }
-        // }
-        // firstarc[k] = m;
-
         let mut m = 0usize;
         let mut k = 1;
-        while k <= num_nodes {
+        while k <= simpath.n {
             simpath.firstarc[k] = m;
+
             let v = simpath.vert[k];
+
             println!("{}({})", simpath.num[v], v);
+
             let v_successors: Vec<usize> = graph.successors(v).into_iter().collect();
             let v_successors_len = v_successors.len() - 1;
+
             for (ui, u) in v_successors.iter().enumerate() {
                 let u_num = simpath.num[*u];
                 if u_num > k {
@@ -486,7 +423,7 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
                     if ui == v_successors_len {
                         println!(" -> {}({}) #{}", u_num, u, m);
                     } else {
-                        println!(" -> {}({}, {}) #{}", u_num, u, v_successors_len - ui, m);
+                        println!(" -> {}({},{}) #{}", u_num, u, v_successors_len - ui, m);
                     }
                 }
             }
@@ -494,20 +431,13 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
         }
         simpath.firstarc[k] = m;
 
-        // for (t = 2; t <= n; t++)
-        //     mate[t] = t;
-        // mate[target->num] = 1, mate[1] = target->num;
-        for t in 2..=num_nodes {
+        for t in 2..=simpath.n {
             simpath.mate[t] = t;
         }
         let target_num = simpath.num[target];
         simpath.mate[target_num] = 1;
         simpath.mate[1] = target_num;
 
-        // jj = ll = 1;
-        // mem[0] = mate[1];
-        // tail = 0, head = 1;
-        // serial = 2;
         let mut jj = 1;
         let mut ll = 1;
         simpath.mem[0] = simpath.mate[1];
@@ -516,10 +446,11 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
         simpath.serial = 2;
 
         for i in 0..m {
-            println!("#{}:", i + 1);
+            let i_succ = i + 1;
+            println!("#{}:", i_succ);
             println!(
                 "Beginning arc {} (serial={}, head-tail={})",
-                i + 1,
+                i_succ,
                 simpath.serial,
                 simpath.head - simpath.tail
             );
@@ -536,13 +467,12 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync + 'static>(
                 simpath.htid = 1 << LOG_MEMSIZE;
             }
 
-            simpath.newserial =
-                simpath.serial + ((simpath.head - simpath.tail) / (ll + 1usize - jj));
+            simpath.newserial = simpath.serial + ((simpath.head - simpath.tail) / (ll + 1 - jj));
 
             let j = jj;
             k = simpath.arcto[i];
             let l = ll;
-            while jj <= num_nodes && simpath.firstarc[jj + 1] == i + 1 {
+            while jj <= simpath.n && simpath.firstarc[jj + 1] == i_succ {
                 jj += 1;
             }
             ll = if k > l { k } else { l };

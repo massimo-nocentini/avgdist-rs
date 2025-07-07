@@ -32,3 +32,6 @@ closeness:
 harmonic:
 	time cargo run --bin harmonic --release -- ./star-t 32 0.05 false > result/star-harmonic.out
 	time cargo run --bin harmonic --release -- ./star-t 32 0.1 true > result/star-harmonic-true.out
+
+simpath:
+	RUST_BACKTRACE=full time cargo run --bin simpath --release -- star 0 10001 
