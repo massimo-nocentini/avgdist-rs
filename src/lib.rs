@@ -333,7 +333,7 @@ fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) {
 }
 
 impl Simpath {
-    pub fn new<T: RandomAccessGraph + Send + Sync>(graph: &T) -> Self {
+    pub fn new<T: RandomAccessGraph>(graph: &T) -> Self {
         let num_nodes = graph.num_nodes();
         Simpath {
             n: num_nodes,
@@ -356,7 +356,7 @@ impl Simpath {
     }
 }
 
-pub fn simpath<T: RandomAccessGraph + Send + Sync>(graph: &T, source: usize, target: usize) {
+pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
     let mut simpath = Simpath::new(graph);
 
     if source == 0 {
@@ -402,131 +402,129 @@ pub fn simpath<T: RandomAccessGraph + Send + Sync>(graph: &T, source: usize, tar
         }
     }
 
-    {
-        let mut m = 0usize;
-        let mut k = 1;
-        while k <= simpath.n {
-            simpath.firstarc[k] = m;
-
-            let v = simpath.vert[k];
-
-            println!("{}({})", simpath.num[v], v);
-
-            let v_successors: Vec<usize> = graph.successors(v).into_iter().collect();
-            let v_successors_len = v_successors.len() - 1;
-
-            for (ui, u) in v_successors.iter().enumerate() {
-                let u_num = simpath.num[*u];
-                if u_num > k {
-                    simpath.arcto[m] = u_num;
-                    m += 1;
-                    if ui == v_successors_len {
-                        println!(" -> {}({}) #{}", u_num, u, m);
-                    } else {
-                        println!(" -> {}({},{}) #{}", u_num, u, v_successors_len - ui, m);
-                    }
-                }
-            }
-            k += 1;
-        }
+    let mut m = 0;
+    let mut k = 1;
+    while k <= simpath.n {
         simpath.firstarc[k] = m;
 
-        for t in 2..=simpath.n {
-            simpath.mate[t] = t;
-        }
-        let target_num = simpath.num[target];
-        simpath.mate[target_num] = 1;
-        simpath.mate[1] = target_num;
+        let v = simpath.vert[k];
 
-        let mut jj = 1;
-        let mut ll = 1;
-        simpath.mem[0] = simpath.mate[1];
-        simpath.tail = 0;
-        simpath.head = 1;
-        simpath.serial = 2;
+        println!("{}({})", simpath.num[v], v);
 
-        for i in 0..m {
-            let i_succ = i + 1;
-            println!("#{}:", i_succ);
-            println!(
-                "Beginning arc {} (serial={}, head-tail={})",
-                i_succ,
-                simpath.serial,
-                simpath.head - simpath.tail
-            );
+        let v_successors: Vec<usize> = graph.successors(v).into_iter().collect();
+        let v_successors_len = v_successors.len() - 1;
 
-            simpath.boundary = simpath.head;
-            simpath.htcount = 0;
-            simpath.htid = (i + simpath.wrap) << LOG_MEMSIZE;
-
-            if simpath.htid == 0 {
-                for hash in 0..HTSIZE {
-                    simpath.htable[hash] = 0;
-                }
-                simpath.wrap += 1;
-                simpath.htid = 1 << LOG_MEMSIZE;
-            }
-
-            simpath.newserial = simpath.serial + ((simpath.head - simpath.tail) / (ll + 1 - jj));
-
-            let j = jj;
-            k = simpath.arcto[i];
-            let l = ll;
-            while jj <= simpath.n && simpath.firstarc[jj + 1] == i_succ {
-                jj += 1;
-            }
-            ll = if k > l { k } else { l };
-            while simpath.tail < simpath.boundary {
-                print!("{}:", simpath.serial);
-                simpath.serial += 1;
-
-                for t in j..=l {
-                    simpath.mate[t] = simpath.mem[trunc(simpath.tail)];
-                    if simpath.mate[t] > l {
-                        let i = simpath.mate[t];
-                        simpath.mate[i] = t;
-                    }
-                    simpath.tail += 1;
-                }
-
-                printstate(&mut simpath, j, jj, ll);
-
-                print!(",");
-
-                let jm = simpath.mate[j];
-                let km = simpath.mate[k];
-                if jm == 0 || km == 0 {
-                    print!("0");
-                } else if jm == k {
-                    let mut t = j + 1;
-                    while t <= ll {
-                        if t != k {
-                            if simpath.mate[t] > 0 && simpath.mate[t] != t {
-                                break;
-                            }
-                        }
-                        t += 1;
-                    }
-
-                    if t > ll {
-                        print!("1");
-                    } else {
-                        print!("0");
-                    }
+        for (ui, u) in v_successors.iter().enumerate() {
+            let u_num = simpath.num[*u];
+            if u_num > k {
+                simpath.arcto[m] = u_num;
+                m += 1;
+                if ui == v_successors_len {
+                    println!(" -> {}({}) #{}", u_num, u, m);
                 } else {
-                    simpath.mate[j] = 0;
-                    simpath.mate[k] = 0;
-                    simpath.mate[jm] = km;
-                    simpath.mate[km] = jm;
-                    printstate(&mut simpath, j, jj, ll);
-                    simpath.mate[jm] = j;
-                    simpath.mate[km] = k;
-                    simpath.mate[j] = jm;
-                    simpath.mate[k] = km;
+                    println!(" -> {}({},{}) #{}", u_num, u, v_successors_len - ui, m);
+                }
+            }
+        }
+        k += 1;
+    }
+    simpath.firstarc[k] = m;
+
+    for t in 2..=simpath.n {
+        simpath.mate[t] = t;
+    }
+    let target_num = simpath.num[target];
+    simpath.mate[target_num] = 1;
+    simpath.mate[1] = target_num;
+
+    let mut jj = 1;
+    let mut ll = 1;
+    simpath.mem[0] = simpath.mate[1];
+    simpath.tail = 0;
+    simpath.head = 1;
+    simpath.serial = 2;
+
+    for i in 0..m {
+        let i_succ = i + 1;
+        println!("#{}:", i_succ);
+        println!(
+            "Beginning arc {} (serial={}, head-tail={})",
+            i_succ,
+            simpath.serial,
+            simpath.head - simpath.tail
+        );
+
+        simpath.boundary = simpath.head;
+        simpath.htcount = 0;
+        simpath.htid = (i + simpath.wrap) << LOG_MEMSIZE;
+
+        if simpath.htid == 0 {
+            for hash in 0..HTSIZE {
+                simpath.htable[hash] = 0;
+            }
+            simpath.wrap += 1;
+            simpath.htid = 1 << LOG_MEMSIZE;
+        }
+
+        simpath.newserial = simpath.serial + ((simpath.head - simpath.tail) / (ll + 1 - jj));
+
+        let j = jj;
+        k = simpath.arcto[i];
+        let l = ll;
+        while jj <= simpath.n && simpath.firstarc[jj + 1] == i_succ {
+            jj += 1;
+        }
+        ll = if k > l { k } else { l };
+        while simpath.tail < simpath.boundary {
+            print!("{}:", simpath.serial);
+            simpath.serial += 1;
+
+            for t in j..=l {
+                simpath.mate[t] = simpath.mem[trunc(simpath.tail)];
+                if simpath.mate[t] > l {
+                    let i = simpath.mate[t];
+                    simpath.mate[i] = t;
+                }
+                simpath.tail += 1;
+            }
+
+            printstate(&mut simpath, j, jj, ll);
+
+            print!(",");
+
+            let jm = simpath.mate[j];
+            let km = simpath.mate[k];
+            if jm == 0 || km == 0 {
+                print!("0");
+            } else if jm == k {
+                let mut t = j + 1;
+                while t <= ll {
+                    if t != k {
+                        if simpath.mate[t] > 0 && simpath.mate[t] != t {
+                            break;
+                        }
+                    }
+                    t += 1;
                 }
 
-                println!("");
+                if t > ll {
+                    print!("1");
+                } else {
+                    print!("0");
+                }
+            } else {
+                simpath.mate[j] = 0;
+                simpath.mate[k] = 0;
+                simpath.mate[jm] = km;
+                simpath.mate[km] = jm;
+                printstate(&mut simpath, j, jj, ll);
+                simpath.mate[jm] = j;
+                simpath.mate[km] = k;
+                simpath.mate[j] = jm;
+                simpath.mate[k] = km;
             }
+
+            println!("");
         }
     }
 }
