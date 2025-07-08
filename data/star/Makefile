@@ -34,4 +34,4 @@ harmonic:
 	time cargo run --bin harmonic --release -- ./star-t 32 0.1 true > result/star-harmonic-true.out
 
 simpath:
-	RUST_BACKTRACE=full time cargo run --bin simpath --release -- star 0 11 > out.bdd 
+	RUST_BACKTRACE=full time cargo run --bin simpath --release -- star 1 11 > out.bdd 

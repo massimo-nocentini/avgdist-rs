@@ -385,11 +385,13 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
             }
         }
 
-        // for v in simpath.num.iter().filter(|&each| *each > 0) {
-        //     println!("{} ", simpath.vert[*v]);
-        // }
-
         if simpath.num[target] == 0 {
+            println!("Vertices reachables from {}:", source);
+
+            for v in simpath.num.iter().filter(|&each| *each > 0) {
+                println!("{} ", simpath.vert[*v]);
+            }
+
             panic!(
                 "Sorry, there's no path from {} to {} in the graph!",
                 source, target
