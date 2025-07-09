@@ -216,7 +216,7 @@ pub fn hc_sample<T: RandomAccessGraph + Send + Sync + 'static>(
     (tx.0, tx.1, tx.2, sizes, finite_ds)
 }
 
-const BASE: usize = 32;
+const BASE: usize = 64;
 const LOG_MEMSIZE: usize = BASE - 5;
 const MEMSIZE: usize = 1 << LOG_MEMSIZE;
 const LOG_HTSIZE: usize = BASE - 7;
