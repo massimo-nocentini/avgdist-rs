@@ -1,6 +1,5 @@
 use avgdist_rs::simpath;
 use std::env;
-use std::time::Instant;
 use webgraph::prelude::*;
 
 fn main() {
@@ -12,9 +11,5 @@ fn main() {
 
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
 
-    let instant = Instant::now();
-
     simpath(&graph, source, target);
-
-    println!("Finished in {:?}.", instant.elapsed());
 }

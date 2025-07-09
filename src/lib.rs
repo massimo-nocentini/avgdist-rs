@@ -1,6 +1,7 @@
 use core::panic;
 use rand::Rng;
 use std::io::{self, Write};
+use std::ops::Neg;
 use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 use std::time::Instant;
@@ -216,7 +217,7 @@ pub fn hc_sample<T: RandomAccessGraph + Send + Sync + 'static>(
     (tx.0, tx.1, tx.2, sizes, finite_ds)
 }
 
-const BASE: usize = 64;
+const BASE: usize = 32;
 const LOG_MEMSIZE: usize = BASE - 5;
 const MEMSIZE: usize = 1 << LOG_MEMSIZE;
 const LOG_HTSIZE: usize = BASE - 7;
@@ -245,7 +246,7 @@ fn trunc(addr: usize) -> usize {
     addr & (MEMSIZE - 1)
 }
 
-fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) {
+fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) -> usize {
     let mut h: usize;
     let mut hh: usize;
     let mut t: usize;
@@ -260,10 +261,12 @@ fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) {
         t += 1;
     }
 
+    let ret;
+
     if t < jj {
-        print!("0");
+        ret = 0;
     } else if ll < jj {
-        print!("0");
+        ret = 0;
     } else {
         let ss = ll + 1 - jj;
         if simpath.head + ss - simpath.tail > MEMSIZE {
@@ -328,8 +331,10 @@ fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) {
         }
 
         h = trunc(hh - simpath.boundary) / ss;
-        print!("{:#x}", simpath.newserial + h);
+        ret = simpath.newserial + h;
     }
+
+    return ret;
 }
 
 impl Simpath {
@@ -410,22 +415,13 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
         simpath.firstarc[k] = m;
 
         let v = simpath.vert[k];
-
-        println!("{}({})", simpath.num[v], v);
-
         let v_successors: Vec<usize> = graph.successors(v).into_iter().collect();
-        let v_successors_len = v_successors.len() - 1;
 
-        for (ui, u) in v_successors.iter().enumerate() {
+        for (_ui, u) in v_successors.iter().enumerate() {
             let u_num = simpath.num[*u];
             if u_num > k {
                 simpath.arcto[m] = u_num;
                 m += 1;
-                if ui == v_successors_len {
-                    println!(" -> {}({}) #{}", u_num, u, m);
-                } else {
-                    println!(" -> {}({},{}) #{}", u_num, u, v_successors_len - ui, m);
-                }
             }
         }
         k += 1;
@@ -446,15 +442,20 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
     simpath.head = 1;
     simpath.serial = 2;
 
+    let mut firstnode = Vec::new();
+    let mut lo = Vec::new();
+    let mut hi = Vec::new();
+
+    firstnode.push(0usize);
+    lo.push(-1isize);
+    lo.push(-1isize);
+    hi.push(0isize);
+    hi.push(0isize);
+
     for i in 0..m {
         let i_succ = i + 1;
-        println!("#{}:", i_succ);
-        // println!(
-        //     "Beginning arc {} (serial={}, head-tail={})",
-        //     i_succ,
-        //     simpath.serial,
-        //     simpath.head - simpath.tail
-        // );
+
+        firstnode.push(lo.len());
 
         simpath.boundary = simpath.head;
         simpath.htcount = 0;
@@ -478,7 +479,6 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
         }
         ll = if k > l { k } else { l };
         while simpath.tail < simpath.boundary {
-            print!("{:#x}:", simpath.serial);
             simpath.serial += 1;
 
             for t in j..=l {
@@ -490,14 +490,15 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
                 simpath.tail += 1;
             }
 
-            printstate(&mut simpath, j, jj, ll);
-
-            print!(",");
+            let left = printstate(&mut simpath, j, jj, ll);
 
             let jm = simpath.mate[j];
             let km = simpath.mate[k];
+
+            let right: usize;
+
             if jm == 0 || km == 0 {
-                print!("0");
+                right = 0;
             } else if jm == k {
                 let mut t = j + 1;
                 while t <= ll {
@@ -509,24 +510,106 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
                     t += 1;
                 }
 
-                if t > ll {
-                    print!("1");
-                } else {
-                    print!("0");
-                }
+                right = if t > ll { 1 } else { 0 };
             } else {
                 simpath.mate[j] = 0;
                 simpath.mate[k] = 0;
                 simpath.mate[jm] = km;
                 simpath.mate[km] = jm;
-                printstate(&mut simpath, j, jj, ll);
+                right = printstate(&mut simpath, j, jj, ll);
                 simpath.mate[jm] = j;
                 simpath.mate[km] = k;
                 simpath.mate[j] = jm;
                 simpath.mate[k] = km;
             }
 
-            println!("");
+            lo.push(left as isize);
+            hi.push(right as isize);
+        }
+    }
+
+    assert!(lo.len() == hi.len());
+
+    firstnode.push(lo.len());
+
+    bdd_reduce(&firstnode, &mut lo, &mut hi);
+}
+
+fn bdd_reduce(firstnode: &Vec<usize>, lo: &mut Vec<isize>, hi: &mut Vec<isize>) {
+    assert!(lo[0] == -1 && lo[1] == -1);
+
+    for t in (1..firstnode.len() - 1).rev() {
+        let mut head = 0isize;
+
+        for k in firstnode[t]..firstnode[t + 1] {
+            {
+                let q = lo[k];
+                assert!(q >= 0);
+
+                let lo_q = lo[q as usize];
+                if lo_q >= 0 {
+                    lo[k] = lo_q
+                }
+            }
+
+            {
+                let mut q = hi[k];
+                assert!(q >= 0);
+                let lo_q = lo[q as usize];
+                if lo_q >= 0 {
+                    q = lo_q;
+                    hi[k] = lo_q;
+                }
+                if q != 0 {
+                    assert!(q >= 0);
+                    let hi_q = hi[q as usize];
+                    if hi_q >= 0 {
+                        hi[k] = head.neg();
+                        head = q;
+                    } else {
+                        hi[k] = hi_q.neg();
+                    }
+                    hi[q as usize] = (k as isize).neg();
+                }
+            }
+        }
+
+        let mut p = head;
+
+        while p != 0 {
+            assert!(p >= 0);
+            let mut q = hi[p as usize].neg();
+            while q > 0 {
+                let r = lo[q as usize];
+                assert!(r >= 0);
+                if lo[r as usize] <= 0 {
+                    println!("{:#x}: (~{}?{:#x}:{:#x})", q, t, r, p);
+
+                    lo[r as usize] = q;
+                    lo[q as usize] = r.neg() - 1;
+                } else {
+                    lo[q as usize] = lo[r as usize];
+                }
+
+                q = hi[q as usize]
+            }
+            q = hi[p as usize].neg();
+            hi[p as usize] = 0;
+            let mut r = 0isize;
+            while q > 0 {
+                assert!(q >= 0);
+                r = lo[q as usize];
+                if r < 0 {
+                    lo[(r.neg() - 1) as usize] = -1;
+                }
+
+                r = q;
+                assert!(r >= 0);
+                q = hi[r as usize];
+            }
+            hi[r as usize] = 0;
+
+            p = q.neg();
         }
     }
 }
