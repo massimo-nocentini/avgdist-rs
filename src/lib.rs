@@ -391,10 +391,10 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
         }
 
         if simpath.num[target] == 0 {
-            println!("Vertices reachables from {}:", source);
+            eprintln!("Vertices reachables from {}:", source);
 
             for v in simpath.num.iter().filter(|&each| *each > 0) {
-                println!("{} ", simpath.vert[*v]);
+                eprintln!("{} ", simpath.vert[*v]);
             }
 
             panic!(
@@ -404,7 +404,7 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
         }
 
         if k < simpath.n {
-            println!("The graph isn't connected ({} < {})! But that's OK; I'll work with the component of {}.", k, simpath.n, source);
+            eprintln!("The graph isn't connected ({} < {})! But that's OK; I'll work with the component of {}.", k, simpath.n, source);
             simpath.n = k;
         }
     }
