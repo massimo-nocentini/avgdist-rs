@@ -1,5 +1,6 @@
 use core::panic;
 use rand::Rng;
+use std::env;
 use std::io::{self, Write};
 use std::ops::Neg;
 use std::sync::atomic::AtomicUsize;
@@ -217,12 +218,6 @@ pub fn hc_sample<T: RandomAccessGraph + Send + Sync + 'static>(
     (tx.0, tx.1, tx.2, sizes, finite_ds)
 }
 
-const BASE: usize = 32;
-const LOG_MEMSIZE: usize = BASE - 5;
-const MEMSIZE: usize = 1 << LOG_MEMSIZE;
-const LOG_HTSIZE: usize = BASE - 7;
-const HTSIZE: usize = 1 << LOG_HTSIZE;
-
 struct Simpath {
     n: usize,
     mem: Vec<usize>,
@@ -240,10 +235,9 @@ struct Simpath {
     mate: Vec<usize>,
     serial: usize,
     newserial: usize,
-}
-
-fn trunc(addr: usize) -> usize {
-    addr & (MEMSIZE - 1)
+    log_memsize: usize,
+    memsize: usize,
+    htsize: usize,
 }
 
 fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) -> usize {
@@ -269,46 +263,46 @@ fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) -> usize {
         ret = 0;
     } else {
         let ss = ll + 1 - jj;
-        if simpath.head + ss - simpath.tail > MEMSIZE {
+        if simpath.head + ss - simpath.tail > simpath.memsize {
             panic!(
                 "Oops, I'm out of memory (memsize={}, serial={})!",
-                MEMSIZE, simpath.serial
+                simpath.memsize, simpath.serial
             );
         }
 
         t = jj;
-        h = trunc(simpath.head);
+        h = simpath.trunc(simpath.head);
         hash = 0;
         while t <= ll {
             simpath.mem[h] = simpath.mate[t];
             hash = hash * 31415926525 + simpath.mate[t];
 
             t += 1;
-            h = trunc(h + 1)
+            h = simpath.trunc(h + 1)
         }
 
-        hash = hash & (HTSIZE - 1);
+        hash = hash & (simpath.htsize - 1);
         loop {
             hh = simpath.htable[hash];
 
-            if (hh ^ simpath.htid) >= MEMSIZE {
+            if (hh ^ simpath.htid) >= simpath.memsize {
                 simpath.htcount += 1;
-                if simpath.htcount > (HTSIZE >> 1) {
+                if simpath.htcount > (simpath.htsize >> 1) {
                     panic!(
                         "Sorry, the hash table is full (htsize={}, serial={})!",
-                        HTSIZE, simpath.serial
+                        simpath.htsize, simpath.serial
                     );
                 }
-                hh = trunc(simpath.head);
+                hh = simpath.trunc(simpath.head);
                 simpath.htable[hash] = simpath.htid + hh;
                 simpath.head += ss;
                 break;
             }
 
-            hh = trunc(hh);
+            hh = simpath.trunc(hh);
             t = hh;
-            h = trunc(simpath.head);
-            tt = trunc(t + ss - 1);
+            h = simpath.trunc(simpath.head);
+            tt = simpath.trunc(t + ss - 1);
 
             let should_continue = loop {
                 if simpath.mem[t] != simpath.mem[h] {
@@ -319,18 +313,18 @@ fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) -> usize {
                     break false;
                 }
 
-                t = trunc(t + 1);
-                h = trunc(h + 1);
+                t = simpath.trunc(t + 1);
+                h = simpath.trunc(h + 1);
             };
 
             if should_continue {
-                hash = (hash + 1) & (HTSIZE - 1);
+                hash = (hash + 1) & (simpath.htsize - 1);
             } else {
                 break;
             }
         }
 
-        h = trunc(hh - simpath.boundary) / ss;
+        h = simpath.trunc(hh - simpath.boundary) / ss;
         ret = simpath.newserial + h;
     }
 
@@ -338,15 +332,46 @@ fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) -> usize {
 }
 
 impl Simpath {
+    fn trunc(&self, addr: usize) -> usize {
+        addr & (self.memsize - 1)
+    }
+
     pub fn new<T: RandomAccessGraph>(graph: &T) -> Self {
+        let default_memsiz: usize = 36; // Default memory size if not set in the environment
+        let base_memsiz: usize = match env::var("BASE_MEMSIZE") {
+            Ok(var) => match var.parse::<usize>() {
+                Ok(size) => size,
+                Err(_) => {
+                    eprintln!(
+                        "BASE_MEMSIZE is not a valid usize, using default value {}.",
+                        default_memsiz
+                    );
+                    default_memsiz
+                }
+            },
+            Err(_) => {
+                eprintln!(
+                    "BASE_MEMSIZE is not a valid usize, using default value {}.",
+                    default_memsiz
+                );
+                default_memsiz
+            }
+        };
+
         let num_nodes = graph.num_nodes();
+
+        let log_memsize: usize = base_memsiz - 5;
+        let memsize: usize = 1 << log_memsize;
+        let log_htsize: usize = base_memsiz - 7;
+        let htsize: usize = 1 << log_htsize;
+
         Simpath {
             n: num_nodes,
-            mem: vec![0; MEMSIZE],
+            mem: vec![0; memsize],
             tail: 0,
             boundary: 0,
             head: 0,
-            htable: vec![0; HTSIZE],
+            htable: vec![0; htsize],
             htid: 0,
             htcount: 0,
             wrap: 1,
@@ -357,6 +382,9 @@ impl Simpath {
             mate: vec![0; num_nodes + 3],
             serial: 0,
             newserial: 0,
+            log_memsize,
+            memsize,
+            htsize,
         }
     }
 }
@@ -475,14 +503,14 @@ pub fn simpath<T: RandomAccessGraph>(
 
         simpath.boundary = simpath.head;
         simpath.htcount = 0;
-        simpath.htid = (i + simpath.wrap) << LOG_MEMSIZE;
+        simpath.htid = (i + simpath.wrap) << simpath.log_memsize;
 
         if simpath.htid == 0 {
-            for hash in 0..HTSIZE {
+            for hash in 0..simpath.htsize {
                 simpath.htable[hash] = 0;
             }
             simpath.wrap += 1;
-            simpath.htid = 1 << LOG_MEMSIZE;
+            simpath.htid = 1 << simpath.log_memsize;
         }
 
         simpath.newserial = simpath.serial + ((simpath.head - simpath.tail) / (ll + 1 - jj));
@@ -498,7 +526,7 @@ pub fn simpath<T: RandomAccessGraph>(
             simpath.serial += 1;
 
             for t in j..=l {
-                simpath.mate[t] = simpath.mem[trunc(simpath.tail)];
+                simpath.mate[t] = simpath.mem[simpath.trunc(simpath.tail)];
                 if simpath.mate[t] > l {
                     let i = simpath.mate[t];
                     simpath.mate[i] = t;
