@@ -361,18 +361,23 @@ impl Simpath {
     }
 }
 
-pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
+pub fn simpath<T: RandomAccessGraph>(
+    graph: &T,
+    source: usize,
+    target: usize,
+) -> Vec<(isize, usize, isize, isize)> {
     let mut simpath = Simpath::new(graph);
 
-    if source == 0 {
-        let mut k = 0;
-        while k < simpath.n {
-            let k_succ = k + 1;
-            simpath.num[k] = k_succ;
-            simpath.vert[k_succ] = k;
-            k = k_succ;
-        }
-    } else {
+    // if source == 0 {
+    //     let mut k = 0;
+    //     while k < simpath.n {
+    //         let k_succ = k + 1;
+    //         simpath.num[k] = k_succ;
+    //         simpath.vert[k_succ] = k;
+    //         k = k_succ;
+    //     }
+    // } else
+    {
         simpath.vert[1] = source;
         simpath.num[source] = 1;
 
@@ -391,11 +396,13 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
         }
 
         if simpath.num[target] == 0 {
-            eprintln!("Vertices reachables from {}:", source);
+            let reachable = simpath
+                .num
+                .iter()
+                .filter(|&each| *each > 0)
+                .collect::<Vec<_>>();
 
-            for v in simpath.num.iter().filter(|&each| *each > 0) {
-                eprintln!("{} ", simpath.vert[*v]);
-            }
+            eprintln!("Vertices reachables from {}: {:?}", source, reachable);
 
             panic!(
                 "Sorry, there's no path from {} to {} in the graph!",
@@ -406,6 +413,8 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
         if k < simpath.n {
             eprintln!("The graph isn't connected ({} < {})! But that's OK; I'll work with the component of {}.", k, simpath.n, source);
             simpath.n = k;
+        } else {
+            eprintln!("The graph is connected ({} vertices)!", k);
         }
     }
 
@@ -415,10 +424,9 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
         simpath.firstarc[k] = m;
 
         let v = simpath.vert[k];
-        let v_successors: Vec<usize> = graph.successors(v).into_iter().collect();
 
-        for (_ui, u) in v_successors.iter().enumerate() {
-            let u_num = simpath.num[*u];
+        for u in graph.successors(v) {
+            let u_num = simpath.num[u];
             if u_num > k {
                 simpath.arcto[m] = u_num;
                 m += 1;
@@ -427,6 +435,12 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
         k += 1;
     }
     simpath.firstarc[k] = m;
+
+    eprintln!(
+        "Finished reading the component ({} vertices, {} arcs).",
+        k - 1,
+        m
+    );
 
     for t in 2..=simpath.n {
         simpath.mate[t] = t;
@@ -441,6 +455,8 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
     simpath.tail = 0;
     simpath.head = 1;
     simpath.serial = 2;
+
+    eprintln!("Setup mates complete.");
 
     let mut firstnode = Vec::new();
     let mut lo = Vec::new();
@@ -526,16 +542,30 @@ pub fn simpath<T: RandomAccessGraph>(graph: &T, source: usize, target: usize) {
             lo.push(left as isize);
             hi.push(right as isize);
         }
+
+        eprintln!("Finished processing arc {} of {}.", i + 1, m);
     }
 
     assert!(lo.len() == hi.len());
 
+    eprintln!("Setup BDD vectors complete of length {}.", lo.len());
+
     firstnode.push(lo.len());
 
-    bdd_reduce(&firstnode, &mut lo, &mut hi);
+    let zdd = bdd_reduce(&firstnode, &mut lo, &mut hi);
+
+    eprintln!("Finished BDD reduction, resulting in {} nodes.", zdd.len());
+
+    zdd
 }
 
-fn bdd_reduce(firstnode: &Vec<usize>, lo: &mut Vec<isize>, hi: &mut Vec<isize>) {
+fn bdd_reduce(
+    firstnode: &Vec<usize>,
+    lo: &mut Vec<isize>,
+    hi: &mut Vec<isize>,
+) -> Vec<(isize, usize, isize, isize)> {
+    let mut zdd = Vec::new();
+
     assert!(lo[0] == -1 && lo[1] == -1);
 
     for t in (1..firstnode.len() - 1).rev() {
@@ -583,7 +613,7 @@ fn bdd_reduce(firstnode: &Vec<usize>, lo: &mut Vec<isize>, hi: &mut Vec<isize>) 
                 let r = lo[q as usize];
                 assert!(r >= 0);
                 if lo[r as usize] <= 0 {
-                    println!("{:#x}: (~{}?{:#x}:{:#x})", q, t, r, p);
+                    zdd.push((q, t, r, p));
 
                     lo[r as usize] = q;
                     lo[q as usize] = r.neg() - 1;
@@ -612,6 +642,8 @@ fn bdd_reduce(firstnode: &Vec<usize>, lo: &mut Vec<isize>, hi: &mut Vec<isize>) 
             p = q.neg();
         }
     }
+
+    return zdd;
 }
 
 #[cfg(test)]

@@ -11,5 +11,9 @@ fn main() {
 
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
 
-    simpath(&graph, source, target);
+    let zdd = simpath(&graph, source, target);
+
+    zdd.iter().for_each(|(q, t, r, p)| {
+        println!("{:#x}: (~{}?{:#x}:{:#x})", *q, *t, *r, *p);
+    });
 }
