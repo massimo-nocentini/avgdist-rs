@@ -6,4 +6,4 @@ unipairs:
 
 
 simpath:
-	RUST_BACKTRACE=full time cargo run --bin simpath --release -- 1k-0001p 3 198 
+	RUST_BACKTRACE=full time cargo run --bin simpath --release -- 1k-0001p 24 699 > out.zdd

@@ -428,6 +428,7 @@ pub fn simpath<T: RandomAccessGraph>(
                 .num
                 .iter()
                 .filter(|&each| *each > 0)
+                .map(|each| simpath.vert[*each])
                 .collect::<Vec<_>>();
 
             eprintln!("Vertices reachables from {}: {:?}", source, reachable);
@@ -522,6 +523,9 @@ pub fn simpath<T: RandomAccessGraph>(
             jj += 1;
         }
         ll = if k > l { k } else { l };
+
+        let bdd_nodes = lo.len();
+
         while simpath.tail < simpath.boundary {
             simpath.serial += 1;
 
@@ -571,7 +575,12 @@ pub fn simpath<T: RandomAccessGraph>(
             hi.push(right as isize);
         }
 
-        eprintln!("Finished processing arc {} of {}.", i + 1, m);
+        eprintln!(
+            "Finished processing arc {} of {} (added {} bdd nodes).",
+            i + 1,
+            m,
+            lo.len() - bdd_nodes
+        );
     }
 
     assert!(lo.len() == hi.len());
