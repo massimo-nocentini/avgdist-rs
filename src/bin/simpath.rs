@@ -1,4 +1,4 @@
-use avgdist_rs::{simpath, zdd_all_sols};
+use avgdist_rs::Simpath;
 use std::env;
 use webgraph::prelude::*;
 
@@ -11,11 +11,13 @@ fn main() {
 
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
 
-    let subgraph = None;
+    let mut simpath = Simpath::from_webgraph(&graph);
 
-    let (zdd, varsize, maxq) = simpath(&graph, source, target, &subgraph);
+    simpath.init_num_arcto_repr(&graph, source, target, &None);
 
-    let paths = zdd_all_sols(&zdd, varsize, maxq);
+    let (zdd, varsize) = simpath.to_zdd(target);
+
+    let paths = simpath.zdd_all_sols(&zdd, varsize);
 
     eprintln!("ZDD Paths:\n{:?}", paths);
 

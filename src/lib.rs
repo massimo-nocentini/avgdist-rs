@@ -1,6 +1,6 @@
 use core::panic;
 use rand::Rng;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::io::{self, Write};
 use std::ops::Neg;
@@ -219,7 +219,7 @@ pub fn hc_sample<T: RandomAccessGraph + Send + Sync + 'static>(
     (tx.0, tx.1, tx.2, sizes, finite_ds)
 }
 
-struct Simpath {
+pub struct Simpath {
     n: usize,
     m: usize,
     mem: Vec<usize>,
@@ -242,100 +242,100 @@ struct Simpath {
     htsize: usize,
 }
 
-fn printstate(simpath: &mut Simpath, j: usize, jj: usize, ll: usize) -> usize {
-    let mut h: usize;
-    let mut hh: usize;
-    let mut t: usize;
-    let mut tt: usize;
-    let mut hash: usize;
-
-    t = j;
-    while t < jj {
-        if simpath.mate[t] > 0 && simpath.mate[t] != t {
-            break;
-        }
-        t += 1;
-    }
-
-    let ret;
-
-    if t < jj {
-        ret = 0;
-    } else if ll < jj {
-        ret = 0;
-    } else {
-        let ss = ll + 1 - jj;
-        if simpath.head + ss - simpath.tail > simpath.memsize {
-            panic!(
-                "Oops, I'm out of memory (memsize={}, serial={})!",
-                simpath.memsize, simpath.serial
-            );
-        }
-
-        t = jj;
-        h = simpath.trunc(simpath.head);
-        hash = 0;
-        while t <= ll {
-            simpath.mem[h] = simpath.mate[t];
-            hash = hash * 31415926525 + simpath.mate[t];
-
-            t += 1;
-            h = simpath.trunc(h + 1)
-        }
-
-        hash = hash & (simpath.htsize - 1);
-        loop {
-            hh = simpath.htable[hash];
-
-            if (hh ^ simpath.htid) >= simpath.memsize {
-                simpath.htcount += 1;
-                if simpath.htcount > (simpath.htsize >> 1) {
-                    panic!(
-                        "Sorry, the hash table is full (htsize={}, serial={})!",
-                        simpath.htsize, simpath.serial
-                    );
-                }
-                hh = simpath.trunc(simpath.head);
-                simpath.htable[hash] = simpath.htid + hh;
-                simpath.head += ss;
-                break;
-            }
-
-            hh = simpath.trunc(hh);
-            t = hh;
-            h = simpath.trunc(simpath.head);
-            tt = simpath.trunc(t + ss - 1);
-
-            let should_continue = loop {
-                if simpath.mem[t] != simpath.mem[h] {
-                    break true;
-                }
-
-                if t == tt {
-                    break false;
-                }
-
-                t = simpath.trunc(t + 1);
-                h = simpath.trunc(h + 1);
-            };
-
-            if should_continue {
-                hash = (hash + 1) & (simpath.htsize - 1);
-            } else {
-                break;
-            }
-        }
-
-        h = simpath.trunc(hh - simpath.boundary) / ss;
-        ret = simpath.newserial + h;
-    }
-
-    return ret;
-}
-
 impl Simpath {
     fn trunc(&self, addr: usize) -> usize {
         addr & (self.memsize - 1)
+    }
+
+    fn printstate(&mut self, j: usize, jj: usize, ll: usize) -> usize {
+        let mut h: usize;
+        let mut hh: usize;
+        let mut t: usize;
+        let mut tt: usize;
+        let mut hash: usize;
+
+        t = j;
+        while t < jj {
+            if self.mate[t] > 0 && self.mate[t] != t {
+                break;
+            }
+            t += 1;
+        }
+
+        let ret;
+
+        if t < jj {
+            ret = 0;
+        } else if ll < jj {
+            ret = 0;
+        } else {
+            let ss = ll + 1 - jj;
+            if self.head + ss - self.tail > self.memsize {
+                panic!(
+                    "Oops, I'm out of memory (memsize={}, serial={})!",
+                    self.memsize, self.serial
+                );
+            }
+
+            t = jj;
+            h = self.trunc(self.head);
+            hash = 0;
+            while t <= ll {
+                self.mem[h] = self.mate[t];
+                hash = hash * 31415926525 + self.mate[t];
+
+                t += 1;
+                h = self.trunc(h + 1)
+            }
+
+            hash = hash & (self.htsize - 1);
+            loop {
+                hh = self.htable[hash];
+
+                if (hh ^ self.htid) >= self.memsize {
+                    self.htcount += 1;
+                    if self.htcount > (self.htsize >> 1) {
+                        panic!(
+                            "Sorry, the hash table is full (htsize={}, serial={})!",
+                            self.htsize, self.serial
+                        );
+                    }
+                    hh = self.trunc(self.head);
+                    self.htable[hash] = self.htid + hh;
+                    self.head += ss;
+                    break;
+                }
+
+                hh = self.trunc(hh);
+                t = hh;
+                h = self.trunc(self.head);
+                tt = self.trunc(t + ss - 1);
+
+                let should_continue = loop {
+                    if self.mem[t] != self.mem[h] {
+                        break true;
+                    }
+
+                    if t == tt {
+                        break false;
+                    }
+
+                    t = self.trunc(t + 1);
+                    h = self.trunc(h + 1);
+                };
+
+                if should_continue {
+                    hash = (hash + 1) & (self.htsize - 1);
+                } else {
+                    break;
+                }
+            }
+
+            h = self.trunc(hh - self.boundary) / ss;
+            ret = self.newserial + h;
+        }
+
+        return ret;
     }
 
     pub fn init_num_arcto_repr<T: RandomAccessGraph>(
@@ -428,7 +428,7 @@ impl Simpath {
         );
     }
 
-    pub fn new<T: RandomAccessGraph>(graph: &T) -> Self {
+    pub fn from_webgraph<T: RandomAccessGraph>(graph: &T) -> Self {
         let default_memsiz: usize = 30; // Default memory size if not set in the environment
         let base_memsiz: usize = match env::var("BASE_MEMSIZE") {
             Ok(var) => match var.parse::<usize>() {
@@ -483,155 +483,221 @@ impl Simpath {
             htsize: memsize,
         }
     }
-}
 
-pub fn simpath<T: RandomAccessGraph>(
-    graph: &T,
-    source: usize,
-    target: usize,
-    subgraph: &Option<HashSet<usize>>,
-) -> (Vec<(usize, usize, usize, usize)>, usize, usize) {
-    let mut simpath = Simpath::new(graph);
+    pub fn to_zdd(&mut self, target: usize) -> (Vec<(usize, usize, usize, usize)>, usize) {
+        for t in 2..=self.n {
+            self.mate[t] = t;
+        }
+        let target_num = self.num[target];
+        self.mate[target_num] = 1;
+        self.mate[1] = target_num;
 
-    simpath.init_num_arcto_repr(graph, source, target, subgraph);
+        let mut jj = 1;
+        let mut ll = 1;
+        self.mem[0] = self.mate[1];
+        self.tail = 0;
+        self.head = 1;
+        self.serial = 2;
 
-    for t in 2..=simpath.n {
-        simpath.mate[t] = t;
-    }
-    let target_num = simpath.num[target];
-    simpath.mate[target_num] = 1;
-    simpath.mate[1] = target_num;
+        eprintln!("Setup mates complete.");
 
-    let mut jj = 1;
-    let mut ll = 1;
-    simpath.mem[0] = simpath.mate[1];
-    simpath.tail = 0;
-    simpath.head = 1;
-    simpath.serial = 2;
+        let mut firstnode = Vec::new();
+        let mut lo = Vec::new();
+        let mut hi = Vec::new();
 
-    eprintln!("Setup mates complete.");
+        firstnode.push(0usize);
+        lo.push(-1isize);
+        lo.push(-1isize);
+        hi.push(0isize);
+        hi.push(0isize);
 
-    let mut firstnode = Vec::new();
-    let mut lo = Vec::new();
-    let mut hi = Vec::new();
+        for i in 0..self.m {
+            let i_succ = i + 1;
 
-    firstnode.push(0usize);
-    lo.push(-1isize);
-    lo.push(-1isize);
-    hi.push(0isize);
-    hi.push(0isize);
+            firstnode.push(lo.len());
 
-    for i in 0..simpath.m {
-        let i_succ = i + 1;
+            self.boundary = self.head;
+            self.htcount = 0;
+            self.htid = (i + self.wrap) << self.log_memsize;
+
+            if self.htid == 0 {
+                eprintln!("Initializing the hash table (wrap = {})...", self.wrap);
+                for hash in 0..self.htsize {
+                    self.htable[hash] = 0;
+                }
+                self.wrap += 1;
+                self.htid = 1 << self.log_memsize;
+            }
+
+            self.newserial = self.serial + ((self.head - self.tail) / (ll + 1 - jj));
+
+            let j = jj;
+            let k = self.arcto[i];
+            let l = ll;
+            while jj <= self.n && self.firstarc[jj + 1] == i_succ {
+                jj += 1;
+            }
+            ll = if k > l { k } else { l };
+
+            let bdd_nodes = lo.len();
+
+            while self.tail < self.boundary {
+                self.serial += 1;
+
+                for t in j..=l {
+                    self.mate[t] = self.mem[self.trunc(self.tail)];
+                    if self.mate[t] > l {
+                        let i = self.mate[t];
+                        self.mate[i] = t;
+                    }
+                    self.tail += 1;
+                }
+
+                let left = self.printstate(j, jj, ll);
+
+                let jm = self.mate[j];
+                let km = self.mate[k];
+
+                let right: usize;
+
+                if jm == 0 || km == 0 {
+                    right = 0;
+                } else if jm == k {
+                    let mut t = j + 1;
+                    while t <= ll {
+                        if t != k {
+                            if self.mate[t] > 0 && self.mate[t] != t {
+                                break;
+                            }
+                        }
+                        t += 1;
+                    }
+
+                    right = if t > ll { 1 } else { 0 };
+                } else {
+                    self.mate[j] = 0;
+                    self.mate[k] = 0;
+                    self.mate[jm] = km;
+                    self.mate[km] = jm;
+                    right = self.printstate(j, jj, ll);
+                    self.mate[jm] = j;
+                    self.mate[km] = k;
+                    self.mate[j] = jm;
+                    self.mate[k] = km;
+                }
+
+                lo.push(left as isize);
+                hi.push(right as isize);
+            }
+
+            eprintln!(
+                "Finished processing arc {} of {} (added {} bdd nodes).",
+                i + 1,
+                self.m,
+                lo.len() - bdd_nodes
+            );
+        }
+
+        assert!(lo.len() == hi.len());
+
+        eprintln!("Setup BDD vectors complete of length {}.", lo.len());
 
         firstnode.push(lo.len());
 
-        simpath.boundary = simpath.head;
-        simpath.htcount = 0;
-        simpath.htid = (i + simpath.wrap) << simpath.log_memsize;
+        let zdd = bdd_reduce(&firstnode, &mut lo, &mut hi);
 
-        if simpath.htid == 0 {
-            eprintln!("Initializing the hash table (wrap = {})...", simpath.wrap);
-            for hash in 0..simpath.htsize {
-                simpath.htable[hash] = 0;
-            }
-            simpath.wrap += 1;
-            simpath.htid = 1 << simpath.log_memsize;
-        }
+        eprintln!(
+            "Finished BDD reduction, resulting in {} ZDD nodes.",
+            zdd.0.len()
+        );
 
-        simpath.newserial = simpath.serial + ((simpath.head - simpath.tail) / (ll + 1 - jj));
+        zdd
+    }
 
-        let j = jj;
-        let k = simpath.arcto[i];
-        let l = ll;
-        while jj <= simpath.n && simpath.firstarc[jj + 1] == i_succ {
-            jj += 1;
-        }
-        ll = if k > l { k } else { l };
+    pub fn zdd_all_sols(
+        &mut self,
+        zdd: &Vec<(usize, usize, usize, usize)>,
+        varsize: usize,
+    ) -> Vec<Vec<usize>> {
+        let mut root = 0usize;
+        let mut mem = HashMap::new();
 
-        let bdd_nodes = lo.len();
+        let mut minv = varsize;
+        let mut present = HashSet::new();
 
-        while simpath.tail < simpath.boundary {
-            simpath.serial += 1;
+        for (ii1, i2, i3, i4) in zdd.iter() {
+            let i1 = *ii1 as usize;
+            // if lo(mem[i1]) != 0 || hi(mem[i1]) != 0 {
+            //     panic!(
+            //         "! clobbered node in the tuple: ({}, {}, {}, {})",
+            //         i1,
+            //         v(mem[i1]),
+            //         lo(mem[i1]),
+            //         hi(mem[i1])
+            //     );
+            // }
 
-            for t in j..=l {
-                simpath.mate[t] = simpath.mem[simpath.trunc(simpath.tail)];
-                if simpath.mate[t] > l {
-                    let i = simpath.mate[t];
-                    simpath.mate[i] = t;
-                }
-                simpath.tail += 1;
-            }
-
-            let left = printstate(&mut simpath, j, jj, ll);
-
-            let jm = simpath.mate[j];
-            let km = simpath.mate[k];
-
-            let right: usize;
-
-            if jm == 0 || km == 0 {
-                right = 0;
-            } else if jm == k {
-                let mut t = j + 1;
-                while t <= ll {
-                    if t != k {
-                        if simpath.mate[t] > 0 && simpath.mate[t] != t {
-                            break;
-                        }
-                    }
-                    t += 1;
-                }
-
-                right = if t > ll { 1 } else { 0 };
-            } else {
-                simpath.mate[j] = 0;
-                simpath.mate[k] = 0;
-                simpath.mate[jm] = km;
-                simpath.mate[km] = jm;
-                right = printstate(&mut simpath, j, jj, ll);
-                simpath.mate[jm] = j;
-                simpath.mate[km] = k;
-                simpath.mate[j] = jm;
-                simpath.mate[k] = km;
+            if *i2 < minv {
+                minv = *i2;
+                root = i1;
             }
 
-            lo.push(left as isize);
-            hi.push(right as isize);
+            mem.insert(i1, (*i2, *i3, *i4));
+
+            present.insert(*i2);
         }
 
         eprintln!(
-            "Finished processing arc {} of {} (added {} bdd nodes).",
-            i + 1,
-            simpath.m,
-            lo.len() - bdd_nodes
+            "There are {} ZDD nodes and {} ZDD variables.",
+            zdd.len(),
+            present.len()
         );
+
+        let mut paths = Vec::new();
+        let mut stack = Vec::new();
+
+        mem.insert(0, (varsize, 0, 0));
+        mem.insert(1, (varsize, 0, 0));
+        if root > 0 {
+            self.zdd_paths(root, &mut stack, &mem, &mut paths);
+        }
+
+        paths
     }
 
-    assert!(lo.len() == hi.len());
+    fn zdd_paths(
+        &mut self,
+        p: usize,
+        stack: &mut Vec<usize>,
+        mem: &HashMap<usize, (usize, usize, usize)>,
+        paths: &mut Vec<Vec<usize>>,
+    ) {
+        if p <= 1 {
+            paths.push(stack.iter().map(|each| self.vert[*each]).collect());
+        } else {
+            let tup = *mem.get(&p).unwrap();
+            let mut q = lo(tup);
+            if q > 0 {
+                self.zdd_paths(q, stack, mem, paths);
+            }
 
-    eprintln!("Setup BDD vectors complete of length {}.", lo.len());
-
-    firstnode.push(lo.len());
-
-    let zdd = bdd_reduce(&firstnode, &mut lo, &mut hi);
-
-    eprintln!(
-        "Finished BDD reduction, resulting in {} ZDD nodes.",
-        zdd.0.len()
-    );
-
-    zdd
+            q = hi(tup);
+            if q > 0 {
+                stack.push(v(tup));
+                self.zdd_paths(q, stack, mem, paths);
+                stack.pop();
+            }
+        }
+    }
 }
 
 fn bdd_reduce(
     firstnode: &Vec<usize>,
     lo: &mut Vec<isize>,
     hi: &mut Vec<isize>,
-) -> (Vec<(usize, usize, usize, usize)>, usize, usize) {
+) -> (Vec<(usize, usize, usize, usize)>, usize) {
     let mut zdd = Vec::new();
     let mut maxv = 0usize;
-    let mut maxq = 0usize;
 
     assert!(lo[0] == -1 && lo[1] == -1);
 
@@ -682,7 +748,6 @@ fn bdd_reduce(
                 if lo[r as usize] <= 0 {
                     zdd.push((q as usize, t, r as usize, p as usize));
                     maxv = std::cmp::max(maxv, t);
-                    maxq = std::cmp::max(maxq, q as usize);
 
                     lo[r as usize] = q;
                     lo[q as usize] = r.neg() - 1;
@@ -712,7 +777,7 @@ fn bdd_reduce(
         }
     }
 
-    (zdd, maxv, maxq)
+    (zdd, maxv)
 }
 
 fn v(tup: (usize, usize, usize)) -> usize {
@@ -725,80 +790,6 @@ fn lo(tup: (usize, usize, usize)) -> usize {
 
 fn hi(tup: (usize, usize, usize)) -> usize {
     tup.2
-}
-
-pub fn zdd_all_sols(
-    zdd: &Vec<(usize, usize, usize, usize)>,
-    varsize: usize,
-    maxq: usize,
-) -> Vec<Vec<usize>> {
-    let mut root = 0usize;
-    let mut mem = vec![(0usize, 0usize, 0usize); maxq + 1];
-
-    let mut minv = varsize;
-    let mut present = HashSet::new();
-
-    for (ii1, i2, i3, i4) in zdd.iter() {
-        let i1 = *ii1 as usize;
-        if lo(mem[i1]) != 0 || hi(mem[i1]) != 0 {
-            panic!(
-                "! clobbered node in the tuple: ({}, {}, {}, {})",
-                i1,
-                v(mem[i1]),
-                lo(mem[i1]),
-                hi(mem[i1])
-            );
-        }
-
-        if *i2 < minv {
-            minv = *i2;
-            root = i1;
-        }
-
-        mem[i1] = (*i2, *i3, *i4);
-
-        present.insert(*i2);
-    }
-
-    eprintln!(
-        "There are {} ZDD nodes and {} ZDD variables.",
-        zdd.len(),
-        present.len()
-    );
-
-    let mut paths = Vec::new();
-    let mut stack = Vec::new();
-
-    mem[0] = (varsize, 0, 0); // Initialize the root node
-    mem[1] = (varsize, 0, 0); // Initialize the root node
-    if root > 0 {
-        zdd_paths(root, &mut stack, &mem, &mut paths);
-    }
-
-    paths
-}
-
-fn zdd_paths(
-    p: usize,
-    stack: &mut Vec<usize>,
-    mem: &Vec<(usize, usize, usize)>,
-    paths: &mut Vec<Vec<usize>>,
-) {
-    if p <= 1 {
-        paths.push(stack.clone());
-    } else {
-        let mut q = lo(mem[p]);
-        if q > 0 {
-            zdd_paths(q, stack, mem, paths);
-        }
-
-        q = hi(mem[p]);
-        if q > 0 {
-            stack.push(v(mem[p]));
-            zdd_paths(q, stack, mem, paths);
-            stack.pop();
-        }
-    }
 }
 
 // #[cfg(test)]
