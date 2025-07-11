@@ -1,5 +1,6 @@
 use core::panic;
 use rand::Rng;
+use std::collections::HashSet;
 use std::env;
 use std::io::{self, Write};
 use std::ops::Neg;
@@ -342,6 +343,7 @@ impl Simpath {
         graph: &T,
         source: usize,
         target: usize,
+        subgraph: &Option<HashSet<usize>>,
     ) {
         let instant = Instant::now();
         // if source == 0 {
@@ -362,8 +364,12 @@ impl Simpath {
             while j < k {
                 j += 1;
                 let v = self.vert[j];
+
                 for u in graph.successors(v) {
-                    if self.num[u] == 0 {
+                    if (subgraph.is_none())
+                        || (subgraph.is_some() && subgraph.as_ref().unwrap().contains(&u))
+                            && self.num[u] == 0
+                    {
                         k += 1;
                         self.num[u] = k;
                         self.vert[k] = u;
@@ -483,10 +489,11 @@ pub fn simpath<T: RandomAccessGraph>(
     graph: &T,
     source: usize,
     target: usize,
-) -> Vec<(isize, usize, isize, isize)> {
+    subgraph: &Option<HashSet<usize>>,
+) -> (Vec<(usize, usize, usize, usize)>, usize, usize) {
     let mut simpath = Simpath::new(graph);
 
-    simpath.init_num_arcto_repr(graph, source, target);
+    simpath.init_num_arcto_repr(graph, source, target, subgraph);
 
     for t in 2..=simpath.n {
         simpath.mate[t] = t;
@@ -611,7 +618,7 @@ pub fn simpath<T: RandomAccessGraph>(
 
     eprintln!(
         "Finished BDD reduction, resulting in {} ZDD nodes.",
-        zdd.len()
+        zdd.0.len()
     );
 
     zdd
@@ -621,8 +628,10 @@ fn bdd_reduce(
     firstnode: &Vec<usize>,
     lo: &mut Vec<isize>,
     hi: &mut Vec<isize>,
-) -> Vec<(isize, usize, isize, isize)> {
+) -> (Vec<(usize, usize, usize, usize)>, usize, usize) {
     let mut zdd = Vec::new();
+    let mut maxv = 0usize;
+    let mut maxq = 0usize;
 
     assert!(lo[0] == -1 && lo[1] == -1);
 
@@ -671,7 +680,9 @@ fn bdd_reduce(
                 let r = lo[q as usize];
                 assert!(r >= 0);
                 if lo[r as usize] <= 0 {
-                    zdd.push((q, t, r, p));
+                    zdd.push((q as usize, t, r as usize, p as usize));
+                    maxv = std::cmp::max(maxv, t);
+                    maxq = std::cmp::max(maxq, q as usize);
 
                     lo[r as usize] = q;
                     lo[q as usize] = r.neg() - 1;
@@ -701,17 +712,103 @@ fn bdd_reduce(
         }
     }
 
-    zdd
+    (zdd, maxv, maxq)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+fn v(tup: (usize, usize, usize)) -> usize {
+    tup.0
+}
 
-    #[test]
-    fn simpath_star() {
-        let graph = BvGraph::with_basename("data/star/star").load().unwrap();
-        simpath(&graph, 0, 10000 + 1);
-        // assert_eq!(result, 4);
+fn lo(tup: (usize, usize, usize)) -> usize {
+    tup.1
+}
+
+fn hi(tup: (usize, usize, usize)) -> usize {
+    tup.2
+}
+
+pub fn zdd_all_sols(
+    zdd: &Vec<(usize, usize, usize, usize)>,
+    varsize: usize,
+    maxq: usize,
+) -> Vec<Vec<usize>> {
+    let mut root = 0usize;
+    let mut mem = vec![(0usize, 0usize, 0usize); maxq + 1];
+
+    let mut minv = varsize;
+    let mut present = HashSet::new();
+
+    for (ii1, i2, i3, i4) in zdd.iter() {
+        let i1 = *ii1 as usize;
+        if lo(mem[i1]) != 0 || hi(mem[i1]) != 0 {
+            panic!(
+                "! clobbered node in the tuple: ({}, {}, {}, {})",
+                i1,
+                v(mem[i1]),
+                lo(mem[i1]),
+                hi(mem[i1])
+            );
+        }
+
+        if *i2 < minv {
+            minv = *i2;
+            root = i1;
+        }
+
+        mem[i1] = (*i2, *i3, *i4);
+
+        present.insert(*i2);
+    }
+
+    eprintln!(
+        "There are {} ZDD nodes and {} ZDD variables.",
+        zdd.len(),
+        present.len()
+    );
+
+    let mut paths = Vec::new();
+    let mut stack = Vec::new();
+
+    mem[0] = (varsize, 0, 0); // Initialize the root node
+    mem[1] = (varsize, 0, 0); // Initialize the root node
+    if root > 0 {
+        zdd_paths(root, &mut stack, &mem, &mut paths);
+    }
+
+    paths
+}
+
+fn zdd_paths(
+    p: usize,
+    stack: &mut Vec<usize>,
+    mem: &Vec<(usize, usize, usize)>,
+    paths: &mut Vec<Vec<usize>>,
+) {
+    if p <= 1 {
+        paths.push(stack.clone());
+    } else {
+        let mut q = lo(mem[p]);
+        if q > 0 {
+            zdd_paths(q, stack, mem, paths);
+        }
+
+        q = hi(mem[p]);
+        if q > 0 {
+            stack.push(v(mem[p]));
+            zdd_paths(q, stack, mem, paths);
+            stack.pop();
+        }
     }
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+
+//     #[test]
+//     fn simpath_star() {
+//         let graph = BvGraph::with_basename("data/star/star").load().unwrap();
+//         simpath(&graph, 0, 10000 + 1);
+//         // assert_eq!(result, 4);
+//     }
+// }
