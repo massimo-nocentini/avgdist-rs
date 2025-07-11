@@ -409,10 +409,14 @@ impl Simpath {
             let v = self.vert[k];
 
             for u in graph.successors(v) {
-                let u_num = self.num[u];
-                if u_num > k {
-                    self.arcto[m] = u_num;
-                    m += 1;
+                if (subgraph.is_none())
+                    || (subgraph.is_some() && subgraph.as_ref().unwrap().contains(&u))
+                {
+                    let u_num = self.num[u];
+                    if u_num > k {
+                        self.arcto[m] = u_num;
+                        m += 1;
+                    }
                 }
             }
             k += 1;
