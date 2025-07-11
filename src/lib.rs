@@ -388,7 +388,7 @@ impl Simpath {
             }
 
             if k < self.n {
-                eprintln!("The graph isn't connected! But that's OK; I'll work with the {}'s component of size {}.", source, k);
+                eprintln!("The graph isn't connected! But that's OK; I'll work with the {}'s component of size {} (|V| = {}).", source, k, self.n);
                 self.n = k;
             } else {
                 eprintln!("The graph is connected ({} vertices)!", k);
