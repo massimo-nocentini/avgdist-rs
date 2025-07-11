@@ -423,7 +423,7 @@ impl Simpath {
     }
 
     pub fn new<T: RandomAccessGraph>(graph: &T) -> Self {
-        let default_memsiz: usize = 36; // Default memory size if not set in the environment
+        let default_memsiz: usize = 30; // Default memory size if not set in the environment
         let base_memsiz: usize = match env::var("BASE_MEMSIZE") {
             Ok(var) => match var.parse::<usize>() {
                 Ok(size) => size,
@@ -446,10 +446,13 @@ impl Simpath {
 
         let num_nodes = graph.num_nodes();
 
-        let log_memsize: usize = base_memsiz - 5;
+        let log_memsize: usize = base_memsiz;
         let memsize: usize = 1 << log_memsize;
-        let log_htsize: usize = base_memsiz - 7;
-        let htsize: usize = 1 << log_htsize;
+
+        eprintln!(
+            "Allocating two vectors of memory size {} GB.",
+            (memsize * size_of::<usize>()) as f64 / 1e9
+        );
 
         Simpath {
             n: num_nodes,
@@ -458,7 +461,7 @@ impl Simpath {
             tail: 0,
             boundary: 0,
             head: 0,
-            htable: vec![0; htsize],
+            htable: vec![0; memsize],
             htid: 0,
             htcount: 0,
             wrap: 1,
@@ -471,7 +474,7 @@ impl Simpath {
             newserial: 0,
             log_memsize,
             memsize,
-            htsize,
+            htsize: memsize,
         }
     }
 }
