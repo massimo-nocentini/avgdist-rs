@@ -220,6 +220,7 @@ pub fn hc_sample<T: RandomAccessGraph + Send + Sync + 'static>(
 
 struct Simpath {
     n: usize,
+    m: usize,
     mem: Vec<usize>,
     tail: usize,
     boundary: usize,
@@ -336,6 +337,91 @@ impl Simpath {
         addr & (self.memsize - 1)
     }
 
+    pub fn init_num_arcto_repr<T: RandomAccessGraph>(
+        &mut self,
+        graph: &T,
+        source: usize,
+        target: usize,
+    ) {
+        let instant = Instant::now();
+        // if source == 0 {
+        //     let mut k = 0;
+        //     while k < self.n {
+        //         let k_succ = k + 1;
+        //         self.num[k] = k_succ;
+        //         self.vert[k_succ] = k;
+        //         k = k_succ;
+        //     }
+        // } else
+        {
+            self.vert[1] = source;
+            self.num[source] = 1;
+
+            let mut k = 1;
+            let mut j = 0;
+            while j < k {
+                j += 1;
+                let v = self.vert[j];
+                for u in graph.successors(v) {
+                    if self.num[u] == 0 {
+                        k += 1;
+                        self.num[u] = k;
+                        self.vert[k] = u;
+                    }
+                }
+            }
+
+            if self.num[target] == 0 {
+                let reachable = self
+                    .num
+                    .iter()
+                    .filter(|&each| *each > 0)
+                    .map(|each| self.vert[*each])
+                    .collect::<Vec<usize>>();
+
+                eprintln!("Vertices reachables from {}: {:?}", source, reachable);
+
+                panic!(
+                    "Sorry, there's no path from {} to {} in the graph!",
+                    source, target
+                );
+            }
+
+            if k < self.n {
+                eprintln!("The graph isn't connected! But that's OK; I'll work with the {}'s component of size {}.", source, k);
+                self.n = k;
+            } else {
+                eprintln!("The graph is connected ({} vertices)!", k);
+            }
+        }
+
+        let mut m = 0;
+        let mut k = 1;
+        while k <= self.n {
+            self.firstarc[k] = m;
+
+            let v = self.vert[k];
+
+            for u in graph.successors(v) {
+                let u_num = self.num[u];
+                if u_num > k {
+                    self.arcto[m] = u_num;
+                    m += 1;
+                }
+            }
+            k += 1;
+        }
+        self.firstarc[k] = m;
+        self.m = m;
+
+        eprintln!(
+            "Finished reading the component ({} vertices, {} arcs) in {:?}.",
+            k - 1,
+            m,
+            instant.elapsed()
+        );
+    }
+
     pub fn new<T: RandomAccessGraph>(graph: &T) -> Self {
         let default_memsiz: usize = 36; // Default memory size if not set in the environment
         let base_memsiz: usize = match env::var("BASE_MEMSIZE") {
@@ -367,6 +453,7 @@ impl Simpath {
 
         Simpath {
             n: num_nodes,
+            m: 0,
             mem: vec![0; memsize],
             tail: 0,
             boundary: 0,
@@ -396,80 +483,7 @@ pub fn simpath<T: RandomAccessGraph>(
 ) -> Vec<(isize, usize, isize, isize)> {
     let mut simpath = Simpath::new(graph);
 
-    // if source == 0 {
-    //     let mut k = 0;
-    //     while k < simpath.n {
-    //         let k_succ = k + 1;
-    //         simpath.num[k] = k_succ;
-    //         simpath.vert[k_succ] = k;
-    //         k = k_succ;
-    //     }
-    // } else
-    {
-        simpath.vert[1] = source;
-        simpath.num[source] = 1;
-
-        let mut k = 1;
-        let mut j = 0;
-        while j < k {
-            j += 1;
-            let v = simpath.vert[j];
-            for u in graph.successors(v) {
-                if simpath.num[u] == 0 {
-                    k += 1;
-                    simpath.num[u] = k;
-                    simpath.vert[k] = u;
-                }
-            }
-        }
-
-        if simpath.num[target] == 0 {
-            let reachable = simpath
-                .num
-                .iter()
-                .filter(|&each| *each > 0)
-                .map(|each| simpath.vert[*each])
-                .collect::<Vec<_>>();
-
-            eprintln!("Vertices reachables from {}: {:?}", source, reachable);
-
-            panic!(
-                "Sorry, there's no path from {} to {} in the graph!",
-                source, target
-            );
-        }
-
-        if k < simpath.n {
-            eprintln!("The graph isn't connected ({} < {})! But that's OK; I'll work with the component of {}.", k, simpath.n, source);
-            simpath.n = k;
-        } else {
-            eprintln!("The graph is connected ({} vertices)!", k);
-        }
-    }
-
-    let mut m = 0;
-    let mut k = 1;
-    while k <= simpath.n {
-        simpath.firstarc[k] = m;
-
-        let v = simpath.vert[k];
-
-        for u in graph.successors(v) {
-            let u_num = simpath.num[u];
-            if u_num > k {
-                simpath.arcto[m] = u_num;
-                m += 1;
-            }
-        }
-        k += 1;
-    }
-    simpath.firstarc[k] = m;
-
-    eprintln!(
-        "Finished reading the component ({} vertices, {} arcs).",
-        k - 1,
-        m
-    );
+    simpath.init_num_arcto_repr(graph, source, target);
 
     for t in 2..=simpath.n {
         simpath.mate[t] = t;
@@ -497,7 +511,7 @@ pub fn simpath<T: RandomAccessGraph>(
     hi.push(0isize);
     hi.push(0isize);
 
-    for i in 0..m {
+    for i in 0..simpath.m {
         let i_succ = i + 1;
 
         firstnode.push(lo.len());
@@ -507,6 +521,7 @@ pub fn simpath<T: RandomAccessGraph>(
         simpath.htid = (i + simpath.wrap) << simpath.log_memsize;
 
         if simpath.htid == 0 {
+            eprintln!("Initializing the hash table (wrap = {})...", simpath.wrap);
             for hash in 0..simpath.htsize {
                 simpath.htable[hash] = 0;
             }
@@ -517,7 +532,7 @@ pub fn simpath<T: RandomAccessGraph>(
         simpath.newserial = simpath.serial + ((simpath.head - simpath.tail) / (ll + 1 - jj));
 
         let j = jj;
-        k = simpath.arcto[i];
+        let k = simpath.arcto[i];
         let l = ll;
         while jj <= simpath.n && simpath.firstarc[jj + 1] == i_succ {
             jj += 1;
@@ -578,7 +593,7 @@ pub fn simpath<T: RandomAccessGraph>(
         eprintln!(
             "Finished processing arc {} of {} (added {} bdd nodes).",
             i + 1,
-            m,
+            simpath.m,
             lo.len() - bdd_nodes
         );
     }
@@ -591,7 +606,10 @@ pub fn simpath<T: RandomAccessGraph>(
 
     let zdd = bdd_reduce(&firstnode, &mut lo, &mut hi);
 
-    eprintln!("Finished BDD reduction, resulting in {} nodes.", zdd.len());
+    eprintln!(
+        "Finished BDD reduction, resulting in {} ZDD nodes.",
+        zdd.len()
+    );
 
     zdd
 }
@@ -680,7 +698,7 @@ fn bdd_reduce(
         }
     }
 
-    return zdd;
+    zdd
 }
 
 #[cfg(test)]
