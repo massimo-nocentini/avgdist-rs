@@ -226,7 +226,7 @@ pub struct Simpath {
     tail: usize,
     boundary: usize,
     head: usize,
-    htable: Vec<usize>,
+    htable: HashMap<usize, usize>,
     htid: usize,
     htcount: usize,
     wrap: usize,
@@ -290,7 +290,10 @@ impl Simpath {
 
             hash = hash & (self.htsize - 1);
             loop {
-                hh = self.htable[hash];
+                hh = match self.htable.get(&hash) {
+                    Some(&value) => value,
+                    None => 0,
+                };
 
                 if (hh ^ self.htid) >= self.memsize {
                     self.htcount += 1;
@@ -301,7 +304,7 @@ impl Simpath {
                         );
                     }
                     hh = self.trunc(self.head);
-                    self.htable[hash] = self.htid + hh;
+                    self.htable.insert(hash, self.htid + hh);
                     self.head += ss;
                     break;
                 }
@@ -482,7 +485,7 @@ impl Simpath {
             tail: 0,
             boundary: 0,
             head: 0,
-            htable: vec![0; memsize],
+            htable: HashMap::new(),
             htid: 0,
             htcount: 0,
             wrap: 1,
@@ -553,7 +556,7 @@ impl Simpath {
             if self.htid == 0 {
                 eprintln!("Initializing the hash table (wrap = {})...", self.wrap);
                 for hash in 0..self.htsize {
-                    self.htable[hash] = 0;
+                    self.htable.insert(hash, 0);
                 }
                 self.wrap += 1;
                 self.htid = 1 << self.log_memsize;
