@@ -3,7 +3,7 @@ use rand::Rng;
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::io::{self, Write};
-use std::ops::Neg;
+use std::ops::{Neg, Not};
 use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 use std::time::Instant;
@@ -231,7 +231,7 @@ pub struct Simpath {
     htcount: usize,
     wrap: usize,
     vert: Vec<usize>,
-    num: Vec<usize>,
+    num: HashMap<usize, usize>,
     arcto: Vec<usize>,
     firstarc: Vec<usize>,
     mate: Vec<usize>,
@@ -343,9 +343,21 @@ impl Simpath {
         graph: &T,
         source: usize,
         target: usize,
-        subgraph: &Option<HashSet<usize>>,
+        subgraph: &HashSet<usize>,
     ) {
         let instant = Instant::now();
+
+        self.n = if subgraph.is_empty() {
+            graph.num_nodes()
+        } else {
+            subgraph.len()
+        };
+
+        self.vert.resize(self.n + 1, 0);
+        self.num.reserve(self.n);
+
+        let mut m_hint = 0usize;
+
         // if source == 0 {
         //     let mut k = 0;
         //     while k < self.n {
@@ -357,7 +369,7 @@ impl Simpath {
         // } else
         {
             self.vert[1] = source;
-            self.num[source] = 1;
+            self.num.insert(source, 1);
 
             let mut k = 1;
             let mut j = 0;
@@ -366,22 +378,22 @@ impl Simpath {
                 let v = self.vert[j];
 
                 for u in graph.successors(v) {
-                    if (subgraph.is_none() || subgraph.as_ref().unwrap().contains(&u))
-                        && self.num[u] == 0
+                    if (subgraph.is_empty() || subgraph.contains(&u))
+                        && self.num.contains_key(&u).not()
                     {
+                        m_hint += 1;
                         k += 1;
-                        self.num[u] = k;
                         self.vert[k] = u;
+                        self.num.insert(u, k);
                     }
                 }
             }
 
-            if self.num[target] == 0 {
+            if self.num.contains_key(&target).not() {
                 let reachable = self
                     .num
                     .iter()
-                    .filter(|&each| *each > 0)
-                    .map(|each| self.vert[*each])
+                    .map(|(each, _index)| *each)
                     .collect::<Vec<usize>>();
 
                 eprintln!("Vertices reachables from {}: {:?}", source, reachable);
@@ -400,6 +412,9 @@ impl Simpath {
             }
         }
 
+        self.firstarc.resize(self.n + 2, 0);
+        self.arcto.resize(m_hint, 0);
+
         let mut m = 0;
         let mut k = 1;
         while k <= self.n {
@@ -408,11 +423,17 @@ impl Simpath {
             let v = self.vert[k];
 
             for u in graph.successors(v) {
-                if subgraph.is_none() || subgraph.as_ref().unwrap().contains(&u) {
-                    let u_num = self.num[u];
-                    if u_num > k {
-                        self.arcto[m] = u_num;
-                        m += 1;
+                if subgraph.is_empty() || subgraph.contains(&u) {
+                    match self.num.get(&u) {
+                        Some(&u_num) => {
+                            if u_num > k {
+                                self.arcto[m] = u_num;
+                                m += 1;
+                            }
+                        }
+                        None => {
+                            eprintln!("Warning: Vertex {} not found in the subgraph!", u);
+                        }
                     }
                 }
             }
@@ -472,11 +493,11 @@ impl Simpath {
             htid: 0,
             htcount: 0,
             wrap: 1,
-            vert: vec![0; num_nodes + 1],
-            num: vec![0; num_nodes],
-            arcto: vec![0; graph.num_arcs().try_into().unwrap()],
-            firstarc: vec![0; num_nodes + 2],
-            mate: vec![0; num_nodes + 3],
+            vert: Vec::new(),
+            num: HashMap::new(),
+            arcto: Vec::new(),    //vec![0; graph.num_arcs().try_into().unwrap()],
+            firstarc: Vec::new(), //vec![0; num_nodes + 2],
+            mate: Vec::new(),     // vec![0; num_nodes + 3],
             serial: 0,
             newserial: 0,
             log_memsize,
@@ -486,10 +507,12 @@ impl Simpath {
     }
 
     pub fn to_zdd(&mut self, target: usize) -> (Vec<(usize, usize, usize, usize)>, usize) {
+        self.mate.resize(self.n + 3, 0);
         for t in 2..=self.n {
             self.mate[t] = t;
         }
-        let target_num = self.num[target];
+        let target_num = *self.num.get(&target).unwrap();
+
         self.mate[target_num] = 1;
         self.mate[1] = target_num;
 

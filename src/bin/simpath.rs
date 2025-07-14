@@ -1,5 +1,5 @@
 use avgdist_rs::Simpath;
-use std::env;
+use std::{collections::HashSet, env};
 use webgraph::prelude::*;
 
 fn main() {
@@ -13,7 +13,7 @@ fn main() {
 
     let mut simpath = Simpath::from_webgraph(&graph);
 
-    simpath.init_num_arcto_repr(&graph, source, target, &None);
+    simpath.init_num_arcto_repr(&graph, source, target, &HashSet::new());
 
     let (zdd, varsize) = simpath.to_zdd(target);
 
