@@ -281,6 +281,11 @@ impl Simpath {
             h = self.trunc(self.head);
             hash = 0;
             while t <= ll {
+                if h >= self.mem.len() {
+                    for _ in self.mem.len() - 1..h {
+                        self.mem.push(0);
+                    }
+                }
                 self.mem[h] = self.mate[t];
                 hash = hash * 31415926525 + self.mate[t];
 
@@ -481,7 +486,7 @@ impl Simpath {
         Simpath {
             n: num_nodes,
             m: 0,
-            mem: vec![0; memsize],
+            mem: Vec::with_capacity(memsize),
             tail: 0,
             boundary: 0,
             head: 0,
@@ -527,7 +532,8 @@ impl Simpath {
 
         let mut jj = 1;
         let mut ll = 1;
-        self.mem[0] = self.mate[1];
+
+        self.mem.push(self.mate[1]);
         self.tail = 0;
         self.head = 1;
         self.serial = 2;
