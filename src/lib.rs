@@ -3,7 +3,7 @@ use rand::Rng;
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::io::{self, Write};
-use std::ops::Neg;
+use std::ops::{Neg, Not};
 use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 use std::time::Instant;
@@ -231,7 +231,7 @@ pub struct Simpath {
     htcount: usize,
     wrap: usize,
     vert: Vec<usize>,
-    num: Vec<usize>,
+    num: HashMap<usize, usize>,
     arcto: Vec<usize>,
     firstarc: Vec<usize>,
     mate: Vec<usize>,
@@ -356,8 +356,9 @@ impl Simpath {
         //     }
         // } else
         {
-            self.vert[1] = source;
-            self.num[source] = 1;
+            self.vert.push(0);
+            self.vert.push(source);
+            self.num.insert(source, 1);
 
             let mut k = 1;
             let mut j = 0;
@@ -368,21 +369,21 @@ impl Simpath {
                 for u in graph.successors(v) {
                     if (subgraph.is_none())
                         || (subgraph.is_some() && subgraph.as_ref().unwrap().contains(&u))
-                            && self.num[u] == 0
+                            && self.num.contains_key(&u).not()
                     {
                         k += 1;
-                        self.num[u] = k;
-                        self.vert[k] = u;
+                        self.vert.push(u);
+                        self.num.insert(u, k);
                     }
                 }
             }
 
-            if self.num[target] == 0 {
+            if self.num.contains_key(&target).not() {
                 let reachable = self
                     .num
                     .iter()
-                    .filter(|&each| *each > 0)
-                    .map(|each| self.vert[*each])
+                    .filter(|&(each, _)| *each > 0)
+                    .map(|(each, _)| self.vert[*each])
                     .collect::<Vec<usize>>();
 
                 eprintln!("Vertices reachables from {}: {:?}", source, reachable);
@@ -403,25 +404,35 @@ impl Simpath {
 
         let mut m = 0;
         let mut k = 1;
+        self.firstarc.push(0);
         while k <= self.n {
-            self.firstarc[k] = m;
+            self.firstarc.push(m);
 
             let v = self.vert[k];
 
             for u in graph.successors(v) {
-                if (subgraph.is_none())
-                    || (subgraph.is_some() && subgraph.as_ref().unwrap().contains(&u))
-                {
-                    let u_num = self.num[u];
-                    if u_num > k {
-                        self.arcto[m] = u_num;
-                        m += 1;
+                if subgraph.is_none() || subgraph.as_ref().unwrap().contains(&u) {
+                    match self.num.get(&u) {
+                        Some(&u_num) => {
+                            if u_num > k {
+                                self.arcto.push(u_num);
+                                m += 1;
+                            }
+                        }
+                        None => panic!("Vertex {} not found in num map!", u),
                     }
                 }
             }
             k += 1;
         }
-        self.firstarc[k] = m;
+
+        self.firstarc.push(m);
+        assert!(
+            self.firstarc.len() - 1 == k,
+            "firstarc length mismatch: {} != {}",
+            self.firstarc.len() - 1,
+            k
+        );
         self.m = m;
 
         eprintln!(
@@ -475,11 +486,11 @@ impl Simpath {
             htid: 0,
             htcount: 0,
             wrap: 1,
-            vert: vec![0; num_nodes + 1],
-            num: vec![0; num_nodes],
-            arcto: vec![0; graph.num_arcs().try_into().unwrap()],
-            firstarc: vec![0; num_nodes + 2],
-            mate: vec![0; num_nodes + 3],
+            vert: Vec::new(),
+            num: HashMap::new(),
+            arcto: Vec::new(),
+            firstarc: Vec::new(),
+            mate: Vec::new(),
             serial: 0,
             newserial: 0,
             log_memsize,
@@ -489,12 +500,27 @@ impl Simpath {
     }
 
     pub fn to_zdd(&mut self, target: usize) -> (Vec<(usize, usize, usize, usize)>, usize) {
+        assert!(
+            self.num.contains_key(&target),
+            "Target vertex {} not found in num map!",
+            target
+        );
+
+        let target_num = *self.num.get(&target).unwrap();
+
+        assert!(
+            target_num < self.n,
+            "Target vertex {} is out of bounds (n = {})",
+            target_num,
+            self.n
+        );
+
+        self.mate.push(0);
+        self.mate.push(target_num);
         for t in 2..=self.n {
-            self.mate[t] = t;
+            self.mate.push(t);
         }
-        let target_num = self.num[target];
         self.mate[target_num] = 1;
-        self.mate[1] = target_num;
 
         let mut jj = 1;
         let mut ll = 1;
