@@ -366,9 +366,8 @@ impl Simpath {
                 let v = self.vert[j];
 
                 for u in graph.successors(v) {
-                    if (subgraph.is_none())
-                        || (subgraph.is_some() && subgraph.as_ref().unwrap().contains(&u))
-                            && self.num[u] == 0
+                    if (subgraph.is_none() || subgraph.as_ref().unwrap().contains(&u))
+                        && self.num[u] == 0
                     {
                         k += 1;
                         self.num[u] = k;
@@ -409,9 +408,7 @@ impl Simpath {
             let v = self.vert[k];
 
             for u in graph.successors(v) {
-                if (subgraph.is_none())
-                    || (subgraph.is_some() && subgraph.as_ref().unwrap().contains(&u))
-                {
+                if subgraph.is_none() || subgraph.as_ref().unwrap().contains(&u) {
                     let u_num = self.num[u];
                     if u_num > k {
                         self.arcto[m] = u_num;
