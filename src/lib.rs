@@ -2,6 +2,7 @@ use core::panic;
 use rand::Rng;
 use std::collections::{HashMap, HashSet};
 use std::env;
+use std::hash::{DefaultHasher, Hash, Hasher};
 use std::io::{self, Write};
 use std::ops::{Neg, Not};
 use std::sync::atomic::AtomicUsize;
@@ -226,7 +227,7 @@ pub struct Simpath {
     tail: usize,
     boundary: usize,
     head: usize,
-    htable: Vec<usize>,
+    htable: HashMap<usize, usize>,
     htid: usize,
     htcount: usize,
     wrap: usize,
@@ -254,6 +255,9 @@ impl Simpath {
         let mut tt: usize;
         let mut hash: usize;
 
+        let mut hasher = DefaultHasher::new();
+        let mut hhash = Vec::new();
+
         t = j;
         while t < jj {
             if self.mate[t] > 0 && self.mate[t] != t {
@@ -277,20 +281,27 @@ impl Simpath {
                 );
             }
 
+            hhash.clear();
             t = jj;
             h = self.trunc(self.head);
-            hash = 0;
+
             while t <= ll {
                 self.mem[h] = self.mate[t];
-                hash = hash * 31415926525 + self.mate[t];
+
+                hhash.push(self.mate[t]);
 
                 t += 1;
                 h = self.trunc(h + 1)
             }
 
-            hash = hash & (self.htsize - 1);
+            hhash.hash(&mut hasher);
+            hash = hasher.finish() as usize;
             loop {
-                hh = self.htable[hash];
+                hh = if let Some(&hv) = self.htable.get(&hash) {
+                    hv
+                } else {
+                    0
+                };
 
                 if (hh ^ self.htid) >= self.memsize {
                     self.htcount += 1;
@@ -301,7 +312,8 @@ impl Simpath {
                         );
                     }
                     hh = self.trunc(self.head);
-                    self.htable[hash] = self.htid + hh;
+
+                    self.htable.insert(hash, self.htid + hh);
                     self.head += ss;
                     break;
                 }
@@ -490,7 +502,7 @@ impl Simpath {
             tail: 0,
             boundary: 0,
             head: 0,
-            htable: vec![0; memsize],
+            htable: HashMap::new(),
             htid: 0,
             htcount: 0,
             wrap: 1,
@@ -545,14 +557,14 @@ impl Simpath {
             self.htcount = 0;
             self.htid = (i + self.wrap) << self.log_memsize;
 
-            if self.htid == 0 {
-                eprintln!("Initializing the hash table (wrap = {})...", self.wrap);
-                for hash in 0..self.htsize {
-                    self.htable[hash] = 0;
-                }
-                self.wrap += 1;
-                self.htid = 1 << self.log_memsize;
-            }
+            // if self.htid == 0 {
+            //     eprintln!("Initializing the hash table (wrap = {})...", self.wrap);
+            //     for hash in 0..self.htsize {
+            //         self.htable[hash] = 0;
+            //     }
+            //     self.wrap += 1;
+            //     self.htid = 1 << self.log_memsize;
+            // }
 
             self.newserial = self.serial + ((self.head - self.tail) / (ll + 1 - jj));
 
