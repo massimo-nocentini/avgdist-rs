@@ -1,6 +1,6 @@
 use core::panic;
 use rand::Rng;
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::env;
 use std::hash::{DefaultHasher, Hash, Hasher};
 use std::io::{self, Write};
@@ -223,12 +223,12 @@ pub fn hc_sample<T: RandomAccessGraph + Send + Sync + 'static>(
 pub struct Simpath {
     n: usize,
     m: usize,
-    mem: Vec<usize>,
+    mem: VecDeque<usize>,
     tail: usize,
     boundary: usize,
     head: usize,
     htable: HashMap<usize, usize>,
-    htid: usize,
+    // htid: usize,
     htcount: usize,
     wrap: usize,
     vert: Vec<usize>,
@@ -281,16 +281,12 @@ impl Simpath {
             {
                 let mut hasher = DefaultHasher::new();
                 let mut hhash = Vec::new();
-                t = jj;
-                h = self.trunc(self.head);
 
-                while t <= ll {
-                    self.mem[h] = self.mate[t];
+                for t in jj..=ll {
+                    self.mem.push_back(self.mate[t]);
 
                     hhash.push(self.mate[t]);
-
-                    t += 1;
-                    h = self.trunc(h + 1)
+                    // hash =  31415926525 * hash + self.mate[t];
                 }
 
                 hhash.hash(&mut hasher);
@@ -301,10 +297,6 @@ impl Simpath {
                 hh = if let Some(&hv) = self.htable.get(&hash) {
                     hv
                 } else {
-                    0
-                };
-
-                if (hh ^ self.htid) >= self.memsize {
                     self.htcount += 1;
                     if self.htcount > (self.htsize >> 1) {
                         panic!(
@@ -314,10 +306,10 @@ impl Simpath {
                     }
                     hh = self.trunc(self.head);
 
-                    self.htable.insert(hash, self.htid + hh);
+                    self.htable.insert(hash, hh);
                     self.head += ss;
                     break;
-                }
+                };
 
                 hh = self.trunc(hh);
                 t = hh;
@@ -498,12 +490,11 @@ impl Simpath {
         Simpath {
             n: num_nodes,
             m: 0,
-            mem: vec![0; memsize],
+            mem: VecDeque::new(),
             tail: 0,
             boundary: 0,
             head: 0,
             htable: HashMap::new(),
-            htid: 0,
             htcount: 0,
             wrap: 1,
             vert: Vec::new(),
@@ -530,7 +521,8 @@ impl Simpath {
 
         let mut jj = 1;
         let mut ll = 1;
-        self.mem[0] = self.mate[1];
+        // self.mem[0] = self.mate[1];
+        self.mem.push_back(self.mate[1]);
         self.tail = 0;
         self.head = 1;
         self.serial = 2;
@@ -554,16 +546,6 @@ impl Simpath {
 
             self.boundary = self.head;
             self.htcount = 0;
-            self.htid = (i + self.wrap) << self.log_memsize;
-
-            if self.htid == 0 {
-                eprintln!("Initializing the hash table (wrap = {})...", self.wrap);
-                // for hash in 0..self.htsize {
-                //     self.htable[hash] = 0;
-                // }
-                self.wrap += 1;
-                self.htid = 1 << self.log_memsize;
-            }
 
             self.newserial = self.serial + ((self.head - self.tail) / (ll + 1 - jj));
 
@@ -581,7 +563,8 @@ impl Simpath {
                 self.serial += 1;
 
                 for t in j..=l {
-                    self.mate[t] = self.mem[self.trunc(self.tail)];
+                    // self.mate[t] = self.mem[self.trunc(self.tail)];
+                    self.mate[t] = self.mem.pop_front().unwrap();
                     if self.mate[t] > l {
                         let i = self.mate[t];
                         self.mate[i] = t;
