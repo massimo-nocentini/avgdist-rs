@@ -378,10 +378,10 @@ impl Simpath {
                 let v = self.vert[j];
 
                 for u in graph.successors(v) {
-                    m_hint += 1;
                     if (subgraph.is_empty() || subgraph.contains(&u))
                         && self.num.contains_key(&u).not()
                     {
+                        m_hint += 1;
                         k += 1;
                         self.vert[k] = u;
                         self.num.insert(u, k);
