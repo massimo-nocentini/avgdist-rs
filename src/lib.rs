@@ -255,9 +255,6 @@ impl Simpath {
         let mut tt: usize;
         let mut hash: usize;
 
-        let mut hasher = DefaultHasher::new();
-        let mut hhash = Vec::new();
-
         t = j;
         while t < jj {
             if self.mate[t] > 0 && self.mate[t] != t {
@@ -281,21 +278,25 @@ impl Simpath {
                 );
             }
 
-            hhash.clear();
-            t = jj;
-            h = self.trunc(self.head);
+            {
+                let mut hasher = DefaultHasher::new();
+                let mut hhash = Vec::new();
+                t = jj;
+                h = self.trunc(self.head);
 
-            while t <= ll {
-                self.mem[h] = self.mate[t];
+                while t <= ll {
+                    self.mem[h] = self.mate[t];
 
-                hhash.push(self.mate[t]);
+                    hhash.push(self.mate[t]);
 
-                t += 1;
-                h = self.trunc(h + 1)
+                    t += 1;
+                    h = self.trunc(h + 1)
+                }
+
+                hhash.hash(&mut hasher);
+                hash = hasher.finish() as usize & (self.htsize - 1);
             }
 
-            hhash.hash(&mut hasher);
-            hash = hasher.finish() as usize;
             loop {
                 hh = if let Some(&hv) = self.htable.get(&hash) {
                     hv
@@ -426,7 +427,7 @@ impl Simpath {
         }
 
         self.firstarc.resize(self.n + 2, 0);
-        self.arcto.resize(m_hint + 2, 0);
+        self.arcto.resize(m_hint, 0);
 
         let mut m = 0;
         let mut k = 1;
@@ -464,8 +465,10 @@ impl Simpath {
     }
 
     pub fn from_webgraph<T: RandomAccessGraph>(graph: &T) -> Self {
+        let num_nodes = graph.num_nodes();
+
         let default_memsiz: usize = 30; // Default memory size if not set in the environment
-        let base_memsiz: usize = match env::var("BASE_MEMSIZE") {
+        let log_memsize: usize = match env::var("BASE_MEMSIZE") {
             Ok(var) => match var.parse::<usize>() {
                 Ok(size) => size,
                 Err(_) => {
@@ -485,13 +488,10 @@ impl Simpath {
             }
         };
 
-        let num_nodes = graph.num_nodes();
-
-        let log_memsize: usize = base_memsiz;
         let memsize: usize = 1 << log_memsize;
 
         eprintln!(
-            "Allocating two vectors of memory size {} GB.",
+            "Allocating two vectors of memory size {:.6} GB.",
             (memsize * size_of::<usize>()) as f64 / 1e9
         );
 
@@ -508,9 +508,9 @@ impl Simpath {
             wrap: 1,
             vert: Vec::new(),
             num: HashMap::new(),
-            arcto: Vec::new(),    //vec![0; graph.num_arcs().try_into().unwrap()],
-            firstarc: Vec::new(), //vec![0; num_nodes + 2],
-            mate: Vec::new(),     // vec![0; num_nodes + 3],
+            arcto: Vec::new(),
+            firstarc: Vec::new(),
+            mate: Vec::new(),
             serial: 0,
             newserial: 0,
             log_memsize,
@@ -525,7 +525,6 @@ impl Simpath {
             self.mate[t] = t;
         }
         let target_num = *self.num.get(&target).unwrap();
-
         self.mate[target_num] = 1;
         self.mate[1] = target_num;
 
@@ -557,14 +556,14 @@ impl Simpath {
             self.htcount = 0;
             self.htid = (i + self.wrap) << self.log_memsize;
 
-            // if self.htid == 0 {
-            //     eprintln!("Initializing the hash table (wrap = {})...", self.wrap);
-            //     for hash in 0..self.htsize {
-            //         self.htable[hash] = 0;
-            //     }
-            //     self.wrap += 1;
-            //     self.htid = 1 << self.log_memsize;
-            // }
+            if self.htid == 0 {
+                eprintln!("Initializing the hash table (wrap = {})...", self.wrap);
+                // for hash in 0..self.htsize {
+                //     self.htable[hash] = 0;
+                // }
+                self.wrap += 1;
+                self.htid = 1 << self.log_memsize;
+            }
 
             self.newserial = self.serial + ((self.head - self.tail) / (ll + 1 - jj));
 
