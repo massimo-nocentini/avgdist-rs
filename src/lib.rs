@@ -2,6 +2,7 @@ use core::panic;
 use rand::Rng;
 use std::collections::{HashMap, HashSet};
 use std::env;
+use std::hash::{DefaultHasher, Hasher};
 use std::io::{self, Write};
 use std::ops::{Neg, Not};
 use std::sync::atomic::AtomicUsize;
@@ -248,11 +249,7 @@ impl Simpath {
     }
 
     fn printstate(&mut self, j: usize, jj: usize, ll: usize) -> usize {
-        let mut h: usize;
-        let mut hh: usize;
         let mut t: usize;
-        let mut tt: usize;
-        let mut hash: usize;
 
         t = j;
         while t < jj {
@@ -269,6 +266,10 @@ impl Simpath {
         } else if ll < jj {
             ret = 0;
         } else {
+            let mut h: usize;
+            let mut hh: usize;
+            let mut tt: usize;
+            let mut hash: usize;
             let ss = ll + 1 - jj;
             if self.head + ss - self.tail > self.memsize {
                 panic!(
@@ -279,17 +280,24 @@ impl Simpath {
 
             t = jj;
             h = self.trunc(self.head);
-            hash = 0;
-            while t <= ll {
-                self.mem[h] = self.mate[t];
-                hash = hash * 31415926525 + self.mate[t];
 
-                t += 1;
-                h = self.trunc(h + 1)
+            {
+                let hasher = DefaultHasher::new();
+                let mut to_hash = Vec::new();
+                while t <= ll {
+                    self.mem[h] = self.mate[t];
+
+                    to_hash.push(self.mate[t]);
+
+                    t += 1;
+                    h = self.trunc(h + 1)
+                }
+                hash = hasher.finish() as usize;
             }
 
             hash = hash & (self.htsize - 1);
-            loop {
+
+            'found: loop {
                 hh = self.htable[hash];
 
                 if (hh ^ self.htid) >= self.memsize {
@@ -311,24 +319,20 @@ impl Simpath {
                 h = self.trunc(self.head);
                 tt = self.trunc(t + ss - 1);
 
-                let should_continue = loop {
+                'search: loop {
                     if self.mem[t] != self.mem[h] {
-                        break true;
+                        break 'search;
                     }
 
                     if t == tt {
-                        break false;
+                        break 'found;
                     }
 
                     t = self.trunc(t + 1);
                     h = self.trunc(h + 1);
-                };
-
-                if should_continue {
-                    hash = (hash + 1) & (self.htsize - 1);
-                } else {
-                    break;
                 }
+
+                hash = (hash + 1) & (self.htsize - 1);
             }
 
             h = self.trunc(hh - self.boundary) / ss;
@@ -414,7 +418,7 @@ impl Simpath {
         }
 
         self.firstarc.resize(self.n + 2, 0);
-        self.arcto.resize(m_hint + 2, 0);
+        self.arcto.resize(m_hint, 0);
 
         let mut m = 0;
         let mut k = 1;
@@ -425,16 +429,10 @@ impl Simpath {
 
             for u in graph.successors(v) {
                 if subgraph.is_empty() || subgraph.contains(&u) {
-                    match self.num.get(&u) {
-                        Some(&u_num) => {
-                            if u_num > k {
-                                self.arcto[m] = u_num;
-                                m += 1;
-                            }
-                        }
-                        None => {
-                            eprintln!("Warning: Vertex {} not found in the subgraph!", u);
-                        }
+                    let u_num = *self.num.get(&u).unwrap();
+                    if u_num > k {
+                        self.arcto[m] = u_num;
+                        m += 1;
                     }
                 }
             }
@@ -496,9 +494,9 @@ impl Simpath {
             wrap: 1,
             vert: Vec::new(),
             num: HashMap::new(),
-            arcto: Vec::new(),    //vec![0; graph.num_arcs().try_into().unwrap()],
-            firstarc: Vec::new(), //vec![0; num_nodes + 2],
-            mate: Vec::new(),     // vec![0; num_nodes + 3],
+            arcto: Vec::new(),
+            firstarc: Vec::new(),
+            mate: Vec::new(),
             serial: 0,
             newserial: 0,
             log_memsize,
