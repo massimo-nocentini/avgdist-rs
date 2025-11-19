@@ -33,7 +33,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include <malloc.h>
 #include <iostream>
 #include <iomanip>
 #include <fstream>

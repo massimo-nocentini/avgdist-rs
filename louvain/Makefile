@@ -1,8 +1,8 @@
 #!/bin/bash
 
-CC=g++
-CFLAGS= -ansi -O5 -Wall
-LDFLAGS= -ansi -lm -Wall
+CC=clang++
+CFLAGS= -ansi -O3 -Wall
+LDFLAGS= -ansi -lm -lc -Wall
 EXEC=community convert hierarchy
 OBJ1= graph_binary.o community.o
 OBJ2= graph.o

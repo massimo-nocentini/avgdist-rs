@@ -16,7 +16,6 @@ struct LouvainCommunity {
     tuples: Vec<LouvainTuple>,
     neigh_last: usize,
     size: usize,
-
     nb_pass: isize,
     min_modularity: f64,
 }
@@ -32,7 +31,7 @@ impl LouvainBinaryGraph {
             for dest in graph.successors(src) {
                 links[src].push((dest, weight));
                 if src != dest {
-                    links[dest].push((src, weight));
+                    links[dest].push((src, weight)); // undirected graph
                 }
             }
         }
@@ -76,8 +75,6 @@ impl LouvainBinaryGraph {
     }
 
     fn nb_neighbors(&self, node: usize) -> usize {
-        assert!(node < self.nbnodes);
-
         if node == 0 {
             self.degrees[0]
         } else {
@@ -86,10 +83,7 @@ impl LouvainBinaryGraph {
     }
 
     fn nb_selfloops(&self, node: usize) -> f64 {
-        assert!(node < self.nbnodes);
-
-        let neighbors = self.neighbors(node);
-        for &(neighbor, weight) in neighbors.iter() {
+        for &(neighbor, weight) in self.neighbors(node).iter() {
             if neighbor == node {
                 return weight;
             }
@@ -98,18 +92,10 @@ impl LouvainBinaryGraph {
     }
 
     fn weighted_degree(&self, node: usize) -> f64 {
-        assert!(node < self.nbnodes);
-
-        let neighbors = self.neighbors(node);
-        let mut res = 0.0;
-        for &(_, weight) in neighbors.iter() {
-            res += weight;
-        }
-        res
+        self.neighbors(node).iter().map(|&(_, weight)| weight).sum()
     }
 
     fn neighbors(&self, node: usize) -> &[(usize, f64)] {
-        assert!(node < self.nbnodes);
         if node == 0 {
             &self.arcs_weights[..self.degrees[0]]
         } else {
@@ -156,7 +142,7 @@ impl<'a> LouvainCommunity {
         let mut q = 0.0;
         let m2 = self.g.total_weight;
         for i in self.tuples.iter().filter(|each| each.tot > 0.0) {
-            q += i.in_ / m2 - (i.tot / m2) * (i.tot / m2);
+            q += i.in_ / m2 - (i.tot / m2).powi(2);
         }
         q
     }
