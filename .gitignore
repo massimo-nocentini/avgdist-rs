@@ -7,3 +7,4 @@ data/star/out.bdd
 /louvain/convert
 /louvain/hierarchy
 /louvain/community
+/louvain/sample_networks/*.bin
