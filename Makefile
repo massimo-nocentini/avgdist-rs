@@ -1,6 +1,11 @@
 
-run:
-	cargo run --bin louvain --release -- ../data/soc-karate.mtx 0.0001
+echo:
+	echo "Makefile for Louvain implementation in Rust"
+
+webgraph-all:
+	cargo run --bin louvain --release -- louvain/sample_networks/example/example 0.0001
+	#cargo run --bin louvain --release -- louvain/sample_networks/karate/karate 0.0001
+	#cargo run --bin louvain --release -- louvain/sample_networks/arxiv/arxiv 0.0001
 
 build:
 	cargo build --release

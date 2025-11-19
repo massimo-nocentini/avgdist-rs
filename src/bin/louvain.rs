@@ -22,8 +22,11 @@ struct LouvainCommunity {
 
 impl LouvainBinaryGraph {
     fn from_webgraph<T: RandomAccessGraph>(graph: &T) -> Self {
+        // In this implementation, we assume all edges have weight 1.0
         let weight = 1.0;
 
+        // Build adjacency list representation, this is equivalent to the code
+        // in `graph.cpp` that loads a graph from a file.
         let num_nodes = graph.num_nodes();
         let mut links = vec![Vec::new(); num_nodes];
 
@@ -51,13 +54,13 @@ impl LouvainBinaryGraph {
             num_arcs += i.len();
         }
 
-        let mut tot = Vec::with_capacity(links.len());
+        let mut degrees = Vec::with_capacity(links.len());
         let mut arcs_weights = Vec::with_capacity(num_arcs);
         let mut cumulative = 0usize;
         let mut total_weight = 0.0;
         for i in links.iter() {
             cumulative += i.len();
-            tot.push(cumulative);
+            degrees.push(cumulative);
 
             for &j in i.iter() {
                 arcs_weights.push(j);
@@ -66,7 +69,7 @@ impl LouvainBinaryGraph {
         }
 
         LouvainBinaryGraph {
-            degrees: tot,
+            degrees,
             arcs_weights,
             nbnodes: num_nodes,
             nblinks: num_arcs,
@@ -110,6 +113,7 @@ struct LouvainTuple {
     n2c: usize,
     in_: f64,
     tot: f64,
+    node: usize,
 }
 
 impl<'a> LouvainCommunity {
@@ -125,6 +129,7 @@ impl<'a> LouvainCommunity {
                 n2c: i,
                 in_: g.nb_selfloops(i),
                 tot: g.weighted_degree(i),
+                node: i,
             });
         }
 
@@ -142,7 +147,7 @@ impl<'a> LouvainCommunity {
         let mut q = 0.0;
         let m2 = self.g.total_weight;
         for i in self.tuples.iter().filter(|each| each.tot > 0.0) {
-            q += i.in_ / m2 - (i.tot / m2).powi(2);
+            q += (i.in_ / m2) - (i.tot / m2).powi(2);
         }
         q
     }
@@ -354,12 +359,30 @@ impl<'a> LouvainCommunity {
                 n2c: i,
                 in_: g.nb_selfloops(i),
                 tot: g.weighted_degree(i),
+                node: i,
             });
         }
 
         self.g = g;
         self.nb_pass = nbp;
         self.min_modularity = minm;
+    }
+
+    fn display_partition(&self) {
+        let mut renumber = vec![-1isize; self.size];
+        for tup in self.tuples.iter() {
+            renumber[tup.n2c] += 1;
+        }
+
+        let mut final_comm = 0isize;
+        for i in renumber.iter_mut().filter(|i| **i != -1) {
+            *i = final_comm;
+            final_comm += 1;
+        }
+
+        for i in self.tuples.iter() {
+            println!("{} {}", i.node, renumber[i.n2c]);
+        }
     }
 }
 
@@ -373,38 +396,35 @@ fn main() {
 
     let instant = Instant::now();
 
-    let louvain_graph = LouvainBinaryGraph::from_webgraph(&graph);
-    let mut louvain_community = LouvainCommunity::from_graph(louvain_graph, -1, precision);
+    let g = LouvainBinaryGraph::from_webgraph(&graph);
+    let mut c = LouvainCommunity::from_graph(g, -1, precision);
 
-    let mut mod_ = louvain_community.modularity();
-    let mut level = 0usize;
+    for level in 0usize.. {
+        let mod_ = c.modularity();
 
-    loop {
         eprintln!(
-            "Level {}: eta {:?}, nodes {}, links {}, weight {}.",
+            "Level {}: eta {:?}, nodes {}, links {}, weight {}:",
             level,
             instant.elapsed(),
-            louvain_community.g.nbnodes,
-            louvain_community.g.nblinks,
-            louvain_community.g.total_weight
+            c.g.nbnodes,
+            c.g.nblinks,
+            c.g.total_weight
         );
 
-        let improvement = louvain_community.one_level();
-        let new_mod = louvain_community.modularity();
+        let improvement = c.one_level();
+        let new_mod = c.modularity();
 
-        level += 1;
+        c.display_partition();
 
-        let g2 = louvain_community.partition2graph_binary();
-        louvain_community.update(g2, -1, precision);
+        let g2 = c.partition2graph_binary();
+        c.update(g2, -1, precision);
 
-        eprintln!("  modularity increased from {} to {}", mod_, new_mod);
+        eprintln!("\tmodularity increased from {} to {}", mod_, new_mod);
 
-        mod_ = new_mod;
-
-        if improvement {
+        if !improvement {
             break;
         }
     }
 
-    println!("\nTotal time: {:?}", instant.elapsed());
+    eprintln!("\nTotal time: {:?}", instant.elapsed());
 }
