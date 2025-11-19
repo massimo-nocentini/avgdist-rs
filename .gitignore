@@ -7,10 +7,10 @@ data/star/out.bdd
 /louvain/convert
 /louvain/hierarchy
 /louvain/community
-/louvain/sample_networks/*.bin
-louvain/sample_networks/arxiv.hier
-louvain/sample_networks/arxiv.tree
-louvain/sample_networks/example.hier
-louvain/sample_networks/example.tree
-louvain/sample_networks/karate.hier
-louvain/sample_networks/karate.tree
+*.bin
+*.hier
+*.tree
+*.ef
+*.graph
+*.offsets
+*.properties
