@@ -1,3 +1,4 @@
+use rand::rngs::ThreadRng;
 use rand::seq::SliceRandom;
 use std::env;
 use std::time::Instant;
@@ -153,8 +154,6 @@ impl<'a> LouvainCommunity {
     }
 
     fn remove(&mut self, node: usize, comm: usize, dnodecomm: f64) {
-        assert!(node < self.size);
-
         let tup = &mut self.tuples[comm];
         tup.tot -= self.g.weighted_degree(node);
         tup.in_ -= 2.0 * dnodecomm + self.g.nb_selfloops(node);
@@ -163,7 +162,6 @@ impl<'a> LouvainCommunity {
     }
 
     fn insert(&mut self, node: usize, comm: usize, dnodecomm: f64) {
-        assert!(node < self.size);
         let tup = &mut self.tuples[comm];
 
         tup.tot += self.g.weighted_degree(node);
@@ -173,8 +171,6 @@ impl<'a> LouvainCommunity {
     }
 
     fn modularity_gain(&self, node: usize, comm: usize, dnodecomm: f64, w_degree: f64) -> f64 {
-        assert!(node < self.size);
-
         let totc = self.tuples[comm].tot;
         let degc = w_degree;
         let m2 = self.g.total_weight;
@@ -189,16 +185,12 @@ impl<'a> LouvainCommunity {
         }
         self.neigh_last = 0;
 
-        let neighbors = self.g.neighbors(node);
-        let deg = self.g.nb_neighbors(node);
-
-        self.tuples[0].neigh_pos = self.tuples[node].n2c;
-        let j0 = self.tuples[0].neigh_pos;
-        self.tuples[j0].neigh_weight = 0.0;
+        let node_n2c = self.tuples[node].n2c;
+        self.tuples[0].neigh_pos = node_n2c;
+        self.tuples[node_n2c].neigh_weight = 0.0;
         self.neigh_last = 1;
 
-        for i in 0..deg {
-            let (neigh, neigh_w) = neighbors[i];
+        for &(neigh, neigh_w) in self.g.neighbors(node) {
             let neigh_comm = self.tuples[neigh].n2c;
 
             if neigh != node {
@@ -212,22 +204,18 @@ impl<'a> LouvainCommunity {
         }
     }
 
-    fn one_level(&mut self) -> bool {
-        let mut improvement = false;
-        let mut nb_moves;
-        let mut new_mod = self.modularity();
-
-        let mut rng = rand::thread_rng();
-
+    fn one_level(&mut self, rng: &mut ThreadRng) -> bool {
         let mut random_order: Vec<usize> = (0..self.size).collect();
-        random_order.shuffle(&mut rng);
+        random_order.shuffle(rng);
+
+        let mut improvement = false;
+        let mut new_mod = self.modularity();
 
         loop {
             let cur_mod = new_mod;
-            nb_moves = 0usize;
+            let mut nb_moves = 0usize;
 
-            for node_tmp in 0..self.size {
-                let node = random_order[node_tmp];
+            for &node in random_order.iter() {
                 let node_comm = self.tuples[node].n2c;
                 let w_degree = self.g.weighted_degree(node);
 
@@ -244,15 +232,13 @@ impl<'a> LouvainCommunity {
 
                 for i in 0..self.neigh_last {
                     let neigh_pos = self.tuples[i].neigh_pos;
-                    let increase = self.modularity_gain(
-                        node,
-                        self.tuples[i].neigh_pos,
-                        self.tuples[i].neigh_weight,
-                        w_degree,
-                    );
+                    let neigh_w = self.tuples[neigh_pos].neigh_weight;
+
+                    let increase = self.modularity_gain(node, neigh_pos, neigh_w, w_degree);
+
                     if increase > best_increase {
                         best_comm = neigh_pos;
-                        best_nblinks = self.tuples[neigh_pos].neigh_weight;
+                        best_nblinks = neigh_w;
                         best_increase = increase;
                     }
                 }
@@ -264,13 +250,6 @@ impl<'a> LouvainCommunity {
                     nb_moves += 1;
                 }
             }
-
-            // let mut total_tot = 0.0;
-            // let mut total_in = 0.0;
-            // for i in 0..self.tuples.len() {
-            //     total_tot += self.tuples[i].tot;
-            //     total_in += self.tuples[i].in_;
-            // }
 
             new_mod = self.modularity();
 
@@ -387,6 +366,8 @@ impl<'a> LouvainCommunity {
 }
 
 fn main() {
+    let mut rng = rand::thread_rng();
+
     let args: Vec<String> = env::args().collect();
 
     let graph_filename = &args[1];
@@ -411,7 +392,7 @@ fn main() {
             c.g.total_weight
         );
 
-        let improvement = c.one_level();
+        let improvement = c.one_level(&mut rng);
         let new_mod = c.modularity();
 
         c.display_partition();

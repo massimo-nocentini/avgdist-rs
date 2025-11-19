@@ -3,9 +3,9 @@ echo:
 	echo "Makefile for Louvain implementation in Rust"
 
 webgraph-all:
-	cargo run --bin louvain --release -- louvain/sample_networks/example/example 0.0001
-	#cargo run --bin louvain --release -- louvain/sample_networks/karate/karate 0.0001
-	#cargo run --bin louvain --release -- louvain/sample_networks/arxiv/arxiv 0.0001
+	cargo run --bin louvain --release -- louvain/sample_networks/example/example 0.00001
+	#cargo run --bin louvain --release -- louvain/sample_networks/karate/karate 0.00001
+	#cargo run --bin louvain --release -- louvain/sample_networks/arxiv/arxiv 0.00001
 
 build:
 	cargo build --release
@@ -19,9 +19,9 @@ upstream-convert:
 	cd louvain/sample_networks/arxiv && ../../convert -i arxiv.txt -o arxiv.bin
 	
 upstream-community:
-	cd louvain/sample_networks/example && ../../community example.bin -l -1 -v -q 0.0001 > example.tree
-	cd louvain/sample_networks/karate && ../../community karate.bin -l -1 -v -q 0.0001 > karate.tree
-	cd louvain/sample_networks/arxiv && ../../community arxiv.bin -l -1 -v -q 0.0001 > arxiv.tree
+	cd louvain/sample_networks/example && ../../community example.bin -l -1 -v -q 0.00001 > example.tree
+	cd louvain/sample_networks/karate && ../../community karate.bin -l -1 -v -q 0.00001 > karate.tree
+	cd louvain/sample_networks/arxiv && ../../community arxiv.bin -l -1 -v -q 0.00001 > arxiv.tree
 
 upstream-hierarchy:
 	cd louvain/sample_networks/example && ../../hierarchy example.tree > example.hier
