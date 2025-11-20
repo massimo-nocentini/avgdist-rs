@@ -8,8 +8,6 @@ use webgraph::prelude::*;
 struct LouvainBinaryGraph {
     degrees: Vec<usize>,
     arcs_weights: Vec<(usize, f64)>,
-    nbnodes: usize,
-    nblinks: usize,
     total_weight: f64,
 }
 
@@ -17,11 +15,18 @@ struct LouvainCommunity {
     g: LouvainBinaryGraph,
     tuples: Vec<LouvainTuple>,
     neigh_last: usize,
-    size: usize,
     min_modularity: f64,
 }
 
 impl LouvainBinaryGraph {
+    fn nbnodes(&self) -> usize {
+        self.degrees.len()
+    }
+
+    fn nblinks(&self) -> usize {
+        self.arcs_weights.len()
+    }
+
     fn from_webgraph<T: RandomAccessGraph>(graph: &T, directed: bool, weight: f64) -> Self {
         // Build adjacency list representation, this is equivalent to the code
         // in `graph.cpp` that loads a graph from a file.
@@ -69,9 +74,7 @@ impl LouvainBinaryGraph {
         arcs_weights.shrink_to_fit();
 
         LouvainBinaryGraph {
-            nbnodes: degrees.len(),
             degrees,
-            nblinks: arcs_weights.len(),
             arcs_weights,
             total_weight,
         }
@@ -108,8 +111,12 @@ struct LouvainTuple {
 }
 
 impl<'a> LouvainCommunity {
+    fn size(&self) -> usize {
+        self.tuples.len()
+    }
+
     fn from_graph(g: LouvainBinaryGraph, minm: f64) -> Self {
-        let tuples: Vec<LouvainTuple> = (0..g.nbnodes)
+        let tuples: Vec<LouvainTuple> = (0..g.nbnodes())
             .map(|i| LouvainTuple {
                 neigh_weight: -1.0,
                 neigh_pos: 0,
@@ -122,7 +129,6 @@ impl<'a> LouvainCommunity {
 
         LouvainCommunity {
             g,
-            size: tuples.len(),
             tuples,
             neigh_last: 0,
             min_modularity: minm,
@@ -183,7 +189,7 @@ impl<'a> LouvainCommunity {
     }
 
     fn one_level(&mut self, rng: &mut ThreadRng) -> bool {
-        let mut random_order: Vec<usize> = (0..self.size).collect();
+        let mut random_order: Vec<usize> = (0..self.size()).collect();
         random_order.shuffle(rng);
 
         let mut improvement = false;
@@ -221,7 +227,8 @@ impl<'a> LouvainCommunity {
                     }
                 }
 
-                self.insert(node, best_comm, best_nblinks); // insert node in the nearest community
+                // insert node in the nearest community
+                self.insert(node, best_comm, best_nblinks);
 
                 if best_comm != node_comm {
                     nb_moves += 1;
@@ -243,7 +250,7 @@ impl<'a> LouvainCommunity {
     }
 
     fn partition2graph_binary(&self) -> LouvainBinaryGraph {
-        let mut renumber: Vec<Option<usize>> = vec![None; self.size];
+        let mut renumber: Vec<Option<usize>> = vec![None; self.size()];
 
         for tup in self.tuples.iter() {
             renumber[tup.n2c] = match renumber[tup.n2c] {
@@ -266,7 +273,7 @@ impl<'a> LouvainCommunity {
         }
 
         let mut g2_degrees = Vec::with_capacity(comm_nodes.len());
-        let mut g2_arcs_weights = Vec::with_capacity(self.g.nblinks);
+        let mut g2_arcs_weights = Vec::with_capacity(self.g.nblinks());
         let mut g2_total_weight = 0.0;
         for (icomm, comm) in comm_nodes.iter().enumerate() {
             let mut m = std::collections::HashMap::new();
@@ -288,19 +295,18 @@ impl<'a> LouvainCommunity {
             }
         }
 
+        g2_degrees.shrink_to_fit();
         g2_arcs_weights.shrink_to_fit();
 
         LouvainBinaryGraph {
             degrees: g2_degrees,
-            nblinks: g2_arcs_weights.len(),
             arcs_weights: g2_arcs_weights,
-            nbnodes: comm_nodes.len(),
             total_weight: g2_total_weight,
         }
     }
 
     fn display_partition(&self) {
-        let mut renumber = vec![None; self.size];
+        let mut renumber = vec![None; self.size()];
         for tup in self.tuples.iter() {
             renumber[tup.n2c] = match renumber[tup.n2c] {
                 Some(r) => Some(r + 1),
@@ -346,8 +352,8 @@ fn main() {
             "Level {}: elapsed {:?}, nodes {}, links {}, weight {}, modularity {:.6}:",
             level,
             instant.elapsed(),
-            c.g.nbnodes,
-            c.g.nblinks,
+            c.g.nbnodes(),
+            c.g.nblinks(),
             c.g.total_weight,
             mod_
         );
