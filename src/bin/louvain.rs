@@ -337,6 +337,7 @@ fn main() {
 
     let graph_filename = &args[1];
     let precision = args[2].parse().unwrap();
+    let verbose = args[3].parse().unwrap();
 
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
 
@@ -361,7 +362,9 @@ fn main() {
         let improvement = c.one_level(&mut rng);
         let new_mod = c.modularity();
 
-        c.display_partition();
+        if verbose {
+            c.display_partition();
+        }
 
         let g2 = c.partition2graph_binary();
         c = LouvainCommunity::from_graph(g2, precision);
@@ -374,4 +377,8 @@ fn main() {
     }
 
     eprintln!("\nTotal time: {:?}", instant.elapsed());
+
+    if !verbose {
+        c.display_partition();
+    }
 }
