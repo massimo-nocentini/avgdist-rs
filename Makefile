@@ -3,9 +3,12 @@ echo:
 	echo "Makefile for Louvain implementation in Rust"
 
 webgraph-all:
-	cargo run --bin louvain --release -- louvain/sample_networks/example/example 0.00001
-	#cargo run --bin louvain --release -- louvain/sample_networks/karate/karate 0.00001
-	#cargo run --bin louvain --release -- louvain/sample_networks/arxiv/arxiv 0.00001
+	cargo run --bin louvain --release -- louvain/sample_networks/example/example 0.00001 > louvain/sample_networks/example/example.webgraph.tree
+	cargo run --bin louvain --release -- louvain/sample_networks/karate/karate 0.00001 > louvain/sample_networks/karate/karate.webgraph.tree
+	cargo run --bin louvain --release -- louvain/sample_networks/arxiv/arxiv 0.00001 > louvain/sample_networks/arxiv/arxiv.webgraph.tree
+	cd louvain/sample_networks/example && ../../hierarchy example.webgraph.tree > example.webgraph.hier
+	cd louvain/sample_networks/karate && ../../hierarchy karate.webgraph.tree > karate.webgraph.hier
+	cd louvain/sample_networks/arxiv && ../../hierarchy arxiv.webgraph.tree > arxiv.webgraph.hier
 
 build:
 	cargo build --release
@@ -29,8 +32,8 @@ upstream-hierarchy:
 	cd louvain/sample_networks/arxiv && ../../hierarchy arxiv.tree > arxiv.hier
 
 upstream-webgraph:
-	cd louvain/sample_networks/example && webgraph from arcs --separator " " example < example.txt && webgraph build ef example
-	cd louvain/sample_networks/karate && webgraph from arcs --separator " " karate < karate.txt && webgraph build ef karate
-	cd louvain/sample_networks/arxiv && webgraph from arcs --separator " " arxiv < arxiv.txt && webgraph build ef arxiv
+	cd louvain/sample_networks/example && webgraph from arcs --labels --separator " " example < example.txt && webgraph build ef example
+	cd louvain/sample_networks/karate && webgraph from arcs --labels --separator " " karate < karate.txt && webgraph build ef karate
+	cd louvain/sample_networks/arxiv && webgraph from arcs --labels --separator " " arxiv < arxiv.txt && webgraph build ef arxiv
 
 upstream-all: upstream-compile upstream-convert upstream-community upstream-hierarchy upstream-webgraph

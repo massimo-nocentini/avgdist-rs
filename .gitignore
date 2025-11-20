@@ -14,3 +14,4 @@ data/star/out.bdd
 *.graph
 *.offsets
 *.properties
+*.nodes
