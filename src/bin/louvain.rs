@@ -243,8 +243,7 @@ impl<'a> LouvainCommunity {
                     }
                 }
 
-                // insert node in the nearest community
-                self.insert(node, best_comm, best_nblinks);
+                self.insert(node, best_comm, best_nblinks); // insert node in the nearest community
 
                 if best_comm != node_comm {
                     nb_moves += 1;
@@ -272,45 +271,35 @@ impl<'a> LouvainCommunity {
         }
 
         let mut final_comm = 0usize;
-        for i in 0..self.size {
-            if renumber[i] != -1 {
-                renumber[i] = final_comm as isize;
-                final_comm += 1;
-            }
+        for i in renumber.iter_mut().filter(|&&mut r| r != -1) {
+            *i = final_comm as isize;
+            final_comm += 1;
         }
 
         let mut comm_nodes = vec![Vec::new(); final_comm];
-        for node in 0..self.size {
-            let comm = renumber[self.tuples[node].n2c] as usize;
-            comm_nodes[comm].push(node);
+        for t in self.tuples.iter() {
+            let comm = renumber[t.n2c] as usize;
+            comm_nodes[comm].push(t.node);
         }
 
         let mut g2_degrees = Vec::with_capacity(final_comm);
         let mut g2_arcs_weights = Vec::new();
         let mut g2_nblinks = 0usize;
         let mut g2_total_weight = 0.0;
-        for comm in 0..final_comm {
+        for (icomm, comm) in comm_nodes.iter().enumerate() {
             let mut m = std::collections::HashMap::new();
 
-            for &node in comm_nodes[comm].iter() {
-                let neighbors = self.g.neighbors(node);
-                let deg = self.g.nb_neighbors(node);
-
-                for i in 0..deg {
-                    let (neigh, neigh_w) = neighbors[i];
+            for &node in comm {
+                for &(neigh, neigh_w) in self.g.neighbors(node) {
                     let neigh_comm = renumber[self.tuples[neigh].n2c] as usize;
-
                     let entry = m.entry(neigh_comm).or_insert(0.0);
                     *entry += neigh_w;
                 }
             }
 
             g2_nblinks += m.len();
-            if comm == 0 {
-                g2_degrees.push(m.len());
-            } else {
-                g2_degrees.push(g2_degrees[comm - 1] + m.len());
-            }
+
+            g2_degrees.push(m.len() + if icomm == 0 { 0 } else { g2_degrees[icomm - 1] });
 
             for (&neigh_comm, &weight) in m.iter() {
                 g2_total_weight += weight;
@@ -329,6 +318,7 @@ impl<'a> LouvainCommunity {
 
     fn update(&mut self, g: LouvainBinaryGraph, nbp: isize, minm: f64) {
         self.size = g.nbnodes;
+        self.neigh_last = 0;
 
         self.tuples.clear();
         for i in 0..self.size {
@@ -354,7 +344,7 @@ impl<'a> LouvainCommunity {
         }
 
         let mut final_comm = 0isize;
-        for i in renumber.iter_mut().filter(|i| **i != -1) {
+        for i in renumber.iter_mut().filter(|&&mut i| i != -1) {
             *i = final_comm;
             final_comm += 1;
         }
