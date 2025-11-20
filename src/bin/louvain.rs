@@ -22,16 +22,12 @@ struct LouvainCommunity {
 }
 
 impl LouvainBinaryGraph {
-    fn from_webgraph<T: RandomAccessGraph>(graph: &T, directed: bool) -> Self {
-        // In this implementation, we assume all edges have weight 1.0
-        let weight = 1.0;
-
+    fn from_webgraph<T: RandomAccessGraph>(graph: &T, directed: bool, weight: f64) -> Self {
         // Build adjacency list representation, this is equivalent to the code
         // in `graph.cpp` that loads a graph from a file.
-        let num_nodes = graph.num_nodes();
-        let mut links = vec![Vec::new(); num_nodes];
+        let mut links = vec![Vec::new(); graph.num_nodes()];
 
-        for src in 0..num_nodes {
+        for src in 0..links.len() {
             for dest in graph.successors(src) {
                 links[src].push((dest, weight));
                 if src != dest && !directed {
@@ -69,11 +65,14 @@ impl LouvainBinaryGraph {
             }
         }
 
+        degrees.shrink_to_fit();
+        arcs_weights.shrink_to_fit();
+
         LouvainBinaryGraph {
+            nbnodes: degrees.len(),
             degrees,
+            nblinks: arcs_weights.len(),
             arcs_weights,
-            nbnodes: num_nodes,
-            nblinks: num_arcs,
             total_weight,
         }
     }
@@ -110,26 +109,22 @@ struct LouvainTuple {
 
 impl<'a> LouvainCommunity {
     fn from_graph(g: LouvainBinaryGraph, minm: f64) -> Self {
-        let size = g.nbnodes;
-
-        let mut tuples = Vec::with_capacity(size);
-
-        for i in 0..size {
-            tuples.push(LouvainTuple {
+        let tuples: Vec<LouvainTuple> = (0..g.nbnodes)
+            .map(|i| LouvainTuple {
                 neigh_weight: -1.0,
                 neigh_pos: 0,
                 n2c: i,
                 in_: g.nb_selfloops(i),
                 tot: g.weighted_degree(i),
                 node: i,
-            });
-        }
+            })
+            .collect();
 
         LouvainCommunity {
             g,
+            size: tuples.len(),
             tuples,
             neigh_last: 0,
-            size,
             min_modularity: minm,
         }
     }
@@ -272,7 +267,6 @@ impl<'a> LouvainCommunity {
 
         let mut g2_degrees = Vec::with_capacity(comm_nodes.len());
         let mut g2_arcs_weights = Vec::with_capacity(self.g.nblinks);
-        let mut g2_nblinks = 0usize;
         let mut g2_total_weight = 0.0;
         for (icomm, comm) in comm_nodes.iter().enumerate() {
             let mut m = std::collections::HashMap::new();
@@ -286,8 +280,6 @@ impl<'a> LouvainCommunity {
                 }
             }
 
-            g2_nblinks += m.len();
-
             g2_degrees.push(m.len() + if icomm == 0 { 0 } else { g2_degrees[icomm - 1] });
 
             for (&neigh_comm, &weight) in m.iter() {
@@ -300,9 +292,9 @@ impl<'a> LouvainCommunity {
 
         LouvainBinaryGraph {
             degrees: g2_degrees,
+            nblinks: g2_arcs_weights.len(),
             arcs_weights: g2_arcs_weights,
             nbnodes: comm_nodes.len(),
-            nblinks: g2_nblinks,
             total_weight: g2_total_weight,
         }
     }
@@ -344,7 +336,7 @@ fn main() {
 
     let instant = Instant::now();
 
-    let g = LouvainBinaryGraph::from_webgraph(&graph, false);
+    let g = LouvainBinaryGraph::from_webgraph(&graph, false, 1.0);
     let mut c = LouvainCommunity::from_graph(g, precision);
 
     for level in 0usize.. {
