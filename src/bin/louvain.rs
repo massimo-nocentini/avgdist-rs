@@ -1,6 +1,7 @@
 use rand::rngs::ThreadRng;
 use rand::seq::SliceRandom;
 use std::env;
+use std::ops::{Add, Div, Mul, Sub};
 use std::time::Instant;
 use webgraph::prelude::*;
 
@@ -21,7 +22,7 @@ struct LouvainCommunity {
 }
 
 impl LouvainBinaryGraph {
-    fn from_webgraph<T: RandomAccessGraph>(graph: &T) -> Self {
+    fn from_webgraph<T: RandomAccessGraph>(graph: &T, directed: bool) -> Self {
         // In this implementation, we assume all edges have weight 1.0
         let weight = 1.0;
 
@@ -33,8 +34,8 @@ impl LouvainBinaryGraph {
         for src in 0..num_nodes {
             for dest in graph.successors(src) {
                 links[src].push((dest, weight));
-                if src != dest {
-                    links[dest].push((src, weight)); // undirected graph
+                if src != dest && !directed {
+                    links[dest].push((src, weight));
                 }
             }
         }
@@ -50,8 +51,8 @@ impl LouvainBinaryGraph {
                 *entry += weight;
             }
 
+            num_arcs += m.len();
             *i = m.into_iter().collect();
-            num_arcs += i.len();
         }
 
         let mut degrees = Vec::with_capacity(links.len());
@@ -77,21 +78,12 @@ impl LouvainBinaryGraph {
         }
     }
 
-    // fn nb_neighbors(&self, node: usize) -> usize {
-    //     if node == 0 {
-    //         self.degrees[0]
-    //     } else {
-    //         self.degrees[node] - self.degrees[node - 1]
-    //     }
-    // }
-
     fn nb_selfloops(&self, node: usize) -> f64 {
-        for &(neighbor, weight) in self.neighbors(node).iter() {
-            if neighbor == node {
-                return weight;
-            }
-        }
-        0.0
+        self.neighbors(node)
+            .iter()
+            .filter(|&&(neighbor, _)| neighbor == node)
+            .map(|&(_, weight)| weight)
+            .sum()
     }
 
     fn weighted_degree(&self, node: usize) -> f64 {
@@ -100,7 +92,7 @@ impl LouvainBinaryGraph {
 
     fn neighbors(&self, node: usize) -> &[(usize, f64)] {
         if node == 0 {
-            &self.arcs_weights[..self.degrees[0]]
+            &self.arcs_weights[0..self.degrees[0]]
         } else {
             &self.arcs_weights[self.degrees[node - 1]..self.degrees[node]]
         }
@@ -153,7 +145,7 @@ impl<'a> LouvainCommunity {
     fn remove(&mut self, node: usize, comm: usize, dnodecomm: f64) {
         let tup = &mut self.tuples[comm];
         tup.tot -= self.g.weighted_degree(node);
-        tup.in_ -= 2.0 * dnodecomm + self.g.nb_selfloops(node);
+        tup.in_ -= 2.0.mul(dnodecomm).add(self.g.nb_selfloops(node));
 
         self.tuples[node].n2c = usize::MAX;
     }
@@ -162,23 +154,19 @@ impl<'a> LouvainCommunity {
         let tup = &mut self.tuples[comm];
 
         tup.tot += self.g.weighted_degree(node);
-        tup.in_ += 2.0 * dnodecomm + self.g.nb_selfloops(node);
+        tup.in_ += 2.0.mul(dnodecomm).add(self.g.nb_selfloops(node));
 
         self.tuples[node].n2c = comm;
     }
 
     fn modularity_gain(&self, comm: usize, dnodecomm: f64, w_degree: f64) -> f64 {
-        let totc = self.tuples[comm].tot;
-        let degc = w_degree;
-        let m2 = self.g.total_weight;
-        let dnc = dnodecomm;
-
-        dnc - (totc * degc) / m2
+        dnodecomm.sub(self.tuples[comm].tot.mul(w_degree).div(self.g.total_weight))
     }
 
     fn neigh_comm(&mut self, node: usize) {
         for i in 0..self.neigh_last {
-            self.tuples[i].neigh_weight = -1.0;
+            let j = self.tuples[i].neigh_pos;
+            self.tuples[j].neigh_weight = -1.0;
         }
         self.neigh_last = 0;
 
@@ -187,17 +175,15 @@ impl<'a> LouvainCommunity {
         self.tuples[node_n2c].neigh_weight = 0.0;
         self.neigh_last = 1;
 
-        for &(neigh, neigh_w) in self.g.neighbors(node) {
+        for &(neigh, neigh_w) in self.g.neighbors(node).iter().filter(|&&(n, _)| n != node) {
             let neigh_comm = self.tuples[neigh].n2c;
 
-            if neigh != node {
-                if self.tuples[neigh_comm].neigh_weight == -1.0 {
-                    self.tuples[neigh_comm].neigh_weight = 0.0;
-                    self.tuples[self.neigh_last].neigh_pos = neigh_comm;
-                    self.neigh_last += 1;
-                }
-                self.tuples[neigh_comm].neigh_weight += neigh_w;
+            if self.tuples[neigh_comm].neigh_weight == -1.0 {
+                self.tuples[neigh_comm].neigh_weight = 0.0;
+                self.tuples[self.neigh_last].neigh_pos = neigh_comm;
+                self.neigh_last += 1;
             }
+            self.tuples[neigh_comm].neigh_weight += neigh_w;
         }
     }
 
@@ -285,7 +271,7 @@ impl<'a> LouvainCommunity {
         }
 
         let mut g2_degrees = Vec::with_capacity(comm_nodes.len());
-        let mut g2_arcs_weights = Vec::new();
+        let mut g2_arcs_weights = Vec::with_capacity(self.g.nblinks);
         let mut g2_nblinks = 0usize;
         let mut g2_total_weight = 0.0;
         for (icomm, comm) in comm_nodes.iter().enumerate() {
@@ -310,6 +296,8 @@ impl<'a> LouvainCommunity {
             }
         }
 
+        g2_arcs_weights.shrink_to_fit();
+
         LouvainBinaryGraph {
             degrees: g2_degrees,
             arcs_weights: g2_arcs_weights,
@@ -319,41 +307,27 @@ impl<'a> LouvainCommunity {
         }
     }
 
-    fn update(&mut self, g: LouvainBinaryGraph, minm: f64) {
-        self.size = g.nbnodes;
-        self.neigh_last = 0;
-
-        self.tuples.clear();
-
-        for i in 0..self.size {
-            self.tuples.push(LouvainTuple {
-                neigh_weight: -1.0,
-                neigh_pos: 0,
-                n2c: i,
-                in_: g.nb_selfloops(i),
-                tot: g.weighted_degree(i),
-                node: i,
-            });
-        }
-
-        self.g = g;
-        self.min_modularity = minm;
-    }
-
     fn display_partition(&self) {
-        let mut renumber = vec![-1isize; self.size];
+        let mut renumber = vec![None; self.size];
         for tup in self.tuples.iter() {
-            renumber[tup.n2c] += 1;
+            renumber[tup.n2c] = match renumber[tup.n2c] {
+                Some(r) => Some(r + 1),
+                None => Some(0usize),
+            };
         }
 
-        let mut final_comm = 0isize;
-        for i in renumber.iter_mut().filter(|&&mut i| i != -1) {
-            *i = final_comm;
+        let mut final_comm = 0usize;
+        for i in renumber.iter_mut().filter(|i| i.is_some()) {
+            *i = Some(final_comm);
             final_comm += 1;
         }
 
         for i in self.tuples.iter() {
-            println!("{} {}", i.node, renumber[i.n2c]);
+            let n2c = match renumber[i.n2c] {
+                Some(r) => r,
+                None => usize::MAX,
+            };
+            println!("{} {}", i.node, n2c);
         }
     }
 }
@@ -370,19 +344,20 @@ fn main() {
 
     let instant = Instant::now();
 
-    let g = LouvainBinaryGraph::from_webgraph(&graph);
+    let g = LouvainBinaryGraph::from_webgraph(&graph, false);
     let mut c = LouvainCommunity::from_graph(g, precision);
 
     for level in 0usize.. {
         let mod_ = c.modularity();
 
         eprintln!(
-            "Level {}: eta {:?}, nodes {}, links {}, weight {}:",
+            "Level {}: elapsed {:?}, nodes {}, links {}, weight {}, modularity {:.6}:",
             level,
             instant.elapsed(),
             c.g.nbnodes,
             c.g.nblinks,
-            c.g.total_weight
+            c.g.total_weight,
+            mod_
         );
 
         let improvement = c.one_level(&mut rng);
@@ -391,7 +366,7 @@ fn main() {
         c.display_partition();
 
         let g2 = c.partition2graph_binary();
-        c.update(g2, precision);
+        c = LouvainCommunity::from_graph(g2, precision);
 
         eprintln!("\tmodularity increased from {} to {}", mod_, new_mod);
 

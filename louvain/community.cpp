@@ -36,7 +36,7 @@ Community::Community(char * filename, char * filename_w, int type, int nbp, doub
   size = g.nb_nodes;
 
   neigh_weight.resize(size,-1);
-  neigh_pos.resize(size);
+  neigh_pos.resize(size,0);
   neigh_last=0;
 
   n2c.resize(size);
@@ -58,7 +58,7 @@ Community::Community(Graph gc, int nbp, double minm) {
   size = g.nb_nodes;
 
   neigh_weight.resize(size,-1);
-  neigh_pos.resize(size);
+  neigh_pos.resize(size,0);
   neigh_last=0;
 
   n2c.resize(size);
