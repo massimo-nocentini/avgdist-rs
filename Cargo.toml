@@ -5,10 +5,12 @@ edition = "2021"
 
 [dependencies]
 bitvec = "1.0.1"
+csv = "1.4.0"
 dsi-progress-logger = "0.2.5"
 lender = "0.2.9"
 rand = "0.8.5"
 rayon = "1.10.0"
+serde = {version = "1.0.228", features = ["derive"]}
 sux = "0.4.6"
 webgraph = { git = "https://github.com/vigna/webgraph-rs.git" }
 #webgraph-algo = { path = "./webgraph-rs-webgraph-algo-dist/algo" }

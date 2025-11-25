@@ -1,8 +1,9 @@
 use rand::rngs::ThreadRng;
 use rand::seq::SliceRandom;
-use std::env;
+use std::io::Write;
 use std::ops::{Add, Div, Mul, Sub};
 use std::time::Instant;
+use std::{env, fs, io};
 use webgraph::prelude::*;
 
 struct LouvainBinaryGraph {
@@ -339,41 +340,55 @@ fn main() {
     let precision = args[2].parse().unwrap();
     let verbose = args[3].parse().unwrap();
 
+    let dot_filename = &args[4];
+
     let graph = BvGraph::with_basename(graph_filename).load().unwrap();
 
     let instant = Instant::now();
 
-    let g = LouvainBinaryGraph::from_webgraph(&graph, false, 1.0);
+    let mut g = LouvainBinaryGraph::from_webgraph(&graph, false, 1.0);
     let mut c = LouvainCommunity::from_graph(g, precision);
 
     for level in 0usize.. {
-        let mod_ = c.modularity();
-
-        eprintln!(
-            "Level {}: elapsed {:?}, nodes {}, links {}, weight {}, modularity {:.6}:",
+        eprint!(
+            "Level {}: elapsed {:?}, nodes {}, links {}, weight {}, modularity {} ",
             level,
             instant.elapsed(),
             c.g.nbnodes(),
             c.g.nblinks(),
             c.g.total_weight,
-            mod_
+            c.modularity()
         );
 
         let improvement = c.one_level(&mut rng);
-        let new_mod = c.modularity();
+
+        eprintln!("increased to {}.", c.modularity());
 
         if verbose {
             c.display_partition();
         }
 
-        let g2 = c.partition2graph_binary();
-        c = LouvainCommunity::from_graph(g2, precision);
-
-        eprintln!("\tmodularity increased from {} to {}", mod_, new_mod);
-
         if !improvement {
+            let f = fs::File::create(dot_filename).unwrap();
+            let mut writer = io::BufWriter::new(f);
+
+            writer
+                .write_all(b"graph G {\n\tnode [shape=circle];\n")
+                .unwrap();
+
+            for i in 0..c.g.nbnodes() {
+                for &(j, _weight) in c.g.neighbors(i).iter().filter(|&&(n, _)| i < n) {
+                    writeln!(writer, "\t{} -- {}", i, j).unwrap();
+                }
+            }
+
+            writer.write_all(b"}\n").unwrap();
+
             break;
         }
+
+        g = c.partition2graph_binary();
+        c = LouvainCommunity::from_graph(g, precision);
     }
 
     eprintln!("\nTotal time: {:?}", instant.elapsed());

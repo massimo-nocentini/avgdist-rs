@@ -3,9 +3,9 @@ echo:
 	echo "Makefile for Louvain implementation in Rust"
 
 webgraph-all:
-	cargo run --bin louvain --release -- louvain/sample_networks/example/example 0.00001 true > louvain/sample_networks/example/example.webgraph.tree
-	cargo run --bin louvain --release -- louvain/sample_networks/karate/karate 0.00001 true > louvain/sample_networks/karate/karate.webgraph.tree
-	cargo run --bin louvain --release -- louvain/sample_networks/arxiv/arxiv 0.00001 true > louvain/sample_networks/arxiv/arxiv.webgraph.tree
+	cargo run --bin louvain --release -- louvain/sample_networks/example/example 0.00001 true louvain/sample_networks/example/example.webgraph.dot > louvain/sample_networks/example/example.webgraph.tree
+	cargo run --bin louvain --release -- louvain/sample_networks/karate/karate 0.00001 true louvain/sample_networks/karate/karate.webgraph.dot > louvain/sample_networks/karate/karate.webgraph.tree
+	cargo run --bin louvain --release -- louvain/sample_networks/arxiv/arxiv 0.00001 true louvain/sample_networks/arxiv/arxiv.webgraph.dot > louvain/sample_networks/arxiv/arxiv.webgraph.tree
 	cd louvain/sample_networks/example && ../../hierarchy example.webgraph.tree > example.webgraph.hier
 	cd louvain/sample_networks/karate && ../../hierarchy karate.webgraph.tree > karate.webgraph.hier
 	cd louvain/sample_networks/arxiv && ../../hierarchy arxiv.webgraph.tree > arxiv.webgraph.hier
