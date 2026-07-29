@@ -148,31 +148,19 @@ fn main() {
 
     let ag = Arc::new(graph);
 
-    let mut D = 0usize; // maximum diameter
-    let mut S = 0usize; // sum of distances
-    let mut C = 0usize; // count of pairs
-    let mut R = 0.0; // ratio of pairs
-    let mut Rc = 0usize; // count of pairs
-
     let instant = Instant::now();
 
-    let (dia, sum, count, ratio, c) =
-        sample(&thread_pool, sample_size, ag.clone(), exact_computation);
-
-    D = std::cmp::max(D, dia);
-    S += sum;
-    C += count;
-    R += ratio;
-    Rc += c;
+    let (diameter, sum, count, ratio, _pairs) =
+        sample(&thread_pool, sample_size, ag, exact_computation);
 
     println!(
         "\n((average distance {:.6}) (diameter {}) (eta {:?}))",
         if exact_computation {
-            (S as f64) / (C as f64)
+            (sum as f64) / (count as f64)
         } else {
-            R / (sample_size as f64)
+            ratio / (sample_size as f64)
         },
-        D,
+        diameter,
         instant.elapsed()
     );
 }
