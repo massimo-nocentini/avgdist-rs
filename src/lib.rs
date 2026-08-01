@@ -2,7 +2,6 @@ use core::panic;
 use rand::Rng;
 use std::collections::{HashMap, HashSet};
 use std::env;
-use std::hash::{DefaultHasher, Hasher};
 use std::io::{self, Write};
 use std::ops::{Neg, Not};
 use std::sync::atomic::AtomicUsize;
@@ -282,17 +281,18 @@ impl Simpath {
             h = self.trunc(self.head);
 
             {
-                let hasher = DefaultHasher::new();
-                let mut to_hash = Vec::new();
+                let mut acc: u64 = 0;
                 while t <= ll {
                     self.mem[h] = self.mate[t];
 
-                    to_hash.push(self.mate[t]);
+                    acc = acc
+                        .wrapping_mul(31415926525)
+                        .wrapping_add(self.mate[t] as u64);
 
                     t += 1;
                     h = self.trunc(h + 1)
                 }
-                hash = hasher.finish() as usize;
+                hash = acc as usize;
             }
 
             hash = hash & (self.htsize - 1);
