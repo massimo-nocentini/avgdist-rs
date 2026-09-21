@@ -143,10 +143,13 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 name = "avgdist-rs"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "bitvec",
  "csv",
- "dsi-progress-logger 0.2.5",
+ "dsi-progress-logger 0.8.9",
+ "env_logger",
  "lender 0.2.9",
+ "log",
  "rand 0.8.7",
  "rayon",
  "serde",
