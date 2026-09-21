@@ -74,14 +74,30 @@ TMP_DIR="${PIPELINE}/tmp"
 UTXO2WEBGRAPH="${HOME:-}/Developer/working-copies/utxo2webgraph-rs/target/release/utxo2webgraph"
 WEBGRAPH=/data/bitcoin/mnocentini-home/Developer/working-copies/webgraph-rs/target/release/webgraph
 
+# Measured on /data/bitcoin/2022/pg, which is the same 2.181e9-node,
+# 8.640e9-arc graph that INDEX=28 produces: `unipairs` peaks at 123 GB of
+# resident memory at 112 threads and 43.7 GB at 32, i.e. about 12 GB fixed plus
+# 1.0 GB per concurrent visit (a 273 MB visited bit vector and a BFS frontier).
+# 112 buys a real 1.84x over 32 -- it has no shared accumulator to contend on --
+# so the maximum is worth taking here.
 THREADS=112
-# `harmonic` holds one f64 per node plus, per running visit, a bit vector and a
-# BFS frontier -- and on pg_28-t the frontier is the big one, about 2.7 GB per
-# visit, so the thread count is really a memory budget.  8 is what the existing
-# benchmarks use.  Measured on the real pg-t graphs, the harmonic stage over
-# indices 8..28 costs roughly 60 h at 8 threads, 17 h at 32 (~86 GB peak) and
-# 9 h at 112 (which would not fit).  Raise this to 32 if the box is yours.
-HARMONIC_THREADS=8
+# `harmonic` costs far more per thread than `unipairs`: it holds one f64 per
+# node for the whole run, and it does an atomic compare-exchange on every node
+# a visit reaches, which is why it moves about a third as many nodes per second.
+# Measured on the real pg-t (2.181e9 nodes, 8.640e9 arcs, the same graph
+# INDEX=28 produces), sampling at epsilon 0.1:
+#
+#     threads   peak RSS   throughput      whole series
+#           8    39.9 GB    5.08 Mnode/s     ~8.5 days
+#          32    81.0 GB   16.59 Mnode/s     ~2.6 days
+#         112   216.2 GB   23.06 Mnode/s     ~1.9 days
+#
+# i.e. 26.9 GB fixed plus 1.69 GB per concurrent visit, and near-linear scaling
+# up to 32 (82% efficiency) that collapses beyond it (40% at 112).  32 is the
+# knee.  56 would cost 122 GB and save about eight hours over the series, which
+# is free against the 123 GB `unipairs` peak above if the machine is yours
+# alone; 112 is affordable but wastes eighty cores.
+HARMONIC_THREADS=32
 EPSILON=0.1
 
 # Below this many nodes the payment graph is still mostly isolated UTXOs --
