@@ -72,7 +72,9 @@ fn sample<T: RandomAccessGraph + Send + Sync + 'static>(
             tx.send((dia, dist, count, vertex, finite_dist)).unwrap();
 
             print!(">: {:?} | ", instant.elapsed());
+            eprintln!("Thread {} finished.", each);
             io::stdout().flush().unwrap();
+            io::stderr().flush().unwrap();
         });
     }
 
